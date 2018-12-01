@@ -33,6 +33,8 @@ int main(int argc, char** args)
 	SDL_Texture* background = drawBackground(renderer);
 	SDL_Rect bgRect = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
+	SDL_Rect bgCollider = { 60, 100, 680, 440 };
+
 	Player* player = new Player();
 
 	while (!quit)
@@ -46,8 +48,7 @@ int main(int argc, char** args)
 			player->handleEvent(input);
 		}
 
-		player->movePlayer();
-		player->animate();
+		player->movePlayer(bgCollider);
 
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
@@ -55,6 +56,10 @@ int main(int argc, char** args)
 		SDL_RenderCopy(renderer, background, NULL, &bgRect);
 
 		player->render(renderer);
+
+		SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+		SDL_RenderDrawRect(renderer, &bgCollider);
+		SDL_RenderDrawRect(renderer, &player->collider);
 
 		SDL_RenderPresent(renderer);
 	}
