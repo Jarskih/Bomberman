@@ -27,6 +27,12 @@
     <ClCompile Include="Helpers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Musicplayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Bomb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="player.h">
@@ -36,6 +42,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Helpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Musicplayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Bomb.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

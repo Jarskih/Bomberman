@@ -1,41 +1,53 @@
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_mixer.h>
 #include "Player.h"
 #include <iostream>
 #include "GameRules.h"
+#include "Musicplayer.h"
 
-SDL_Texture* drawBackground(SDL_Renderer* renderer) {
-	SDL_Texture* background = nullptr;
+SDL_Window* window = nullptr;
+SDL_Renderer* renderer = nullptr;
+SDL_Event input;
+SDL_Rect bgRect;
+SDL_Rect bgCollider;
+SDL_Texture* background = nullptr;
+
+void drawBackground() {
 	SDL_Surface* temp = IMG_Load("img/game_bkg1.png");
 	if (!temp) {
 		std::cout << "Cant load background" << std::endl;
 	}
 	background = SDL_CreateTextureFromSurface(renderer, temp);
 	SDL_FreeSurface(temp);
+	bgRect = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
-	return background;
+	bgCollider = { 60, 100, 680, 440 };
+}
+
+void SDLinit() {
+	SDL_Init(SDL_INIT_EVERYTHING);
+	//For loading PNG images
+	IMG_Init(IMG_INIT_PNG);
+
+	window = SDL_CreateWindow("Getting Started", SDL_WINDOWPOS_UNDEFINED,
+		SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 }
 
 //For SDL, you should have the following main method:
 int main(int argc, char** args)
 {
-	SDL_Init(SDL_INIT_EVERYTHING);
-	//For loading PNG images
-	IMG_Init(IMG_INIT_PNG);
-
-	SDL_Window* window = SDL_CreateWindow("Getting Started", SDL_WINDOWPOS_UNDEFINED,
-		SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-
-	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
-	SDL_Event input;
 	bool quit = false;
 
-	SDL_Texture* background = drawBackground(renderer);
-	SDL_Rect bgRect = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
-
-	SDL_Rect bgCollider = { 60, 100, 680, 440 };
+	SDLinit();
 
 	Player* player = new Player();
+
+	drawBackground();
+	InitMusicPlayer();
+	PlayMusic();
 
 	while (!quit)
 	{
@@ -63,6 +75,7 @@ int main(int argc, char** args)
 
 		SDL_RenderPresent(renderer);
 	}
+	DestroyMusicPlayer();
 
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);

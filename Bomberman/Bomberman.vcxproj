@@ -72,6 +72,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>C:\C++\projects\Bomberman\Bomberman\Dependencies;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -90,7 +93,7 @@
     </ClCompile>
     <Link>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
-      <AdditionalDependencies>SDL2_image.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2_image.lib;SDL2.lib;SDL2main.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -120,14 +123,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="Helpers.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Musicplayer.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="GameRules.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bomb.h" />
     <ClInclude Include="GameRules.h" />
     <ClInclude Include="Helpers.h" />
+    <ClInclude Include="Musicplayer.h" />
     <ClInclude Include="player.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
