@@ -1,10 +1,16 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
+#include <memory>
+#include "Helpers.h"
 #include "Player.h"
 #include <iostream>
 #include "GameRules.h"
 #include "Musicplayer.h"
+#include "Block.h"
+#include "Map.h"
+#include "Timer.h"
+
 
 SDL_Window* window = nullptr;
 SDL_Renderer* renderer = nullptr;
@@ -43,11 +49,20 @@ int main(int argc, char** args)
 
 	SDLinit();
 
-	Player* player = new Player();
+	auto player = mksp<Player>();
+	auto map = mksp<Map>(13, 15);
+	auto timer = mksp<Timer>();
 
-	drawBackground();
+	SDL_Rect temp = { 0, 0 };
+
+	// drawBackground();
 	InitMusicPlayer();
 	PlayMusic();
+
+
+	//Start counting frames per second
+	int countedFrames = 0;
+	timer->start();
 
 	while (!quit)
 	{
@@ -60,20 +75,30 @@ int main(int argc, char** args)
 			player->handleEvent(input);
 		}
 
-		player->movePlayer(bgCollider);
+		float timeStep = countedFrames / (timer->getTicks() / 1000.0f);
+		if (timeStep > 2000000)
+		{
+			timeStep = 0;
+		}
+		std::cout << "Average Frames Per Second " << timeStep << std::endl;
+
+		player->movePlayer(temp);
+		timer->start();
 
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
 
-		SDL_RenderCopy(renderer, background, NULL, &bgRect);
+		SDL_RenderCopy(renderer, background, nullptr, &bgRect);
+
+		map->render(renderer);
 
 		player->render(renderer);
 
 		SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-		SDL_RenderDrawRect(renderer, &bgCollider);
 		SDL_RenderDrawRect(renderer, &player->collider);
 
 		SDL_RenderPresent(renderer);
+		++countedFrames;
 	}
 	DestroyMusicPlayer();
 

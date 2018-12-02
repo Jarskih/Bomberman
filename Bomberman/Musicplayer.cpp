@@ -1,5 +1,6 @@
 #include "Musicplayer.h"
 
+
 Mix_Music* gMusic;
 
 //Initialize SDL_mixer

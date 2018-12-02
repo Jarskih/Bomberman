@@ -1,4 +1,5 @@
 #pragma once
+
 class Bomb
 {
 public:
@@ -10,4 +11,3 @@ private:
 	int m_posX = 0;
 	int m_posY = 0;
 };
-

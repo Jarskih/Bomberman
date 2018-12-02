@@ -5,6 +5,7 @@
 #include "Helpers.h"
 #include "Bomb.h"
 
+
 const char* Player::GetSprite() {
 	switch (state) {
 	case DOWN:
@@ -32,6 +33,7 @@ const char* Player::GetSprite() {
 		return "img/player_move_left.png";
 		break;
 	default:
+		return "error";
 		break;
 	}
 }
@@ -39,6 +41,10 @@ const char* Player::GetSprite() {
 SDL_Texture* Player::loadTexture(SDL_Renderer* renderer) {
 	SDL_Texture* texture = nullptr;
 	const char* sprite = GetSprite();
+
+	if (sprite == "error") {
+		std::cout << "Error loading sprite" << std::endl;
+	}
 
 	SDL_Surface* surface = IMG_Load(sprite);
 	if (!surface) {
@@ -111,25 +117,30 @@ void Player::movePlayer(SDL_Rect& wall) {
 	windowRect.x = posX;
 	collider.x = posX + PLAYER_WIDTH / 4;
 
-	if ((posX < 0) || (posX + PLAYER_WIDTH > SCREEN_WIDTH) || isOutOfGamearea(collider, wall))
+	/*
+
+	if (checkCollision(collider, wall))
 	{
 		//Move back
-		posX -= speed_x;
+		posX -= speed_x * timeStep;
 		windowRect.x = posX;
 		collider.x = posX + PLAYER_WIDTH / 4;
 	}
+	*/
 
 	posY += speed_y;
 	windowRect.y = posY;
 	collider.y = posY + PLAYER_HEIGHT / 2;
 
-	if ((posY < 0) || (posY + PLAYER_HEIGHT > SCREEN_HEIGHT) || isOutOfGamearea(collider, wall))
+	/*
+	if (checkCollision(collider, wall))
 	{
 		//Move back
-		posY -= speed_y;
+		posY -= speed_y * timeStep;
 		windowRect.y = posY;
 		collider.y = posY + PLAYER_HEIGHT / 2;
 	}
+	*/
 }
 
 void Player::render(SDL_Renderer* renderer) {
@@ -182,7 +193,7 @@ void Player::render(SDL_Renderer* renderer) {
 	SDL_DestroyTexture(texture);
 	texture = loadTexture(renderer);
 
-	SDL_QueryTexture(texture, NULL, NULL, &textureRect.w, &textureRect.h);
+	SDL_QueryTexture(texture, nullptr, nullptr, &textureRect.w, &textureRect.h);
 
 	textureRect.h /= totalFrames;
 
@@ -190,6 +201,6 @@ void Player::render(SDL_Renderer* renderer) {
 }
 
 void Player::DropBomb() {
-	Bomb* bomb = new Bomb(flamePower, posX, posY);
+	auto bomb = mksp<Bomb>(flamePower, posX, posY);
 	bombsDropped++;
 }
