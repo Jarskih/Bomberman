@@ -12,11 +12,11 @@ public:
 	~Map() = default;
 	void render(SDL_Renderer* renderer);
 	void loadTextures(SDL_Renderer * renderer);
+	std::vector<sp<Block>> m_tileSet = {};
 private:
 	enum Blocks { BREAKABLE, NONBREAKABLE, WALL_UP, WALL_LEFT, WALL_RIGHT, WALL_DOWN, WALL_LEFT_UP, WALL_RIGHT_UP, WALL_LEFT_DOWN, WALL_RIGHT_DOWN, GRASS };
 	int size_Y = 0;
 	int size_X = 0;
-	std::vector<sp<Block>> m_tileSet = {};
 	void generateMap();
 	//std::string blockSprites[9] = { "img/block.png", "img/whiteBlock.png", "img/wallTop.png", "img/wallLeft.png", "img/wallRight.png", "img/wallDown.png", "img/wallTopLeft.png", "img/wallTopRight.png", "img/grass.png" };
 	int blockTypes[13][15] = {

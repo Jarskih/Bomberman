@@ -5,7 +5,7 @@
 
 void Block::GetSprite()
 {
-	switch (m_blockType) {
+	switch (blockType) {
 	case BREAKABLE:
 		m_sprite = "img/block.png";
 		break;
@@ -58,7 +58,7 @@ SDL_Texture* Block::LoadTexture(SDL_Renderer* renderer) {
 
 	SDL_Surface* surface = IMG_Load(m_sprite);
 	if (!surface) {
-		std::cout << "Cant load block: " << m_blockType << std::endl;
+		std::cout << "Cant load block: " << blockType << std::endl;
 	}
 	texture = SDL_CreateTextureFromSurface(renderer, surface);
 	SDL_FreeSurface(surface);
@@ -68,7 +68,7 @@ SDL_Texture* Block::LoadTexture(SDL_Renderer* renderer) {
 void Block::render(SDL_Renderer* renderer) {
 	if (isDestroyed && !destroyedTextureLoaded)
 	{
-		m_blockType = DESTROYED;
+		blockType = DESTROYED;
 		SDL_DestroyTexture(texture);
 		texture = LoadTexture(renderer);
 		destroyedTextureLoaded = true;
@@ -82,6 +82,10 @@ void Block::render(SDL_Renderer* renderer) {
 
 	windowRect.x = m_x;
 	windowRect.y = m_y;
+	collider.x = m_x;
+	collider.y = m_y;
 
 	SDL_RenderCopy(renderer, texture, nullptr, &windowRect);
+
+	SDL_RenderDrawRect(renderer, &collider);
 }

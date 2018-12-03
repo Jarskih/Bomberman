@@ -4,7 +4,7 @@
 #include "GameRules.h"
 #include "Helpers.h"
 #include "Bomb.h"
-
+#include "Block.h"
 
 const char* Player::GetSprite() {
 	switch (state) {
@@ -152,7 +152,10 @@ void Player::playerController()
 	}
 }
 
-void Player::movePlayer(SDL_Rect& wall) {
+void Player::movePlayer(std::vector<sp<Block>> blocks) {
+	const int oldX = posX;
+	const int oldY = posY;
+
 	switch (state) {
 	case UP:
 		posY -= speed;
@@ -186,19 +189,22 @@ void Player::movePlayer(SDL_Rect& wall) {
 		break;
 	}
 	windowRect.x = posX;
-	collider.x = posX + PLAYER_WIDTH / 4;
+	collider.x = posX + PLAYER_WIDTH / 3.f;
 	windowRect.y = posY;
-	collider.y = posY + PLAYER_HEIGHT / 2;
+	collider.y = posY + PLAYER_HEIGHT / 2.f;
 
-	if (checkCollision(collider, wall))
+	for (const auto& block : blocks)
 	{
-		posX -= speed;
-		windowRect.x = posX;
-		collider.x = posX + PLAYER_WIDTH / 4;
+		if (block->blockType != Block::GRASS && checkCollision(collider, block->collider))
+		{
+			posX = oldX;
+			windowRect.x = posX;
+			collider.x = posX + PLAYER_WIDTH / 3.f;
 
-		posY -= speed;
-		windowRect.y = posY;
-		collider.y = posY + PLAYER_HEIGHT / 2;
+			posY = oldY;
+			windowRect.y = posY;
+			collider.y = posY + PLAYER_HEIGHT / 2.f;
+		}
 	}
 }
 
@@ -243,11 +249,10 @@ void Player::render(SDL_Renderer* renderer) {
 	}
 
 	if (moving) {
-		int delayPerFrame = 100;
-		int frame = (SDL_GetTicks() / delayPerFrame) % totalFrames;
+		const int delayPerFrame = 100;
+		const int frame = (SDL_GetTicks() / delayPerFrame) % totalFrames;
 		textureRect.y = frame * textureRect.h;
 	}
-
 
 	SDL_DestroyTexture(texture);
 	texture = loadTexture(renderer);
