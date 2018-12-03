@@ -4,9 +4,7 @@
 class Timer
 {
 public:
-	Timer() = default;
-	~Timer() = default;
-	Uint32 getTicks();
+	Uint32 getTicks() const;
 	void start();
 private:
 	bool m_isStarted = false;

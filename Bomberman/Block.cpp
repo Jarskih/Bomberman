@@ -39,6 +39,9 @@ void Block::GetSprite()
 	case GRASS:
 		m_sprite = "img/grass.png";
 		break;
+	case DESTROYED:
+		// TODO add block
+		break;
 	default:
 		m_sprite = "error";
 		break;
@@ -63,10 +66,19 @@ SDL_Texture* Block::LoadTexture(SDL_Renderer* renderer) {
 }
 
 void Block::render(SDL_Renderer* renderer) {
-	SDL_DestroyTexture(texture);
-	texture = LoadTexture(renderer);
-
-	//SDL_QueryTexture(texture, NULL, NULL, &textureRect.w, &textureRect.h);
+	if (isDestroyed && !destroyedTextureLoaded)
+	{
+		m_blockType = DESTROYED;
+		SDL_DestroyTexture(texture);
+		texture = LoadTexture(renderer);
+		destroyedTextureLoaded = true;
+	}
+	else if (!isDestroyed && !textureLoaded)
+	{
+		SDL_DestroyTexture(texture);
+		texture = LoadTexture(renderer);
+		textureLoaded = true;
+	}
 
 	windowRect.x = m_x;
 	windowRect.y = m_y;

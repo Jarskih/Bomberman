@@ -57,11 +57,9 @@ int main(int argc, char** args)
 
 	// drawBackground();
 	InitMusicPlayer();
-	PlayMusic();
+	// PlayMusic();
 
-
-	//Start counting frames per second
-	int countedFrames = 0;
+	map->loadTextures(renderer);
 	timer->start();
 
 	while (!quit)
@@ -72,16 +70,9 @@ int main(int argc, char** args)
 			{
 				quit = true;
 			}
-			player->handleEvent(input);
+			//player->handleEvent(input);
 		}
-
-		float timeStep = countedFrames / (timer->getTicks() / 1000.0f);
-		if (timeStep > 2000000)
-		{
-			timeStep = 0;
-		}
-		std::cout << "Average Frames Per Second " << timeStep << std::endl;
-
+		player->playerController();
 		player->movePlayer(temp);
 		timer->start();
 
@@ -98,7 +89,6 @@ int main(int argc, char** args)
 		SDL_RenderDrawRect(renderer, &player->collider);
 
 		SDL_RenderPresent(renderer);
-		++countedFrames;
 	}
 	DestroyMusicPlayer();
 

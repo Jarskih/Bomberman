@@ -111,36 +111,95 @@ void Player::handleEvent(SDL_Event& event) {
 	}
 }
 
-void Player::movePlayer(SDL_Rect& wall) {
+void Player::playerController()
+{
+	const Uint8* currentKeyStates = SDL_GetKeyboardState(nullptr);
+	if (currentKeyStates[SDL_SCANCODE_UP])
+	{
+		state = UP;
+	}
+	else if (currentKeyStates[SDL_SCANCODE_DOWN])
+	{
+		state = DOWN;
+	}
+	else if (currentKeyStates[SDL_SCANCODE_LEFT])
+	{
+		state = LEFT;
+	}
+	else if (currentKeyStates[SDL_SCANCODE_RIGHT])
+	{
+		state = RIGHT;
+	}
+	else
+	{
+		if (state == UP)
+		{
+			state = IDLE_UP;
+		}
+		if (state == DOWN)
+		{
+			state = IDLE_DOWN;
+		}
+		if (state == LEFT)
+		{
+			state = IDLE_LEFT;
+		}
+		if (state == RIGHT)
+		{
+			state = IDLE_RIGHT;
+		}
+		moving = false;
+	}
+}
 
-	posX += speed_x;
+void Player::movePlayer(SDL_Rect& wall) {
+	switch (state) {
+	case UP:
+		posY -= speed;
+		moving = true;
+		break;
+	case IDLE_UP:
+		moving = false;
+		break;
+	case DOWN:
+		posY += speed;
+		moving = true;
+		break;
+	case IDLE_DOWN:
+		moving = false;
+		break;
+	case LEFT:
+		posX -= speed;
+		moving = true;
+		break;
+	case IDLE_LEFT:
+		moving = false;
+		break;
+	case RIGHT:
+		posX += speed;
+		moving = true;
+		break;
+	case IDLE_RIGHT:
+		moving = false;
+		break;
+	default:
+		break;
+	}
 	windowRect.x = posX;
 	collider.x = posX + PLAYER_WIDTH / 4;
-
-	/*
-
-	if (checkCollision(collider, wall))
-	{
-		//Move back
-		posX -= speed_x * timeStep;
-		windowRect.x = posX;
-		collider.x = posX + PLAYER_WIDTH / 4;
-	}
-	*/
-
-	posY += speed_y;
 	windowRect.y = posY;
 	collider.y = posY + PLAYER_HEIGHT / 2;
 
-	/*
 	if (checkCollision(collider, wall))
 	{
-		//Move back
-		posY -= speed_y * timeStep;
+		posX -= speed;
+		windowRect.x = posX;
+		collider.x = posX + PLAYER_WIDTH / 4;
+
+		posY -= speed;
 		windowRect.y = posY;
 		collider.y = posY + PLAYER_HEIGHT / 2;
 	}
-	*/
 }
 
 void Player::render(SDL_Renderer* renderer) {

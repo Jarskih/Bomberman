@@ -2,7 +2,7 @@
 
 void Map::render(SDL_Renderer * renderer)
 {
-	for (auto block : m_tileSet) {
+	for (const auto& block : m_tileSet) {
 		block->render(renderer);
 	}
 }
@@ -17,3 +17,10 @@ void Map::generateMap() {
 	}
 }
 
+void Map::loadTextures(SDL_Renderer * renderer)
+{
+	for (const auto& block : m_tileSet)
+	{
+		block->LoadTexture(renderer);
+	}
+}

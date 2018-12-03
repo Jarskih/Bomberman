@@ -1,7 +1,7 @@
 #include "Timer.h"
 
 
-Uint32 Timer::getTicks()
+Uint32 Timer::getTicks() const
 {
 
 	Uint32 time = 0;

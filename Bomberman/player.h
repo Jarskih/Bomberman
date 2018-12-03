@@ -6,7 +6,7 @@ class Player {
 public:
 	bool isAlive = true;
 	bool moving = false;
-	int speed = 20;
+	int speed = 3;
 	float posX = 200;
 	float posY = 200;
 	int flamePower = 1;
@@ -29,6 +29,7 @@ public:
 	SDL_Texture* loadTexture(SDL_Renderer* renderer);
 	const char* Player::GetSprite();
 	void handleEvent(SDL_Event& event);
+	void playerController();
 	void movePlayer(SDL_Rect& wall);
 	void render(SDL_Renderer* renderer);
 	void DropBomb();
