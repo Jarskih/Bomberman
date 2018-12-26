@@ -6,7 +6,7 @@
 
 std::pair <int, int> Block::getBlockIndex()
 {
-	return getCurrentBlock(posX, posY);
+	return getCurrentBlock(m_pos_x, m_pos_y);
 }
 
 void Block::GetSprite()
@@ -90,10 +90,10 @@ void Block::render(SDL_Renderer* renderer) {
 		textureLoaded = true;
 	}
 
-	windowRect.x = posX;
-	windowRect.y = posY;
-	collider.x = posX;
-	collider.y = posY;
+	windowRect.x = m_pos_x;
+	windowRect.y = m_pos_y;
+	collider.x = m_pos_x;
+	collider.y = m_pos_y;
 
 	const int totalFrames = 7;
 	if (blockType == DESTROYED)
@@ -109,7 +109,7 @@ void Block::render(SDL_Renderer* renderer) {
 
 	SDL_RenderCopy(renderer, texture, nullptr, &windowRect);
 
-	SDL_RenderDrawRect(renderer, &collider);
+	//SDL_RenderDrawRect(renderer, &collider);
 }
 
 void Block::changeBlockType(int newType)

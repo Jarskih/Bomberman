@@ -4,6 +4,7 @@
 #include <map>
 #include "GameRules.h"
 #include "Flame.h"
+#include <utility>
 #include <vector>
 #include "Helpers.h"
 
@@ -14,7 +15,8 @@ static const int BOMB_HEIGHT = BLOCK_HEIGHT;
 class Bomb
 {
 public:
-	Bomb(int flamePower, int posX, int posY) : m_flamePower(flamePower), m_posX(posX), m_posY(posY)
+	Bomb(int flamePower, int posX, int posY, sp<Map> map) : m_flamePower(flamePower), m_posX(posX), m_posY(posY), m_map(
+		std::move(map))
 	{
 		spritePaths["bomb"] = "img/bomb.png";
 		spritePaths["explosionCenter"] = "img/flame_center.png";
@@ -26,7 +28,7 @@ public:
 	};
 	~Bomb() = default;
 	bool isExploded = false;
-	void render(SDL_Renderer* renderer, const sp<Map> &map);
+	void render(SDL_Renderer* renderer);
 	void load_textures(SDL_Renderer* renderer, const std::string &sprite);
 private:
 	Uint32 timeDropped = 0;
@@ -34,13 +36,14 @@ private:
 	Uint32 bombTimer = 2000;
 	Uint32 currentTime = 0;
 	Uint32 oldTime = 0;
-	int explosionframe = 0;
+	int explosion_frame = 0;
 	SDL_Texture* texture = nullptr;
 	SDL_Rect windowRect;
 	SDL_Rect textureRect;
 	int m_flamePower = 0;
 	int m_posX = 0;
 	int m_posY = 0;
+	sp<Map> m_map = nullptr;
 	int index_x = 0;
 	int index_y = 0;
 
@@ -48,6 +51,6 @@ private:
 	std::map<std::string, std::string> spritePaths;
 
 	void explode(SDL_Renderer* renderer);
-	void renderFlames(SDL_Renderer* renderer, const sp<Map> &map);
-	bool canSpawnFlame(const sp<Map> &map, const int index_x, const int index_y);
+	void renderFlames(SDL_Renderer* renderer, int frames);
+	static bool canSpawnFlame(const sp<Map> &map, const int index_x, const int index_y);
 };

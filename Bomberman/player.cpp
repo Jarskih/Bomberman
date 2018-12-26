@@ -17,14 +17,12 @@ void Player::update(const sp<Map> &map)
 
 void Player::checkBombs()
 {
-	int i = 0;
-	for (auto bomb : bombs)
+	for (const auto& bomb : bombs)
 	{
 		if (bomb->isExploded)
 		{
-			bombs.erase(bombs.begin() + i);
+			bombs.erase(bombs.begin());
 		}
-		i++;
 	}
 }
 
@@ -238,7 +236,7 @@ void Player::renderBombs(const sp<Map> &map)
 {
 	for (const auto& bomb : bombs)
 	{
-		bomb->render(m_renderer, map);
+		bomb->render(m_renderer);
 	}
 }
 
@@ -302,18 +300,18 @@ void Player::render() {
 void Player::dropBomb(const sp<Map> &map) {
 	if (maxBombs > bombs.size())
 	{
-		std::cout << "Player X: " << posX << " Player Y: " << posY << std::endl;
+		//std::cout << "Player X: " << m_pos_x << " Player Y: " << m_pos_y << std::endl;
 		const std::pair<int, int> currentBlockIndex = getCurrentBlock(posX, posY);
-		std::cout << "Current block X: " << currentBlockIndex.first << " Current block Y: " << currentBlockIndex.second << std::endl;
+		//std::cout << "Current block X: " << currentBlockIndex.first << " Current block Y: " << currentBlockIndex.second << std::endl;
 
 		std::pair<int, int> blockCenter = getBlockCenter(currentBlockIndex.first, currentBlockIndex.second);
-		std::cout << "Block center X: " << blockCenter.first << " Block Center Y: " << blockCenter.second << std::endl;
+		//std::cout << "Block center X: " << blockCenter.first << " Block Center Y: " << blockCenter.second << std::endl;
 
 
 		std::pair <int, int> testIndex = getCurrentBlock(blockCenter.first, blockCenter.second);
-		std::cout << "Test index X: " << testIndex.first << " Block index Y: " << testIndex.second << std::endl;
+		//std::cout << "Test index X: " << testIndex.first << " Block index Y: " << testIndex.second << std::endl;
 
-		const auto bomb = makesp<Bomb>(flamePower, blockCenter.first, blockCenter.second);
+		const auto bomb = makesp<Bomb>(flamePower, blockCenter.first, blockCenter.second, map);
 		bomb->load_textures(m_renderer, "bomb");
 
 		bombs.emplace_back(bomb);

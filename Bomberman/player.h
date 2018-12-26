@@ -17,7 +17,7 @@ public:
 	int speed = 3;
 	float posX = BLOCK_WIDTH + BLOCK_WIDTH / 2;
 	float posY = BLOCK_HEIGHT / 2;
-	int flamePower = 1;
+	int flamePower = 2;
 	int maxBombs = 1;
 
 	float speed_x = 0;

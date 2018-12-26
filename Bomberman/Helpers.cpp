@@ -1,5 +1,6 @@
 #include "Helpers.h"
 #include "GameRules.h"
+#include <iostream>
 
 std::pair<int, int> getBlockCenter(int index_x, int index_y)
 {

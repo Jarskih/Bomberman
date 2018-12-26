@@ -5,7 +5,7 @@
 #include "Textures.h"
 #include "Service.h"
 
-void Bomb::render(SDL_Renderer* renderer, const sp<Map> &map)
+void Bomb::render(SDL_Renderer* renderer)
 {
 	const Uint32 currentTime = SDL_GetTicks() - timeDropped;
 	const Uint32 timeSpent = currentTime - oldTime;
@@ -13,7 +13,6 @@ void Bomb::render(SDL_Renderer* renderer, const sp<Map> &map)
 	if (timeSpent > bombTimer)
 	{
 		explode(renderer);
-		renderFlames(renderer, map);
 	}
 	else
 	{
@@ -46,7 +45,6 @@ void Bomb::load_textures(SDL_Renderer* renderer, const std::string &sprite)
 
 void Bomb::explode(SDL_Renderer* renderer)
 {
-	//load_textures(renderer, "explosionCenter");
 	SDL_Texture* m_texture = Service<Textures>::Get()->findTexture("explosionCenter");
 	const Uint32 delayPerFrame = 200;
 
@@ -57,78 +55,131 @@ void Bomb::explode(SDL_Renderer* renderer)
 		timeExploded = SDL_GetTicks();
 	}
 
-	if (SDL_GetTicks() - timeExploded >= delayPerFrame * explosionframe)
+	if (SDL_GetTicks() - timeExploded >= delayPerFrame * explosion_frame)
 	{
-		explosionframe++;
+		explosion_frame++;
 	}
 
-	textureRect.y = explosionframe * textureRect.h;
+	renderFlames(renderer, explosion_frame);
+
+	textureRect.y = explosion_frame * textureRect.h;
 	SDL_QueryTexture(m_texture, nullptr, nullptr, &textureRect.w, &textureRect.h);
 
 	textureRect.h /= totalFrames;
 
 	SDL_RenderCopy(renderer, m_texture, &textureRect, &windowRect);
 
-	if (explosionframe >= totalFrames)
+	if (explosion_frame >= totalFrames)
 	{
 		isExploded = true;
 	}
 }
 
-void Bomb::renderFlames(SDL_Renderer* renderer, const sp<Map> &map)
+void Bomb::renderFlames(SDL_Renderer* renderer, int frames)
 {
 	if (flames.empty())
 	{
 		// Up
-		for (int i = m_flamePower; i > 0; i--)
+		for (int range = 1; range <= m_flamePower; range++)
 		{
-			int y = index_y - i;
-			auto flame = makesp<Flame>(index_x, y, m_flamePower, m_flamePower, renderer);
-			flame->loadTextures("lastUp");
-			// auto texture = Service<Textures>::Get();
-			// flame->setTexture(texture->findTexture("lastUp"));
-			flames.emplace_back(flame);
+			int y = index_y - range;
+			if (canSpawnFlame(m_map, index_x, y))
+			{
+				auto flame = makesp<Flame>(index_x, y, range, m_flamePower, renderer);
+				if (range < m_flamePower)
+				{
+					flame->loadTextures("flameY");
+				}
+				else
+				{
+					flame->loadTextures("lastUp");
+				}
+				flames.push_back(flame);
+			}
+			else
+			{
+				break;
+			}
 		}
 		// Down
-		for (int i = m_flamePower; i > 0; i--)
+		for (int range = 1; range <= m_flamePower; range++)
 		{
-			int y = index_y + i;
-			auto flame = makesp<Flame>(index_x, y, m_flamePower, m_flamePower, renderer);
-			auto texture = Service<Textures>::Get();
-			flame->setTexture(texture->findTexture("lastDown"));
-			flames.emplace_back(flame);
+			int y = index_y + range;
+			if (canSpawnFlame(m_map, index_x, y))
+			{
+				auto flame = makesp<Flame>(index_x, y, range, m_flamePower, renderer);
+				if (range < m_flamePower)
+				{
+					flame->loadTextures("flameY");
+				}
+				else
+				{
+					flame->loadTextures("lastDown");
+				}
+				flames.push_back(flame);
+			}
+			else
+			{
+				break;
+			}
 		}
 		// Left
-		for (int i = m_flamePower; i > 0; i--)
+		for (int range = 1; range <= m_flamePower; range++)
 		{
-			int x = index_x - i;
-			auto flame = makesp<Flame>(x, index_y, m_flamePower, m_flamePower, renderer);
-			auto texture = Service<Textures>::Get();
-			flame->setTexture(texture->findTexture("lastLeft"));
-			flames.emplace_back(flame);
+			int x = index_x - range;
+			if (canSpawnFlame(m_map, x, index_y))
+			{
+				auto flame = makesp<Flame>(x, index_y, range, m_flamePower, renderer);
+				if (range < m_flamePower)
+				{
+					flame->loadTextures("flameX");
+				}
+				else
+				{
+					flame->loadTextures("lastLeft");
+				}
+				flames.push_back(flame);
+			}
+			else
+			{
+				break;
+			}
 		}
 		// Right
-		for (int i = m_flamePower; i > 0; i--)
+		for (int range = 1; range <= m_flamePower; range++)
 		{
-			int x = index_x + i;
-			auto flame = makesp<Flame>(x, index_y, m_flamePower, m_flamePower, renderer);
-			auto texture = Service<Textures>::Get();
-			flame->setTexture(texture->findTexture("lastRight"));
-			flames.emplace_back(flame);
+			int x = index_x + range;
+			if (canSpawnFlame(m_map, x, index_y))
+			{
+				auto flame = makesp<Flame>(x, index_y, range, m_flamePower, renderer);
+				if (range < m_flamePower)
+				{
+					flame->loadTextures("flameX");
+				}
+				else
+				{
+					flame->loadTextures("lastRight");
+				}
+				flames.push_back(flame);
+			}
+			else
+			{
+				break;
+			}
 		}
 	}
 	for (const auto& flame : flames)
 	{
-		flame->render(renderer);
+		flame->render(frames);
 	}
 }
 
 bool Bomb::canSpawnFlame(const sp<Map> &map, const int index_x, const int index_y)
 {
 	bool allowed = false;
-	for (auto block : map->tileSet)
+	for (const auto& block : map->tileSet)
 	{
-		if (block->getBlockIndex().first == index_x && block->getBlockIndex().second == index_y)
+		if (block->getBlockIndex().first == index_x + 1 && block->getBlockIndex().second == index_y + 1)
 		{
 			if (block->blockType == GRASS)
 			{

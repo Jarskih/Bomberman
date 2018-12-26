@@ -78,11 +78,10 @@ int main(int argc, char** args)
 			player->movePlayer(map->tileSet);
 			timer->start();
 
-			// Debug
-			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-
 			map->render();
 
+			// Debug
+			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 			player->update(map);
 
 			// Debug

@@ -26,8 +26,8 @@ void Textures::save_sprite_paths()
 	spritePaths["lastUp"] = "img/flame_up_end.png";
 	spritePaths["lastLeft"] = "img/flame_left_end.png";
 	spritePaths["lastDown"] = "img/flame_down_end.png";
-	spritePaths["flameX"] = "img/flame_middle_y.png";
-	spritePaths["flameY"] = "img/flame_middle_x.png";
+	spritePaths["flameY"] = "img/flame_middle_y.png";
+	spritePaths["flameX"] = "img/flame_middle_x.png";
 	spritePaths["bomb"] = "img/bomb.png";
 	spritePaths["explosionCenter"] = "img/flame_center.png";
 }
