@@ -15,7 +15,7 @@ SDL_Texture* Textures::findTexture(std::string name)
 	{
 		return textures[name];
 	}
-	std::cout << "Cant find texture: " << name << std::endl;
+	std::cout << "Cant find m_texture: " << name << std::endl;
 	return nullptr;
 }
 
@@ -41,7 +41,7 @@ void Textures::create_textures()
 
 		SDL_Surface* surface = IMG_Load(c);
 		if (!surface) {
-			std::cout << "Cant load texture with path: " << path.first << std::endl;
+			std::cout << "Cant load m_texture with path: " << path.first << std::endl;
 		}
 		else
 		{

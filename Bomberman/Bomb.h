@@ -33,7 +33,7 @@ public:
 private:
 	Uint32 timeDropped = 0;
 	Uint32 timeExploded = 0;
-	Uint32 bombTimer = 2000;
+	Uint32 bombTimer = 1500;
 	Uint32 currentTime = 0;
 	Uint32 oldTime = 0;
 	int explosion_frame = 0;

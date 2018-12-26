@@ -74,19 +74,19 @@ SDL_Texture* Block::LoadTexture(SDL_Renderer* renderer) {
 void Block::render(SDL_Renderer* renderer) {
 	if (blockType == DESTROYED && !textureLoaded)
 	{
-		SDL_DestroyTexture(texture);
-		texture = LoadTexture(renderer);
+		SDL_DestroyTexture(m_texture);
+		m_texture = LoadTexture(renderer);
 		textureLoaded = true;
 	}
 	else if (blockType != DESTROYED && !textureLoaded)
 	{
-		SDL_DestroyTexture(texture);
-		texture = LoadTexture(renderer);
+		SDL_DestroyTexture(m_texture);
+		m_texture = LoadTexture(renderer);
 		textureLoaded = true;
 	}
 	else if (blockType == GRASS && !textureLoaded) {
-		SDL_DestroyTexture(texture);
-		texture = LoadTexture(renderer);
+		SDL_DestroyTexture(m_texture);
+		m_texture = LoadTexture(renderer);
 		textureLoaded = true;
 	}
 
@@ -99,15 +99,22 @@ void Block::render(SDL_Renderer* renderer) {
 	if (blockType == DESTROYED)
 	{
 		const int delayPerFrame = 100;
-		const int frame = (SDL_GetTicks() / delayPerFrame) % totalFrames;
-		textureRect.y = frame * textureRect.h;
+
+		if (SDL_GetTicks() - timeExploded > delayPerFrame)
+		{
+			textureRect.y = frame * textureRect.h;
+			SDL_QueryTexture(m_texture, nullptr, nullptr, &textureRect.w, &textureRect.h);
+
+			textureRect.h /= totalFrames;
+			frame++;
+		}
 		if (frame >= totalFrames - 1)
 		{
 			changeBlockType(GRASS);
 		}
 	}
 
-	SDL_RenderCopy(renderer, texture, nullptr, &windowRect);
+	SDL_RenderCopy(renderer, m_texture, nullptr, &windowRect);
 
 	//SDL_RenderDrawRect(renderer, &collider);
 }
@@ -116,4 +123,5 @@ void Block::changeBlockType(int newType)
 {
 	blockType = newType;
 	textureLoaded = false;
+	timeExploded = SDL_GetTicks();
 }

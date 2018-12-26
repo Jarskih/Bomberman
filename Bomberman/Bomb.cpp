@@ -37,7 +37,7 @@ void Bomb::load_textures(SDL_Renderer* renderer, const std::string &sprite)
 
 	SDL_Surface* surface = IMG_Load(c);
 	if (!surface) {
-		std::cout << "Cant load bomb texture" << std::endl;
+		std::cout << "Cant load bomb m_texture" << std::endl;
 	}
 	texture = SDL_CreateTextureFromSurface(renderer, surface);
 	SDL_FreeSurface(surface);
@@ -184,6 +184,10 @@ bool Bomb::canSpawnFlame(const sp<Map> &map, const int index_x, const int index_
 			if (block->blockType == GRASS)
 			{
 				allowed = true;
+			}
+			if (block->blockType == BREAKABLE)
+			{
+				block->changeBlockType(DESTROYED);
 			}
 		}
 	}

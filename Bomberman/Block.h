@@ -25,14 +25,16 @@ public:
 	int m_pos_y;
 	int blockType;
 private:
-
+	Uint32 timeExploded = 0;
+	Uint32 currentTime = 0;
+	int frame = 0;
 	bool isDestroyed = false;
 	bool destroyedTextureLoaded = false;
 	bool textureLoaded = false;
 	SDL_Rect windowRect = { 0, 0, BLOCK_WIDTH, BLOCK_HEIGHT };
 	SDL_Rect textureRect = { 0, 0, 0, 0 };
 	const char* m_sprite = nullptr;
-	SDL_Texture* texture = nullptr;
+	SDL_Texture* m_texture = nullptr;
 
 	void GetSprite();
 };
