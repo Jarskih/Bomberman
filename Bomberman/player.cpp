@@ -1,12 +1,35 @@
-#include "Player.h"
+#include "player.h"
 #include <SDL_image.h>
 #include <iostream>
 #include "GameRules.h"
+#include <memory>
 #include "Helpers.h"
 #include "Bomb.h"
 #include "Block.h"
+#include "Map.h"
 
-const char* Player::GetSprite() {
+void Player::update(const sp<Map> &map)
+{
+	checkBombs();
+	renderBombs(map);
+	render();
+}
+
+void Player::checkBombs()
+{
+	int i = 0;
+	for (auto bomb : bombs)
+	{
+		if (bomb->isExploded)
+		{
+			bombs.erase(bombs.begin() + i);
+		}
+		i++;
+	}
+}
+
+const char* Player::GetSprite() const
+{
 	switch (state) {
 	case DOWN:
 		return "img/player_move_down.png";
@@ -38,7 +61,8 @@ const char* Player::GetSprite() {
 	}
 }
 
-SDL_Texture* Player::loadTexture(SDL_Renderer* renderer) {
+SDL_Texture* Player::loadTexture() const
+{
 	SDL_Texture* texture = nullptr;
 	const char* sprite = GetSprite();
 
@@ -50,11 +74,11 @@ SDL_Texture* Player::loadTexture(SDL_Renderer* renderer) {
 	if (!surface) {
 		std::cout << "Cant load player" << std::endl;
 	}
-	texture = SDL_CreateTextureFromSurface(renderer, surface);
+	texture = SDL_CreateTextureFromSurface(m_renderer, surface);
 	SDL_FreeSurface(surface);
 	return texture;
 }
-
+/*
 void Player::handleEvent(SDL_Event& event) {
 	//If a key was pressed
 	if (event.type == SDL_KEYDOWN && event.key.repeat == 0)
@@ -79,7 +103,6 @@ void Player::handleEvent(SDL_Event& event) {
 			state = RIGHT;
 			break;
 		case SDLK_SPACE:
-			DropBomb();
 			break;
 		default:
 			break;
@@ -110,8 +133,8 @@ void Player::handleEvent(SDL_Event& event) {
 		}
 	}
 }
-
-void Player::playerController()
+*/
+void Player::playerController(sp<Map> map)
 {
 	const Uint8* currentKeyStates = SDL_GetKeyboardState(nullptr);
 	if (currentKeyStates[SDL_SCANCODE_UP])
@@ -130,8 +153,11 @@ void Player::playerController()
 	{
 		state = RIGHT;
 	}
-	else
+	else if (currentKeyStates[SDL_SCANCODE_SPACE])
 	{
+		dropBomb(map);
+	}
+	else {
 		if (state == UP)
 		{
 			state = IDLE_UP;
@@ -195,7 +221,7 @@ void Player::movePlayer(std::vector<sp<Block>> blocks) {
 
 	for (const auto& block : blocks)
 	{
-		if (block->blockType != Block::GRASS && checkCollision(collider, block->collider))
+		if (block->blockType != GRASS && checkCollision(collider, block->collider))
 		{
 			posX = oldX;
 			windowRect.x = posX;
@@ -208,7 +234,15 @@ void Player::movePlayer(std::vector<sp<Block>> blocks) {
 	}
 }
 
-void Player::render(SDL_Renderer* renderer) {
+void Player::renderBombs(const sp<Map> &map)
+{
+	for (const auto& bomb : bombs)
+	{
+		bomb->render(m_renderer, map);
+	}
+}
+
+void Player::render() {
 	int totalFrames = 8;
 
 	switch (state) {
@@ -248,23 +282,40 @@ void Player::render(SDL_Renderer* renderer) {
 		break;
 	}
 
+	SDL_DestroyTexture(texture);
+	texture = loadTexture();
+
+
 	if (moving) {
 		const int delayPerFrame = 100;
 		const int frame = (SDL_GetTicks() / delayPerFrame) % totalFrames;
 		textureRect.y = frame * textureRect.h;
 	}
 
-	SDL_DestroyTexture(texture);
-	texture = loadTexture(renderer);
-
 	SDL_QueryTexture(texture, nullptr, nullptr, &textureRect.w, &textureRect.h);
 
 	textureRect.h /= totalFrames;
 
-	SDL_RenderCopy(renderer, texture, &textureRect, &windowRect);
+	SDL_RenderCopy(m_renderer, texture, &textureRect, &windowRect);
 }
 
-void Player::DropBomb() {
-	auto bomb = mksp<Bomb>(flamePower, posX, posY);
-	bombsDropped++;
+void Player::dropBomb(const sp<Map> &map) {
+	if (maxBombs > bombs.size())
+	{
+		std::cout << "Player X: " << posX << " Player Y: " << posY << std::endl;
+		const std::pair<int, int> currentBlockIndex = getCurrentBlock(posX, posY);
+		std::cout << "Current block X: " << currentBlockIndex.first << " Current block Y: " << currentBlockIndex.second << std::endl;
+
+		std::pair<int, int> blockCenter = getBlockCenter(currentBlockIndex.first, currentBlockIndex.second);
+		std::cout << "Block center X: " << blockCenter.first << " Block Center Y: " << blockCenter.second << std::endl;
+
+
+		std::pair <int, int> testIndex = getCurrentBlock(blockCenter.first, blockCenter.second);
+		std::cout << "Test index X: " << testIndex.first << " Block index Y: " << testIndex.second << std::endl;
+
+		const auto bomb = makesp<Bomb>(flamePower, blockCenter.first, blockCenter.second);
+		bomb->load_textures(m_renderer, "bomb");
+
+		bombs.emplace_back(bomb);
+	}
 }

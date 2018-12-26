@@ -1,12 +1,18 @@
 #include "Musicplayer.h"
-
+#include <iostream>
 
 Mix_Music* gMusic;
 
 //Initialize SDL_mixer
-bool InitMusicPlayer() {
-	return Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
-
+void InitMusicPlayer() {
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1) {
+		std::cout << "Could not start music player" << std::endl;
+	}
+	else
+	{
+		// TODO enable music
+		// PlayMusic();
+	}
 }
 
 //Load music

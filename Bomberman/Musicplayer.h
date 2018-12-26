@@ -4,7 +4,7 @@
 
 
 
-bool InitMusicPlayer();
+void InitMusicPlayer();
 void PlayMusic();
 void DestroyMusicPlayer();
 

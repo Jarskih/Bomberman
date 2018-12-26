@@ -2,6 +2,12 @@
 #include <iostream>
 #include <SDL.h>
 #include <SDL_image.h>
+#include "Flame.h"
+
+std::pair <int, int> Block::getBlockIndex()
+{
+	return getCurrentBlock(posX, posY);
+}
 
 void Block::GetSprite()
 {
@@ -40,7 +46,7 @@ void Block::GetSprite()
 		m_sprite = "img/grass.png";
 		break;
 	case DESTROYED:
-		// TODO add block
+		m_sprite = "img/block_breaking.png";
 		break;
 	default:
 		m_sprite = "error";
@@ -66,26 +72,48 @@ SDL_Texture* Block::LoadTexture(SDL_Renderer* renderer) {
 }
 
 void Block::render(SDL_Renderer* renderer) {
-	if (isDestroyed && !destroyedTextureLoaded)
-	{
-		blockType = DESTROYED;
-		SDL_DestroyTexture(texture);
-		texture = LoadTexture(renderer);
-		destroyedTextureLoaded = true;
-	}
-	else if (!isDestroyed && !textureLoaded)
+	if (blockType == DESTROYED && !textureLoaded)
 	{
 		SDL_DestroyTexture(texture);
 		texture = LoadTexture(renderer);
 		textureLoaded = true;
 	}
+	else if (blockType != DESTROYED && !textureLoaded)
+	{
+		SDL_DestroyTexture(texture);
+		texture = LoadTexture(renderer);
+		textureLoaded = true;
+	}
+	else if (blockType == GRASS && !textureLoaded) {
+		SDL_DestroyTexture(texture);
+		texture = LoadTexture(renderer);
+		textureLoaded = true;
+	}
 
-	windowRect.x = m_x;
-	windowRect.y = m_y;
-	collider.x = m_x;
-	collider.y = m_y;
+	windowRect.x = posX;
+	windowRect.y = posY;
+	collider.x = posX;
+	collider.y = posY;
+
+	const int totalFrames = 7;
+	if (blockType == DESTROYED)
+	{
+		const int delayPerFrame = 100;
+		const int frame = (SDL_GetTicks() / delayPerFrame) % totalFrames;
+		textureRect.y = frame * textureRect.h;
+		if (frame >= totalFrames - 1)
+		{
+			changeBlockType(GRASS);
+		}
+	}
 
 	SDL_RenderCopy(renderer, texture, nullptr, &windowRect);
 
 	SDL_RenderDrawRect(renderer, &collider);
+}
+
+void Block::changeBlockType(int newType)
+{
+	blockType = newType;
+	textureLoaded = false;
 }

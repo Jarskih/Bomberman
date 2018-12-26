@@ -1,99 +1,114 @@
 #include <SDL.h>
 #include <SDL_image.h>
-#include <SDL_mixer.h>
 #include <memory>
 #include "Helpers.h"
-#include "Player.h"
-#include <iostream>
+#include "player.h"
 #include "GameRules.h"
 #include "Musicplayer.h"
-#include "Block.h"
 #include "Map.h"
 #include "Timer.h"
-
+#include "Textures.h"
+#include "Service.h"
 
 SDL_Window* window = nullptr;
-SDL_Renderer* renderer = nullptr;
+static SDL_Renderer* renderer = nullptr;
 SDL_Event input;
-SDL_Rect bgRect;
-SDL_Rect bgCollider;
-SDL_Texture* background = nullptr;
-
-void drawBackground() {
-	SDL_Surface* temp = IMG_Load("img/game_bkg1.png");
-	if (!temp) {
-		std::cout << "Cant load background" << std::endl;
-	}
-	background = SDL_CreateTextureFromSurface(renderer, temp);
-	SDL_FreeSurface(temp);
-	bgRect = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
-
-	bgCollider = { 60, 100, 680, 440 };
-}
 
 void SDLinit() {
-	SDL_Init(SDL_INIT_EVERYTHING);
-	//For loading PNG images
-	IMG_Init(IMG_INIT_PNG);
+	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not initialize SDL: %s", SDL_GetError());
 
-	window = SDL_CreateWindow("Getting Started", SDL_WINDOWPOS_UNDEFINED,
+	if (Mix_Init(MIX_INIT_MP3) == 0)
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not initialize SDL_mixer: %s", Mix_GetError());
+
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) == -1)
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not initialize OpenAudio: %s", Mix_GetError());
+
+	if (IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG) == 0)
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not initialize IMG: %s", IMG_GetError());
+
+	window = SDL_CreateWindow("Bomberman", SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+	if (window == nullptr)
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not create SDL_Window: %s", SDL_GetError());
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	if (renderer == nullptr)
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not create SDL_Renderer: %s", SDL_GetError());
 }
 
 //For SDL, you should have the following main method:
 int main(int argc, char** args)
 {
-	bool quit = false;
-
 	SDLinit();
 
-	auto player = mksp<Player>();
-	auto map = mksp<Map>(13, 15);
-	auto timer = mksp<Timer>();
-
-	SDL_Rect temp = { 0, 0 };
-
-	// drawBackground();
-	InitMusicPlayer();
-	// PlayMusic();
-
-	map->loadTextures(renderer);
-	timer->start();
-
-	while (!quit)
 	{
-		while (SDL_PollEvent(&input) > 0)
-		{
-			if (input.type == SDL_QUIT)
-			{
-				quit = true;
-			}
-			//player->handleEvent(input);
-		}
-		player->playerController();
-		player->movePlayer(map->m_tileSet);
+		auto map = makesp<Map>(13, 15, renderer);
+		auto timer = makesp<Timer>();
+		auto player = makesp<Player>(renderer);
+		auto textures = makesp<Textures>(renderer);
+		Service<Textures>::Set(textures);
+
+		SDL_Rect temp = { 0, 0 ,0, 0 };
+
+		InitMusicPlayer();
+
+		map->loadTextures();
 		timer->start();
 
-		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-		SDL_RenderClear(renderer);
+		bool quit = false;
+		while (!quit)
+		{
+			while (SDL_PollEvent(&input) > 0)
+			{
+				if (input.type == SDL_QUIT)
+				{
+					quit = true;
+				}
+				//player->handleEvent(input);
+			}
 
-		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+			// Clear screen
+			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+			SDL_RenderClear(renderer);
 
-		map->render(renderer);
+			// Update
 
-		player->render(renderer);
+			player->playerController(map);
+			player->movePlayer(map->tileSet);
+			timer->start();
 
-		SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
-		SDL_RenderDrawRect(renderer, &player->collider);
+			// Debug
+			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-		SDL_RenderPresent(renderer);
+			map->render();
+
+			player->update(map);
+
+			// Debug
+			SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+			SDL_RenderDrawRect(renderer, &player->collider);
+
+
+			// Presenting to screen
+			SDL_RenderPresent(renderer);
+			SDL_Delay(16);
+		}
 	}
 	DestroyMusicPlayer();
 
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
+	if (renderer != nullptr)
+		SDL_DestroyRenderer(renderer);
+
+	if (window != nullptr)
+		SDL_DestroyWindow(window);
+
+	IMG_Quit();
+
+	Mix_CloseAudio();
+
+	Mix_Quit();
+
 	SDL_Quit();
 
 	return 0;

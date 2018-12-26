@@ -1,26 +1,27 @@
 #include "Map.h"
+#include "player.h"
 
-void Map::render(SDL_Renderer * renderer)
+void Map::render()
 {
-	for (const auto& block : m_tileSet) {
-		block->render(renderer);
+	for (const auto& block : tileSet) {
+		block->render(m_renderer);
 	}
 }
 
 void Map::generateMap() {
-	for (int y = 0; y < size_Y; y++) {
-		for (int x = 0; x < size_X; x++) {
+	for (int y = 0; y < m_size_Y; y++) {
+		for (int x = 0; x < m_size_X; x++) {
 			int posX = x * BLOCK_WIDTH;
 			int posY = y * BLOCK_HEIGHT;
-			m_tileSet.emplace_back(mksp<Block>(posX, posY, blockTypes[y][x]));
+			tileSet.emplace_back(makesp<Block>(posX, posY, MAP_LAYOUT[y][x]));
 		}
 	}
 }
 
-void Map::loadTextures(SDL_Renderer * renderer)
+void Map::loadTextures()
 {
-	for (const auto& block : m_tileSet)
+	for (const auto& block : tileSet)
 	{
-		block->LoadTexture(renderer);
+		block->LoadTexture(m_renderer);
 	}
 }
