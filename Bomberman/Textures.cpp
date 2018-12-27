@@ -30,6 +30,7 @@ void Textures::save_sprite_paths()
 	spritePaths["flameX"] = "img/flame_middle_x.png";
 	spritePaths["bomb"] = "img/bomb.png";
 	spritePaths["explosionCenter"] = "img/flame_center.png";
+	spritePaths["easyEnemy"] = "img/easy_enemy.png";
 }
 
 void Textures::create_textures()

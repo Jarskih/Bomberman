@@ -10,9 +10,9 @@
 
 void Player::update(const sp<Map> &map)
 {
+	playerController(map);
+	movePlayer(map->tileSet);
 	checkBombs();
-	renderBombs(map);
-	render();
 }
 
 void Player::checkBombs()
@@ -240,7 +240,18 @@ void Player::renderBombs(const sp<Map> &map)
 	}
 }
 
-void Player::render() {
+void Player::render(const sp<Map> &map) {
+
+	renderBombs(map);
+	animate(map);
+
+	// Debug
+	SDL_SetRenderDrawColor(m_renderer, 255, 255, 0, 255);
+	SDL_RenderDrawRect(m_renderer, &collider);
+}
+
+void Player::animate(const sp<Map> &map)
+{
 	int totalFrames = 8;
 
 	switch (state) {

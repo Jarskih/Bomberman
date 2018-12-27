@@ -2,7 +2,6 @@
 #include <SDL_image.h>
 #include <memory>
 #include "Helpers.h"
-#include "player.h"
 #include "GameRules.h"
 #include "Musicplayer.h"
 #include "Map.h"
@@ -45,7 +44,7 @@ int main(int argc, char** args)
 	{
 		auto map = makesp<Map>(13, 15, renderer);
 		auto timer = makesp<Timer>();
-		auto player = makesp<Player>(renderer);
+
 		auto textures = makesp<Textures>(renderer);
 		Service<Textures>::Set(textures);
 
@@ -73,21 +72,11 @@ int main(int argc, char** args)
 			SDL_RenderClear(renderer);
 
 			// Update
-
-			player->playerController(map);
-			player->movePlayer(map->tileSet);
+			map->update(map);
 			timer->start();
 
-			map->render();
-
-			// Debug
-			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-			player->update(map);
-
-			// Debug
-			SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
-			SDL_RenderDrawRect(renderer, &player->collider);
-
+			// Render
+			map->render(map);
 
 			// Presenting to screen
 			SDL_RenderPresent(renderer);

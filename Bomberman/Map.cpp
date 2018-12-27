@@ -1,10 +1,34 @@
 #include "Map.h"
 #include "player.h"
+#include "EasyEnemy.h"
 
-void Map::render()
+void Map::update(sp<Map> &map) const
+{
+	for (const auto& player : m_playerList)
+	{
+		player->update(map);
+	}
+
+	for (const auto& enemy : m_enemyList)
+	{
+		enemy->update(map);
+	}
+}
+
+void Map::render(sp<Map> &map) const
 {
 	for (const auto& block : tileSet) {
 		block->render(m_renderer);
+	}
+
+	for (const auto& player : m_playerList)
+	{
+		player->render(map);
+	}
+
+	for (const auto& enemy : m_enemyList)
+	{
+		enemy->render(map);
 	}
 }
 
@@ -17,6 +41,19 @@ void Map::generateMap() {
 		}
 	}
 }
+void Map::spawnGameObjects()
+{
+	auto player = makesp<Player>(m_renderer);
+	m_playerList.push_back(player);
+
+	auto enemy1 = makesp<EasyEnemy>(m_renderer, 11, 6);
+	auto enemy2 = makesp<EasyEnemy>(m_renderer, 9, 8);
+	auto enemy3 = makesp<EasyEnemy>(m_renderer, 3, 6);
+	m_enemyList.push_back(enemy1);
+	m_enemyList.push_back(enemy2);
+	m_enemyList.push_back(enemy3);
+}
+
 
 void Map::loadTextures()
 {

@@ -1,6 +1,5 @@
 #pragma once
 #include <SDL.h>
-#include "GameRules.h"
 #include <vector>
 #include "Block.h"
 #include "Helpers.h"
@@ -15,8 +14,8 @@ public:
 	bool isAlive = true;
 	bool moving = false;
 	int speed = 3;
-	float posX = BLOCK_WIDTH + BLOCK_WIDTH / 2;
-	float posY = BLOCK_HEIGHT / 2;
+	float posX = BLOCK_WIDTH + BLOCK_WIDTH / 2.f;
+	float posY = BLOCK_HEIGHT / 2.f;
 	int flamePower = 2;
 	int maxBombs = 1;
 
@@ -42,8 +41,9 @@ public:
 	void playerController(sp<Map> map);
 	void movePlayer(std::vector<sp<Block>> blocks);
 	void renderBombs(const sp<Map> &map);
-	void render();
+	void render(const sp<Map> &map);
 	void dropBomb(const sp<Map> &map);
 private:
 	SDL_Renderer* m_renderer = nullptr;
+	void animate(const sp<Map> &map);
 };

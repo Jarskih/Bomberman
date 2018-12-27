@@ -2,6 +2,7 @@
 #include "GameRules.h"
 #include <iostream>
 
+// Get block center coordinates from indexes
 std::pair<int, int> getBlockCenter(int index_x, int index_y)
 {
 	const int x = index_x * BLOCK_WIDTH; // + BLOCK_OFFSET_X;
@@ -13,6 +14,7 @@ std::pair<int, int> getBlockCenter(int index_x, int index_y)
 	return blockCenter;
 }
 
+// Get block index from coordinates
 std::pair<int, int> getCurrentBlock(int x, int y)
 {
 	const int index_x = (x / BLOCK_WIDTH) + 1;

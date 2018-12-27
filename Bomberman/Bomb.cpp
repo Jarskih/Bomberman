@@ -174,7 +174,7 @@ void Bomb::renderFlames(SDL_Renderer* renderer, int frames)
 	}
 	for (const auto& flame : flames)
 	{
-		flame->checkCollision();
+		// flame->checkCollision();
 		flame->render(frames);
 	}
 }

@@ -112,9 +112,13 @@ void Block::render(SDL_Renderer* renderer) {
 		{
 			changeBlockType(GRASS);
 		}
+		SDL_RenderCopy(renderer, m_texture, &textureRect, &windowRect);
+	}
+	else
+	{
+		SDL_RenderCopy(renderer, m_texture, nullptr, &windowRect);
 	}
 
-	SDL_RenderCopy(renderer, m_texture, nullptr, &windowRect);
 
 	//SDL_RenderDrawRect(renderer, &collider);
 }
