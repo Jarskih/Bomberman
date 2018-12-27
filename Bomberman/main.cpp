@@ -91,7 +91,6 @@ int main(int argc, char** args)
 
 			// Presenting to screen
 			SDL_RenderPresent(renderer);
-			SDL_Delay(16);
 		}
 	}
 	DestroyMusicPlayer();

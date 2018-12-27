@@ -21,8 +21,6 @@ void Flame::setTexture(SDL_Texture* texture)
 
 void Flame::render(int frame)
 {
-	SDL_RenderDrawRect(m_renderer, &collider);
-
 	int totalFrames = 4;
 
 	if (frame < totalFrames)
@@ -34,4 +32,14 @@ void Flame::render(int frame)
 
 		SDL_RenderCopy(m_renderer, m_texture, &textureRect, &windowRect);
 	}
+
+	SDL_RenderDrawRect(m_renderer, &collider);
+}
+
+void Flame::colliderResize(int x, int y, int width, int height)
+{
+	collider.x += x;
+	collider.y += y;
+	collider.w = width;
+	collider.h = height;
 }

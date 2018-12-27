@@ -17,12 +17,13 @@ public:
 	{
 		windowRect = { getBlockCenter(x, y).first, getBlockCenter(x, y).second, BLOCK_WIDTH, BLOCK_HEIGHT };
 		textureRect = { 0, 0, BLOCK_WIDTH, BLOCK_HEIGHT };
-		collider = { getBlockCenter(x, y).first, getBlockCenter(x, y).second, BLOCK_WIDTH, BLOCK_HEIGHT };
+		collider = { getBlockCenter(x, y).first, getBlockCenter(x, y).second, 0, 0 };
 	};
 	~Flame() = default;
 	void loadTextures(std::string sprite);
 	void setTexture(SDL_Texture* texture);
 	void render(int frame);
+	void colliderResize(int x, int y, int width, int height);
 
 private:
 	int m_index_x;

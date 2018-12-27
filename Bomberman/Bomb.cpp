@@ -94,6 +94,7 @@ void Bomb::renderFlames(SDL_Renderer* renderer, int frames)
 				{
 					flame->loadTextures("lastUp");
 				}
+				flame->colliderResize(BLOCK_WIDTH / 4, 0, BLOCK_WIDTH / 2, BLOCK_HEIGHT);
 				flames.push_back(flame);
 			}
 			else
@@ -116,6 +117,7 @@ void Bomb::renderFlames(SDL_Renderer* renderer, int frames)
 				{
 					flame->loadTextures("lastDown");
 				}
+				flame->colliderResize(BLOCK_WIDTH / 4, 0, BLOCK_WIDTH / 2, BLOCK_HEIGHT);
 				flames.push_back(flame);
 			}
 			else
@@ -138,6 +140,7 @@ void Bomb::renderFlames(SDL_Renderer* renderer, int frames)
 				{
 					flame->loadTextures("lastLeft");
 				}
+				flame->colliderResize(0, BLOCK_HEIGHT / 4, BLOCK_WIDTH, BLOCK_HEIGHT / 2);
 				flames.push_back(flame);
 			}
 			else
@@ -160,6 +163,7 @@ void Bomb::renderFlames(SDL_Renderer* renderer, int frames)
 				{
 					flame->loadTextures("lastRight");
 				}
+				flame->colliderResize(0, BLOCK_HEIGHT / 4, BLOCK_WIDTH, BLOCK_HEIGHT / 2);
 				flames.push_back(flame);
 			}
 			else
@@ -170,6 +174,7 @@ void Bomb::renderFlames(SDL_Renderer* renderer, int frames)
 	}
 	for (const auto& flame : flames)
 	{
+		flame->checkCollision();
 		flame->render(frames);
 	}
 }
@@ -181,13 +186,15 @@ bool Bomb::canSpawnFlame(const sp<Map> &map, const int index_x, const int index_
 	{
 		if (block->getBlockIndex().first == index_x + 1 && block->getBlockIndex().second == index_y + 1)
 		{
-			if (block->blockType == GRASS)
-			{
+			switch (block->blockType) {
+			case GRASS:
 				allowed = true;
-			}
-			if (block->blockType == BREAKABLE)
-			{
+				break;
+			case BREAKABLE:
 				block->changeBlockType(DESTROYED);
+				break;
+			default:
+				break;
 			}
 		}
 	}
