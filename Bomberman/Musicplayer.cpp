@@ -12,8 +12,7 @@ namespace MusicPlayer {
 		}
 		else
 		{
-			// TODO enable music
-			// PlayMusic();
+			PlayMusic();
 		}
 	}
 

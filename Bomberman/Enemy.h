@@ -40,6 +40,9 @@ private:
 	int m_index_y;
 	int m_pos_x;
 	int m_pos_y;
+	int frame = 0;
+	Uint32 timeDied;
+	Uint32 deathDelay = 1500;
 	SDL_Texture* m_texture = nullptr;
 	bool m_texture_loaded = false;
 	std::string m_sprite = "easyEnemy";

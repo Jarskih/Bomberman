@@ -18,9 +18,17 @@ void Enemy::update()
 
 void Enemy::render()
 {
+	if (!isAlive && SDL_GetTicks() - timeDied > deathDelay) {
+		return;
+	}
+
+	const int totalFrames = 6;
+	const int animatedFrames = 4;
+	const int delayPerFrame = 200;
 
 	collider.x = m_pos_x;
 	collider.y = m_pos_y;
+
 	// Debug
 
 	SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);
@@ -29,10 +37,14 @@ void Enemy::render()
 	SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 0);
 	SDL_RenderDrawRect(m_renderer, &windowRect);
 
-	const int totalFrames = 6;
-	const int animatedFrames = 4;
-	const int delayPerFrame = 200;
-	int frame = (SDL_GetTicks() / delayPerFrame) % animatedFrames;
+	if (!isAlive)
+	{
+		frame = 5;
+	}
+	else
+	{
+		frame = (SDL_GetTicks() / delayPerFrame) % animatedFrames;
+	}
 
 	textureRect.y = frame * textureRect.h;
 	SDL_QueryTexture(m_texture, nullptr, nullptr, &textureRect.w, &textureRect.h);
@@ -186,5 +198,8 @@ void Enemy::move()
 
 void Enemy::die()
 {
+	timeDied = SDL_GetTicks();
 	isAlive = false;
+	collider.h = 0;
+	collider.w = 0;
 }

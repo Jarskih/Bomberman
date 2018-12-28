@@ -52,7 +52,6 @@ int main(int argc, char** args)
 		SDL_Rect temp = { 0, 0 ,0, 0 };
 
 		MusicPlayer::InitMusicPlayer();
-		MusicPlayer::PlayMusic();
 
 		map->loadTextures();
 		timer->start();
