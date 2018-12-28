@@ -7,11 +7,15 @@
 #include "Bomb.h"
 #include "Block.h"
 #include "Map.h"
+#include "Service.h"
 
-void Player::update(const sp<Map> &map)
+void Player::update()
 {
-	playerController(map);
-	movePlayer(map->tileSet);
+	if (isAlive)
+	{
+		playerController();
+		movePlayer();
+	}
 	checkBombs();
 }
 
@@ -132,10 +136,14 @@ void Player::handleEvent(SDL_Event& event) {
 	}
 }
 */
-void Player::playerController(sp<Map> map)
+void Player::playerController()
 {
 	const Uint8* currentKeyStates = SDL_GetKeyboardState(nullptr);
-	if (currentKeyStates[SDL_SCANCODE_UP])
+	if (currentKeyStates[SDL_SCANCODE_SPACE])
+	{
+		dropBomb();
+	}
+	else if (currentKeyStates[SDL_SCANCODE_UP])
 	{
 		state = UP;
 	}
@@ -150,10 +158,6 @@ void Player::playerController(sp<Map> map)
 	else if (currentKeyStates[SDL_SCANCODE_RIGHT])
 	{
 		state = RIGHT;
-	}
-	else if (currentKeyStates[SDL_SCANCODE_SPACE])
-	{
-		dropBomb(map);
 	}
 	else {
 		if (state == UP)
@@ -176,9 +180,11 @@ void Player::playerController(sp<Map> map)
 	}
 }
 
-void Player::movePlayer(std::vector<sp<Block>> blocks) {
+void Player::movePlayer() {
 	const int oldX = posX;
 	const int oldY = posY;
+	auto map = Service<Map>::Get();
+	bool colliding = false;
 
 	switch (state) {
 	case UP:
@@ -217,22 +223,53 @@ void Player::movePlayer(std::vector<sp<Block>> blocks) {
 	windowRect.y = posY;
 	collider.y = posY + PLAYER_HEIGHT / 2.f;
 
-	for (const auto& block : blocks)
+	for (const auto& player : map->m_playerList)
 	{
-		if (block->blockType != GRASS && checkCollision(collider, block->collider))
+		for (const auto& bomb : player->bombs)
 		{
-			posX = oldX;
-			windowRect.x = posX;
-			collider.x = posX + PLAYER_WIDTH / 3.f;
-
-			posY = oldY;
-			windowRect.y = posY;
-			collider.y = posY + PLAYER_HEIGHT / 2.f;
+			if (Helpers::checkCollision(collider, bomb->collider))
+			{
+				if (bomb->firstCollision)
+				{
+					break;
+				}
+				else
+				{
+					colliding = true;
+				}
+				break;
+			}
+			else
+			{
+				bomb->firstCollision = false;
+			}
 		}
+	}
+	if (!colliding)
+	{
+		for (const auto& block : map->tileSet)
+		{
+			if (block->blockType != GRASS && Helpers::checkCollision(collider, block->collider))
+			{
+				colliding = true;
+				break;
+			}
+		}
+	}
+
+	if (colliding)
+	{
+		posX = oldX;
+		windowRect.x = posX;
+		collider.x = posX + PLAYER_WIDTH / 3.f;
+
+		posY = oldY;
+		windowRect.y = posY;
+		collider.y = posY + PLAYER_HEIGHT / 2.f;
 	}
 }
 
-void Player::renderBombs(const sp<Map> &map)
+void Player::renderBombs()
 {
 	for (const auto& bomb : bombs)
 	{
@@ -240,17 +277,22 @@ void Player::renderBombs(const sp<Map> &map)
 	}
 }
 
-void Player::render(const sp<Map> &map) {
+void Player::render() {
 
-	renderBombs(map);
-	animate(map);
+	renderBombs();
+	animate();
 
 	// Debug
 	SDL_SetRenderDrawColor(m_renderer, 255, 255, 0, 255);
 	SDL_RenderDrawRect(m_renderer, &collider);
 }
 
-void Player::animate(const sp<Map> &map)
+void Player::die()
+{
+	isAlive = false;
+}
+
+void Player::animate()
 {
 	int totalFrames = 8;
 
@@ -308,18 +350,19 @@ void Player::animate(const sp<Map> &map)
 	SDL_RenderCopy(m_renderer, texture, &textureRect, &windowRect);
 }
 
-void Player::dropBomb(const sp<Map> &map) {
+void Player::dropBomb() {
+	auto map = Service<Map>::Get();
 	if (maxBombs > bombs.size())
 	{
 		//std::cout << "Player X: " << m_pos_x << " Player Y: " << m_pos_y << std::endl;
-		const std::pair<int, int> currentBlockIndex = getCurrentBlock(posX, posY);
+		const std::pair<int, int> currentBlockIndex = Helpers::getCurrentBlock(posX, posY);
 		//std::cout << "Current block X: " << currentBlockIndex.first << " Current block Y: " << currentBlockIndex.second << std::endl;
 
-		std::pair<int, int> blockCenter = getBlockCenter(currentBlockIndex.first, currentBlockIndex.second);
+		std::pair<int, int> blockCenter = Helpers::getBlockCenter(currentBlockIndex.first, currentBlockIndex.second);
 		//std::cout << "Block center X: " << blockCenter.first << " Block Center Y: " << blockCenter.second << std::endl;
 
 
-		std::pair <int, int> testIndex = getCurrentBlock(blockCenter.first, blockCenter.second);
+		std::pair <int, int> testIndex = Helpers::getCurrentBlock(blockCenter.first, blockCenter.second);
 		//std::cout << "Test index X: " << testIndex.first << " Block index Y: " << testIndex.second << std::endl;
 
 		const auto bomb = makesp<Bomb>(flamePower, blockCenter.first, blockCenter.second, map);

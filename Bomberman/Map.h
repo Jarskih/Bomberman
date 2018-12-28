@@ -4,10 +4,10 @@
 #include "Helpers.h"
 #include "Block.h"
 #include "player.h"
-#include "EasyEnemy.h"
+#include "Enemy.h"
 
 class Player;
-class EasyEnemy;
+class Enemy;
 
 class Map
 {
@@ -24,7 +24,7 @@ public:
 	int m_score = 0;
 	int m_players = 1;
 	std::vector<sp<Player>> m_playerList = {};
-	std::vector<sp<EasyEnemy>> m_enemyList = {};
+	std::vector<sp<Enemy>> m_enemyList = {};
 private:
 	int m_size_Y = 0;
 	int m_size_X = 0;

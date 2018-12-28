@@ -23,19 +23,25 @@ public:
 		windowRect = { posX, posY, BOMB_WIDTH, BOMB_HEIGHT };
 		textureRect = { 0,0, BOMB_WIDTH, BOMB_HEIGHT };
 		timeDropped = SDL_GetTicks();
-		index_x = getCurrentBlock(m_posX, m_posY).first;
-		index_y = getCurrentBlock(m_posX, m_posY).second;
+		index_x = Helpers::getCurrentBlock(m_posX, m_posY).first;
+		index_y = Helpers::getCurrentBlock(m_posX, m_posY).second;
+		collider.x = posX;
+		collider.y = posY;
 	};
 	~Bomb() = default;
 	bool isExploded = false;
 	void render(SDL_Renderer* renderer);
 	void load_textures(SDL_Renderer* renderer, const std::string &sprite);
+	SDL_Rect collider = { 0,0, BLOCK_WIDTH, BLOCK_HEIGHT };
+	bool hitFlame = false;
+	bool firstCollision = true;
 private:
 	Uint32 timeDropped = 0;
 	Uint32 timeExploded = 0;
 	Uint32 bombTimer = 1500;
 	Uint32 currentTime = 0;
 	Uint32 oldTime = 0;
+	bool explosionSound = false;
 	int explosion_frame = 0;
 	SDL_Texture* texture = nullptr;
 	SDL_Rect windowRect;

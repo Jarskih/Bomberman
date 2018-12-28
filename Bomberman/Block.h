@@ -9,8 +9,8 @@ class Block
 public:
 	Block(int x, int y, int blockType) : m_pos_x(x), m_pos_y(y), blockType(blockType)
 	{
-		index_x = getCurrentBlock(m_pos_x, m_pos_y).first;
-		index_y = getCurrentBlock(m_pos_x, m_pos_y).second;
+		index_x = Helpers::getCurrentBlock(m_pos_x, m_pos_y).first;
+		index_y = Helpers::getCurrentBlock(m_pos_x, m_pos_y).second;
 	};
 	~Block() = default;
 

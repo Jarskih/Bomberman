@@ -45,12 +45,14 @@ int main(int argc, char** args)
 		auto map = makesp<Map>(13, 15, renderer);
 		auto timer = makesp<Timer>();
 
-		auto textures = makesp<Textures>(renderer);
+		const auto textures = makesp<Textures>(renderer);
 		Service<Textures>::Set(textures);
+		Service<Map>::Set(map);
 
 		SDL_Rect temp = { 0, 0 ,0, 0 };
 
-		InitMusicPlayer();
+		MusicPlayer::InitMusicPlayer();
+		MusicPlayer::PlayMusic();
 
 		map->loadTextures();
 		timer->start();
@@ -82,7 +84,7 @@ int main(int argc, char** args)
 			SDL_RenderPresent(renderer);
 		}
 	}
-	DestroyMusicPlayer();
+	MusicPlayer::DestroyMusicPlayer();
 
 	if (renderer != nullptr)
 		SDL_DestroyRenderer(renderer);

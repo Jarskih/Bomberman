@@ -1,19 +1,22 @@
-#include "EasyEnemy.h"
+#include "Enemy.h"
 #include "Map.h"
 #include "Service.h"
 #include "Textures.h"
 
-void EasyEnemy::update(const sp<Map> &map)
+void Enemy::update()
 {
 	loadTexture(m_sprite);
 	if (SDL_GetTicks() - decisionTime > decisionDelay)
 	{
 		decide();
 	}
-	move(map->tileSet);
+	if (isAlive)
+	{
+		move();
+	}
 }
 
-void EasyEnemy::render(const sp<Map> &map)
+void Enemy::render()
 {
 
 	collider.x = m_pos_x;
@@ -39,7 +42,7 @@ void EasyEnemy::render(const sp<Map> &map)
 	SDL_RenderCopy(m_renderer, m_texture, &textureRect, &windowRect);
 }
 
-void EasyEnemy::loadTexture(std::string sprite)
+void Enemy::loadTexture(std::string sprite)
 {
 	if (!m_texture_loaded)
 	{
@@ -49,7 +52,7 @@ void EasyEnemy::loadTexture(std::string sprite)
 	}
 }
 
-void EasyEnemy::decide()
+void Enemy::decide()
 {
 	decisionTime = SDL_GetTicks();
 	int random = rand() % 10;
@@ -117,10 +120,12 @@ void EasyEnemy::decide()
 	}
 }
 
-void EasyEnemy::move(std::vector<sp<Block>> blocks)
+void Enemy::move()
 {
+	auto map = Service<Map>::Get();
 	const int oldX = m_pos_x;
 	const int oldY = m_pos_y;
+	bool colliding = false;
 
 	switch (state) {
 	case UP:
@@ -143,19 +148,43 @@ void EasyEnemy::move(std::vector<sp<Block>> blocks)
 	windowRect.y = m_pos_y;
 	collider.y = m_pos_y + PADDING_Y;
 
-	for (const auto& block : blocks)
+	for (const auto& player : map->m_playerList)
 	{
-		if (block->blockType != GRASS && checkCollision(collider, block->collider))
+		for (const auto& bomb : player->bombs)
 		{
-			m_pos_x = oldX;
-			windowRect.x = m_pos_x;
-			collider.x = m_pos_x + PADDING_X;;
-
-			m_pos_y = oldY;
-			windowRect.y = m_pos_y;
-			collider.y = m_pos_y + PADDING_Y;
-			decide();
-			break;
+			if (Helpers::checkCollision(collider, bomb->collider))
+			{
+				colliding = true;
+				break;
+			}
 		}
 	}
+	if (!colliding)
+	{
+		for (const auto& block : map->tileSet)
+		{
+			if (block->blockType != GRASS && Helpers::checkCollision(collider, block->collider))
+			{
+				colliding = true;
+				break;
+			}
+		}
+	}
+
+	if (colliding)
+	{
+		m_pos_x = oldX;
+		windowRect.x = m_pos_x;
+		collider.x = m_pos_x + PADDING_X;;
+
+		m_pos_y = oldY;
+		windowRect.y = m_pos_y;
+		collider.y = m_pos_y + PADDING_Y;
+		decide();
+	}
+}
+
+void Enemy::die()
+{
+	isAlive = false;
 }

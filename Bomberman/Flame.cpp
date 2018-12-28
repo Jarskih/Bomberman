@@ -2,7 +2,7 @@
 #include <SDL_image.h>
 #include "Service.h"
 #include "Textures.h"
-#include <iostream>
+#include "Map.h"
 
 void Flame::loadTextures(std::string sprite)
 {
@@ -42,4 +42,30 @@ void Flame::colliderResize(int x, int y, int width, int height)
 	collider.y += y;
 	collider.w = width;
 	collider.h = height;
+}
+
+void Flame::checkCollision() {
+	auto map = Service<Map>::Get();
+	for (const auto& player : map->m_playerList)
+	{
+		if (Helpers::checkCollision(collider, player->collider))
+		{
+			player->die();
+		}
+
+		for (const auto& bomb : player->bombs)
+		{
+			if (Helpers::checkCollision(collider, bomb->collider))
+			{
+				bomb->hitFlame = true;
+			}
+		}
+		for (const auto& enemy : map->m_enemyList)
+		{
+			if (Helpers::checkCollision(collider, enemy->collider))
+			{
+				enemy->die();
+			}
+		}
+	}
 }

@@ -4,14 +4,20 @@
 #include "Map.h"
 #include "Textures.h"
 #include "Service.h"
+#include "Musicplayer.h"
 
 void Bomb::render(SDL_Renderer* renderer)
 {
 	const Uint32 currentTime = SDL_GetTicks() - timeDropped;
 	const Uint32 timeSpent = currentTime - oldTime;
 
-	if (timeSpent > bombTimer)
+	if (timeSpent > bombTimer || hitFlame)
 	{
+		if (!explosionSound)
+		{
+			MusicPlayer::PlaySound("sounds/bomb.wav");
+			explosionSound = true;
+		}
 		explode(renderer);
 	}
 	else
@@ -28,6 +34,11 @@ void Bomb::render(SDL_Renderer* renderer)
 
 		oldTime = timeSpent;
 	}
+
+	//Debug
+
+	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+	SDL_RenderDrawRect(renderer, &collider);
 }
 
 void Bomb::load_textures(SDL_Renderer* renderer, const std::string &sprite)
@@ -174,7 +185,7 @@ void Bomb::renderFlames(SDL_Renderer* renderer, int frames)
 	}
 	for (const auto& flame : flames)
 	{
-		// flame->checkCollision();
+		flame->checkCollision();
 		flame->render(frames);
 	}
 }

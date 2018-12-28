@@ -1,33 +1,43 @@
 #include "Musicplayer.h"
 #include <iostream>
 
-Mix_Music* gMusic;
+namespace MusicPlayer {
 
-//Initialize SDL_mixer
-void InitMusicPlayer() {
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1) {
-		std::cout << "Could not start music player" << std::endl;
+	Mix_Music* gMusic;
+
+	//Initialize SDL_mixer
+	void InitMusicPlayer() {
+		if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1) {
+			std::cout << "Could not start music player" << std::endl;
+		}
+		else
+		{
+			// TODO enable music
+			// PlayMusic();
+		}
 	}
-	else
+
+	//Load music
+	void PlayMusic() {
+		gMusic = Mix_LoadMUS("sounds/music.mp3");
+		if (gMusic == nullptr)
+		{
+			printf("Failed to load music! SDL_mixer Error: %s\n", Mix_GetError());
+		}
+		else {
+			Mix_PlayMusic(gMusic, -1);
+		}
+	}
+
+	void PlaySound(const char* filePath)
 	{
-		// TODO enable music
-		// PlayMusic();
+		Mix_Chunk* chunk = Mix_LoadWAV(filePath);
+		Mix_PlayChannel(-1, chunk, 0);
 	}
-}
 
-//Load music
-void PlayMusic() {
-	gMusic = Mix_LoadMUS("sounds/music.mp3");
-	if (gMusic == nullptr)
-	{
-		printf("Failed to load music! SDL_mixer Error: %s\n", Mix_GetError());
+	void DestroyMusicPlayer() {
+		Mix_FreeMusic(gMusic);
+		gMusic = nullptr;
 	}
-	else {
-		Mix_PlayMusic(gMusic, -1);
-	}
-}
 
-void DestroyMusicPlayer() {
-	Mix_FreeMusic(gMusic);
-	gMusic = nullptr;
 }

@@ -2,9 +2,10 @@
 #include <SDL_mixer.h>
 #include <stdio.h>
 
-
-
-void InitMusicPlayer();
-void PlayMusic();
-void DestroyMusicPlayer();
+namespace MusicPlayer {
+	void InitMusicPlayer();
+	void PlayMusic();
+	void PlaySound(const char* filePath);
+	void DestroyMusicPlayer();
+}
 

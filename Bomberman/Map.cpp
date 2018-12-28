@@ -1,17 +1,17 @@
 #include "Map.h"
 #include "player.h"
-#include "EasyEnemy.h"
+#include "Enemy.h"
 
 void Map::update(sp<Map> &map) const
 {
 	for (const auto& player : m_playerList)
 	{
-		player->update(map);
+		player->update();
 	}
 
 	for (const auto& enemy : m_enemyList)
 	{
-		enemy->update(map);
+		enemy->update();
 	}
 }
 
@@ -23,12 +23,12 @@ void Map::render(sp<Map> &map) const
 
 	for (const auto& player : m_playerList)
 	{
-		player->render(map);
+		player->render();
 	}
 
 	for (const auto& enemy : m_enemyList)
 	{
-		enemy->render(map);
+		enemy->render();
 	}
 }
 
@@ -43,12 +43,12 @@ void Map::generateMap() {
 }
 void Map::spawnGameObjects()
 {
-	auto player = makesp<Player>(m_renderer);
+	const auto player = makesp<Player>(m_renderer);
 	m_playerList.push_back(player);
 
-	auto enemy1 = makesp<EasyEnemy>(m_renderer, 11, 6);
-	auto enemy2 = makesp<EasyEnemy>(m_renderer, 9, 8);
-	auto enemy3 = makesp<EasyEnemy>(m_renderer, 3, 6);
+	const auto enemy1 = makesp<Enemy>(EASY, m_renderer, 11, 6);
+	const auto enemy2 = makesp<Enemy>(EASY, m_renderer, 9, 8);
+	const auto enemy3 = makesp<Enemy>(EASY, m_renderer, 3, 6);
 	m_enemyList.push_back(enemy1);
 	m_enemyList.push_back(enemy2);
 	m_enemyList.push_back(enemy3);

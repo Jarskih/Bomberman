@@ -134,7 +134,7 @@
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="Bomb.cpp" />
-    <ClCompile Include="EasyEnemy.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Flame.cpp" />
     <ClCompile Include="Helpers.cpp" />
     <ClCompile Include="main.cpp" />
@@ -150,7 +150,7 @@
     <ClInclude Include="Actor.h" />
     <ClInclude Include="Block.h" />
     <ClInclude Include="Bomb.h" />
-    <ClInclude Include="EasyEnemy.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="Flame.h" />
     <ClInclude Include="GameRules.h" />
     <ClInclude Include="Helpers.h" />

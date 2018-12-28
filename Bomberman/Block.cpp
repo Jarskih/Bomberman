@@ -6,7 +6,7 @@
 
 std::pair <int, int> Block::getBlockIndex()
 {
-	return getCurrentBlock(m_pos_x, m_pos_y);
+	return Helpers::getCurrentBlock(m_pos_x, m_pos_y);
 }
 
 void Block::GetSprite()
