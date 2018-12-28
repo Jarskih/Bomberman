@@ -62,3 +62,11 @@ void Map::loadTextures()
 		block->LoadTexture(m_renderer);
 	}
 }
+
+void Map::handleEvent(SDL_Event& event)
+{
+	for (const auto& player : m_playerList)
+	{
+		player->handleEvent(event);
+	}
+}

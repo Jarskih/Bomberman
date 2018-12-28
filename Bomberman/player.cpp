@@ -16,18 +16,22 @@ void Player::update()
 		playerController();
 		movePlayer();
 	}
-	checkBombs();
+	bombs = checkBombs();
+	bombsDropped = bombs.size();
 }
 
-void Player::checkBombs()
+std::vector<sp<Bomb>> Player::checkBombs()
 {
+	std::vector<sp<Bomb>> newBombs = {};
+
 	for (const auto& bomb : bombs)
 	{
-		if (bomb->isExploded)
+		if (!bomb->isExploded)
 		{
-			bombs.erase(bombs.begin());
+			newBombs.push_back(bomb);
 		}
 	}
+	return newBombs;
 }
 
 const char* Player::GetSprite() const
@@ -80,70 +84,25 @@ SDL_Texture* Player::loadTexture() const
 	SDL_FreeSurface(surface);
 	return texture;
 }
-/*
+
 void Player::handleEvent(SDL_Event& event) {
-	//If a key was pressed
 	if (event.type == SDL_KEYDOWN && event.key.repeat == 0)
 	{
-		//Adjust the velocity
 		switch (event.key.keysym.sym)
 		{
-		case SDLK_UP:
-			speed_y -= speed;
-			state = UP;
-			break;
-		case SDLK_DOWN:
-			speed_y += speed;
-			state = DOWN;
-			break;
-		case SDLK_LEFT:
-			speed_x -= speed;
-			state = LEFT;
-			break;
-		case SDLK_RIGHT:
-			speed_x += speed;
-			state = RIGHT;
-			break;
 		case SDLK_SPACE:
-			break;
-		default:
-			break;
-		}
-	}
-	else if (event.type == SDL_KEYUP && event.key.repeat == 0)
-	{
-		moving = false;
-		if (event.key.repeat == 0) {
-		}
-		//Adjust the velocity
-		switch (event.key.keysym.sym)
-		{
-		case SDLK_UP: speed_y += speed;
-			state = IDLE_UP;
-			break;
-		case SDLK_DOWN: speed_y -= speed;
-			state = IDLE_DOWN;
-			break;
-		case SDLK_LEFT: speed_x += speed;
-			state = IDLE_LEFT;
-			break;
-		case SDLK_RIGHT: speed_x -= speed;
-			state = IDLE_RIGHT;
+			dropBomb();
 			break;
 		default:
 			break;
 		}
 	}
 }
-*/
+
 void Player::playerController()
 {
 	const Uint8* currentKeyStates = SDL_GetKeyboardState(nullptr);
-	if (currentKeyStates[SDL_SCANCODE_SPACE])
-	{
-		dropBomb();
-	}
-	else if (currentKeyStates[SDL_SCANCODE_UP])
+	if (currentKeyStates[SDL_SCANCODE_UP])
 	{
 		state = UP;
 	}
@@ -351,8 +310,10 @@ void Player::animate()
 }
 
 void Player::dropBomb() {
+	std::cout << "maxBombs: " << maxBombs << " bombsDropped: " << bombsDropped << std::endl;
+
 	auto map = Service<Map>::Get();
-	if (maxBombs > bombs.size())
+	if (maxBombs > bombsDropped)
 	{
 		//std::cout << "Player X: " << m_pos_x << " Player Y: " << m_pos_y << std::endl;
 		const std::pair<int, int> currentBlockIndex = Helpers::getCurrentBlock(posX, posY);

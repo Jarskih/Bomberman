@@ -15,9 +15,10 @@ public:
 	~Player() = default;
 	void update();
 	void render();
+	void handleEvent(SDL_Event& event);
 	void die();
 private:
-	void checkBombs();
+	std::vector<sp<Bomb>> checkBombs();
 	void playerController();
 	void movePlayer();
 	void renderBombs();
@@ -30,10 +31,11 @@ public:
 	float posX = BLOCK_WIDTH + BLOCK_WIDTH / 2.f;
 	float posY = BLOCK_HEIGHT / 2.f;
 	int flamePower = 2;
-	int maxBombs = 1;
+	int maxBombs = 3;
 	float speed_x = 0;
 	float speed_y = 0;
 	std::vector<sp<Bomb>> bombs = {};
+	int bombsDropped = 0;
 	enum states { IDLE_UP, IDLE_DOWN, IDLE_LEFT, IDLE_RIGHT, DOWN, UP, LEFT, RIGHT };
 	int state = IDLE_DOWN;
 	SDL_Rect collider = { 0, 0, PLAYER_WIDTH / 3, PLAYER_HEIGHT / 3 };

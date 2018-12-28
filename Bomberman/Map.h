@@ -20,6 +20,7 @@ public:
 	void update(sp<Map> &map) const;
 	void render(sp<Map> &map) const;
 	void loadTextures();
+	void handleEvent(SDL_Event& event);
 	std::vector<sp<Block>> tileSet = {};
 	int m_score = 0;
 	int m_players = 1;

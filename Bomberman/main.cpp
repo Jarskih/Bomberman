@@ -65,7 +65,7 @@ int main(int argc, char** args)
 				{
 					quit = true;
 				}
-				//player->handleEvent(input);
+				map->handleEvent(input);
 			}
 
 			// Clear screen
