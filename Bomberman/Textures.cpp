@@ -40,6 +40,7 @@ void Textures::save_sprite_paths()
 	spritePaths["playerMoveUp"] = "img/player_move_up.png";
 	spritePaths["playerMoveLeft"] = "img/player_move_left.png";
 	spritePaths["playerMoveRight"] = "img/player_move_right.png";
+	spritePaths["hud"] = "img/hud.png";
 }
 
 void Textures::create_textures()

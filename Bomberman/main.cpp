@@ -36,13 +36,22 @@ void SDLinit() {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not create SDL_Renderer: %s", SDL_GetError());
 }
 
+void renderHud(SDL_Rect hudViewPort)
+{
+	// Clear screen
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+	SDL_RenderClear(renderer);
+
+	// Presenting to screen
+	SDL_RenderPresent(renderer);
+}
+
 //For SDL, you should have the following main method:
 int main(int argc, char** args)
 {
 	SDLinit();
-
 	{
-		auto map = makesp<Map>(13, 15, renderer);
+		auto map = makesp<Map>(14, 15, renderer);
 		auto timer = makesp<Timer>();
 
 		const auto textures = makesp<Textures>(renderer);
@@ -68,6 +77,8 @@ int main(int argc, char** args)
 				map->handleEvent(input);
 			}
 
+			// renderHud();
+
 			// Clear screen
 			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 			SDL_RenderClear(renderer);
@@ -79,6 +90,9 @@ int main(int argc, char** args)
 			// Render
 			map->render(map);
 
+			SDL_Texture* texture = textures->findTexture("hud");
+			SDL_Rect hudRect = { 0, 0, SCREEN_WIDTH, BLOCK_HEIGHT };
+			SDL_RenderCopy(renderer, texture, nullptr, &hudRect);
 			// Presenting to screen
 			SDL_RenderPresent(renderer);
 		}

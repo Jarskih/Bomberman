@@ -1,13 +1,8 @@
 #pragma once
 #include <SDL.h>
 #include <vector>
-#include "Block.h"
 #include "Helpers.h"
-#include "Map.h"
 #include "Bomb.h"
-
-static const int PLAYER_WIDTH = 100;
-static const int PLAYER_HEIGHT = 80;
 
 class Player {
 public:
@@ -27,10 +22,8 @@ private:
 public:
 	bool moving = false;
 	int speed = 3;
-	//int posX = Helpers::getBlockCenter(1, 1).first - BLOCK_WIDTH / 2;
-	//int posY = Helpers::getBlockCenter(1, 1).second - BLOCK_HEIGHT / 2;
-	int posX = BLOCK_WIDTH + BLOCK_WIDTH / 2.f;
-	int posY = BLOCK_HEIGHT / 2.f;
+	int posX = BLOCK_WIDTH + BLOCK_WIDTH / 2.0f;
+	int posY = BLOCK_HEIGHT + BLOCK_HEIGHT / 2.0f;
 	int flamePower = 1;
 	int maxBombs = 1;
 	float speed_x = 0;

@@ -8,7 +8,7 @@ namespace Helpers {
 	std::pair<int, int> getBlockCenter(int index_x, int index_y)
 	{
 		const int x = index_x * BLOCK_WIDTH; // + BLOCK_OFFSET_X;
-		const int y = index_y * BLOCK_HEIGHT; // + BLOCK_OFFSET_Y;
+		const int y = index_y * BLOCK_HEIGHT;; // + BLOCK_OFFSET_Y;
 
 		std::pair<int, int> blockCenter;
 		blockCenter.first = x - 1;
