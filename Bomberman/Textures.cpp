@@ -15,8 +15,12 @@ SDL_Texture* Textures::findTexture(std::string name)
 	{
 		return textures[name];
 	}
-	std::cout << "Cant find m_texture: " << name << std::endl;
-	return nullptr;
+	else
+	{
+		std::cout << "Cant find m_texture: " << name << std::endl;
+		return nullptr;
+	}
+
 }
 
 void Textures::save_sprite_paths()
@@ -31,6 +35,11 @@ void Textures::save_sprite_paths()
 	spritePaths["bomb"] = "img/bomb.png";
 	spritePaths["explosionCenter"] = "img/flame_center.png";
 	spritePaths["easyEnemy"] = "img/easy_enemy.png";
+	spritePaths["playerDeath"] = "img/player_death.png";
+	spritePaths["playerMoveDown"] = "img/player_move_down.png";
+	spritePaths["playerMoveUp"] = "img/player_move_up.png";
+	spritePaths["playerMoveLeft"] = "img/player_move_left.png";
+	spritePaths["playerMoveRight"] = "img/player_move_right.png";
 }
 
 void Textures::create_textures()

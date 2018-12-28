@@ -8,10 +8,11 @@
 #include "Block.h"
 #include "Map.h"
 #include "Service.h"
+#include "Textures.h"
 
 void Player::update()
 {
-	if (isAlive)
+	if (state != DEAD)
 	{
 		playerController();
 		movePlayer();
@@ -34,6 +35,7 @@ std::vector<sp<Bomb>> Player::checkBombs()
 	return newBombs;
 }
 
+/*
 const char* Player::GetSprite() const
 {
 	switch (state) {
@@ -66,10 +68,13 @@ const char* Player::GetSprite() const
 		break;
 	}
 }
+*/
 
-SDL_Texture* Player::loadTexture() const
+SDL_Texture* Player::loadTexture()
 {
+	/*
 	SDL_Texture* texture = nullptr;
+
 	const char* sprite = GetSprite();
 
 	if (sprite == "error") {
@@ -83,6 +88,42 @@ SDL_Texture* Player::loadTexture() const
 	texture = SDL_CreateTextureFromSurface(m_renderer, surface);
 	SDL_FreeSurface(surface);
 	return texture;
+	*/
+	std::string name;
+
+	switch (state) {
+	case DOWN:
+		name = "playerMoveDown";
+		break;
+	case IDLE_DOWN:
+		name = "playerMoveDown";
+		break;
+	case UP:
+		name = "playerMoveUp";
+		break;
+	case IDLE_UP:
+		name = "playerMoveUp";
+		break;
+	case RIGHT:
+		name = "playerMoveRight";
+		break;
+	case IDLE_RIGHT:
+		name = "playerMoveRight";
+		break;
+	case LEFT:
+		name = "playerMoveLeft";
+		break;
+	case IDLE_LEFT:
+		name = "playerMoveLeft";
+		break;
+	case DEAD:
+		name = "playerDeath";
+		break;
+	default:
+		break;
+	}
+	textureName = name;
+	return Service<Textures>::Get()->findTexture(textureName);
 }
 
 void Player::handleEvent(SDL_Event& event) {
@@ -104,35 +145,43 @@ void Player::playerController()
 	const Uint8* currentKeyStates = SDL_GetKeyboardState(nullptr);
 	if (currentKeyStates[SDL_SCANCODE_UP])
 	{
+		oldState = state;
 		state = UP;
 	}
 	else if (currentKeyStates[SDL_SCANCODE_DOWN])
 	{
+		oldState = state;
 		state = DOWN;
 	}
 	else if (currentKeyStates[SDL_SCANCODE_LEFT])
 	{
+		oldState = state;
 		state = LEFT;
 	}
 	else if (currentKeyStates[SDL_SCANCODE_RIGHT])
 	{
+		oldState = state;
 		state = RIGHT;
 	}
 	else {
 		if (state == UP)
 		{
+			oldState = state;
 			state = IDLE_UP;
 		}
 		if (state == DOWN)
 		{
+			oldState = state;
 			state = IDLE_DOWN;
 		}
 		if (state == LEFT)
 		{
+			oldState = state;
 			state = IDLE_LEFT;
 		}
 		if (state == RIGHT)
 		{
+			oldState = state;
 			state = IDLE_RIGHT;
 		}
 		moving = false;
@@ -248,7 +297,11 @@ void Player::render() {
 
 void Player::die()
 {
-	isAlive = false;
+	state = DEAD;
+	timeDied = SDL_GetTicks();
+	collider.h = 0;
+	collider.w = 0;
+	frame = 0;
 }
 
 void Player::animate()
@@ -256,6 +309,9 @@ void Player::animate()
 	int totalFrames = 8;
 
 	switch (state) {
+	case DEAD:
+		totalFrames = 5;
+		break;
 	case UP:
 		totalFrames = 7;
 		moving = true;
@@ -292,15 +348,31 @@ void Player::animate()
 		break;
 	}
 
-	SDL_DestroyTexture(texture);
-	texture = loadTexture();
-
-
-	if (moving) {
-		const int delayPerFrame = 100;
-		const int frame = (SDL_GetTicks() / delayPerFrame) % totalFrames;
-		textureRect.y = frame * textureRect.h;
+	if (oldState != state)
+	{
+		texture = loadTexture();
+		oldState = state;
 	}
+
+	if (state == DEAD)
+	{
+		const Uint32 currentTime = SDL_GetTicks() - timeDied;
+		const Uint32 timeSpent = currentTime - oldTime;
+		if (timeSpent > delayPerFrame)
+		{
+			oldTime = timeSpent;
+			frame++;
+		}
+		if (frame > totalFrames)
+		{
+			return;
+		}
+	}
+	else if (moving) {
+		frame = (SDL_GetTicks() / delayPerFrame) % totalFrames;
+	}
+
+	textureRect.y = frame * textureRect.h;
 
 	SDL_QueryTexture(texture, nullptr, nullptr, &textureRect.w, &textureRect.h);
 
@@ -310,25 +382,14 @@ void Player::animate()
 }
 
 void Player::dropBomb() {
-	std::cout << "maxBombs: " << maxBombs << " bombsDropped: " << bombsDropped << std::endl;
-
 	auto map = Service<Map>::Get();
 	if (maxBombs > bombsDropped)
 	{
-		//std::cout << "Player X: " << m_pos_x << " Player Y: " << m_pos_y << std::endl;
 		const std::pair<int, int> currentBlockIndex = Helpers::getCurrentBlock(posX, posY);
-		//std::cout << "Current block X: " << currentBlockIndex.first << " Current block Y: " << currentBlockIndex.second << std::endl;
-
 		std::pair<int, int> blockCenter = Helpers::getBlockCenter(currentBlockIndex.first, currentBlockIndex.second);
-		//std::cout << "Block center X: " << blockCenter.first << " Block Center Y: " << blockCenter.second << std::endl;
-
-
 		std::pair <int, int> testIndex = Helpers::getCurrentBlock(blockCenter.first, blockCenter.second);
-		//std::cout << "Test index X: " << testIndex.first << " Block index Y: " << testIndex.second << std::endl;
-
 		const auto bomb = makesp<Bomb>(flamePower, blockCenter.first, blockCenter.second, map);
 		bomb->load_textures(m_renderer, "bomb");
-
 		bombs.emplace_back(bomb);
 	}
 }
