@@ -41,6 +41,7 @@ private:
 	int m_pos_x;
 	int m_pos_y;
 	int frame = 0;
+	int m_score = 100;
 	Uint32 timeDied;
 	Uint32 deathDelay = 1500;
 	SDL_Texture* m_texture = nullptr;

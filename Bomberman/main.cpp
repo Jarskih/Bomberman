@@ -1,69 +1,70 @@
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <memory>
 #include "Helpers.h"
 #include "GameRules.h"
 #include "Musicplayer.h"
 #include "Map.h"
 #include "Timer.h"
-#include "Textures.h"
 #include "Service.h"
+#include "Textures.h"
+#include "Hud.h"
 
 SDL_Window* window = nullptr;
-static SDL_Renderer* renderer = nullptr;
+SDL_Renderer* renderer = nullptr;
 SDL_Event input;
 
-void SDLinit() {
-	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
+void SDLInit() {
+	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not initialize SDL: %s", SDL_GetError());
-
-	if (Mix_Init(MIX_INIT_MP3) == 0)
+	}
+	if (Mix_Init(MIX_INIT_MP3) == 0) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not initialize SDL_mixer: %s", Mix_GetError());
-
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) == -1)
+	}
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) == -1) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not initialize OpenAudio: %s", Mix_GetError());
-
+	}
 	if (IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG) == 0)
+	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not initialize IMG: %s", IMG_GetError());
+	}
+	if (TTF_Init() == -1)
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+	}
 
 	window = SDL_CreateWindow("Bomberman", SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-	if (window == nullptr)
+	if (window == nullptr) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not create SDL_Window: %s", SDL_GetError());
+	}
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-	if (renderer == nullptr)
+	if (renderer == nullptr) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not create SDL_Renderer: %s", SDL_GetError());
+	}
 }
 
-void renderHud(SDL_Rect hudViewPort)
-{
-	// Clear screen
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-	SDL_RenderClear(renderer);
 
-	// Presenting to screen
-	SDL_RenderPresent(renderer);
-}
 
 //For SDL, you should have the following main method:
 int main(int argc, char** args)
 {
-	SDLinit();
+	SDLInit();
 	{
-		auto map = makesp<Map>(14, 15, renderer);
 		auto timer = makesp<Timer>();
-
+		timer->start();
 		const auto textures = makesp<Textures>(renderer);
+		auto map = makesp<Map>(14, 15, renderer);
+		map->loadTextures();
+		auto hud = makesp<Hud>(renderer, textures->findTexture("hud"));
+
 		Service<Textures>::Set(textures);
 		Service<Map>::Set(map);
-
-		SDL_Rect temp = { 0, 0 ,0, 0 };
+		Service<Hud>::Set(hud);
 
 		MusicPlayer::InitMusicPlayer();
-
-		map->loadTextures();
-		timer->start();
 
 		bool quit = false;
 		while (!quit)
@@ -77,8 +78,6 @@ int main(int argc, char** args)
 				map->handleEvent(input);
 			}
 
-			// renderHud();
-
 			// Clear screen
 			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 			SDL_RenderClear(renderer);
@@ -89,10 +88,8 @@ int main(int argc, char** args)
 
 			// Render
 			map->render(map);
+			hud->render();
 
-			SDL_Texture* texture = textures->findTexture("hud");
-			SDL_Rect hudRect = { 0, 0, SCREEN_WIDTH, BLOCK_HEIGHT };
-			SDL_RenderCopy(renderer, texture, nullptr, &hudRect);
 			// Presenting to screen
 			SDL_RenderPresent(renderer);
 		}
@@ -105,12 +102,10 @@ int main(int argc, char** args)
 	if (window != nullptr)
 		SDL_DestroyWindow(window);
 
+	TTF_Quit();
 	IMG_Quit();
-
 	Mix_CloseAudio();
-
 	Mix_Quit();
-
 	SDL_Quit();
 
 	return 0;

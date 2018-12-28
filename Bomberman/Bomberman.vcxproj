@@ -99,7 +99,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\C++\projects\Bomberman\Bomberman\Dependencies\SDL2_ttf\lib\x64;C:\C++\projects\Bomberman\Bomberman\Dependencies\SDL2_mixer\lib\x64;C:\C++\projects\Bomberman\Bomberman\Dependencies\SDL2_image\lib\x64;C:\C++\projects\Bomberman\Bomberman\Dependencies\SDL2\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_mixer.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_mixer.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
       <SubSystem>Console</SubSystem>
     </Link>
@@ -137,6 +137,7 @@
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Flame.cpp" />
     <ClCompile Include="Helpers.cpp" />
+    <ClCompile Include="Hud.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Musicplayer.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="Flame.h" />
     <ClInclude Include="GameRules.h" />
     <ClInclude Include="Helpers.h" />
+    <ClInclude Include="Hud.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Musicplayer.h" />
     <ClInclude Include="player.h" />

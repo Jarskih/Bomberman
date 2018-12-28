@@ -2,6 +2,7 @@
 #include "Map.h"
 #include "Service.h"
 #include "Textures.h"
+#include "Hud.h"
 
 void Enemy::update()
 {
@@ -202,4 +203,6 @@ void Enemy::die()
 	isAlive = false;
 	collider.h = 0;
 	collider.w = 0;
+	auto hud = Service<Hud>::Get();
+	hud->incrementScore(m_score);
 }
