@@ -1,12 +1,21 @@
 ﻿#pragma once
-#include <vector>
-#include "Actor.h"
+#include "GameRules.h"
 
 struct State
 {
-public:
-	State(int players) : m_players(players) {};
-	int m_score = 0;
-	int m_players = 1;
-	std::vector<Actor> game_objects = {};
+	enum Scenes
+	{
+		MENU,
+		LEVEL_INTRO,
+		LEVEL,
+		DEFEAT
+
+	};
+	State() {};
+	int score = 0;
+	int players = NUMBER_OF_PLAYERS;
+	int lives = STARTING_LIVES;
+	int scene = MENU;
+
+	void changeScene();
 };

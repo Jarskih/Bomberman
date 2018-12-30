@@ -3,6 +3,7 @@
 #include "Service.h"
 #include "Textures.h"
 #include "Hud.h"
+#include <algorithm>
 
 void Enemy::update()
 {
@@ -167,8 +168,19 @@ void Enemy::move()
 		{
 			if (Helpers::checkCollision(collider, bomb->collider))
 			{
-				colliding = true;
-				break;
+				// auto collisionList = bomb->enemyFirstCollision;
+				// auto it = std::find(collisionList.begin(), collisionList.end(), this);
+				if (true)
+				{
+					colliding = true;
+					break;
+				}
+				else
+				{
+					// TODO add to list
+					//collisionList->push_back(this);
+				}
+
 			}
 		}
 	}
@@ -203,6 +215,5 @@ void Enemy::die()
 	isAlive = false;
 	collider.h = 0;
 	collider.w = 0;
-	auto hud = Service<Hud>::Get();
-	hud->incrementScore(m_score);
+	Service<State>::Get()->score + m_score;
 }

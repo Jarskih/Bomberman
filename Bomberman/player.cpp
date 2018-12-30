@@ -1,6 +1,5 @@
 #include "player.h"
 #include <SDL_image.h>
-#include <iostream>
 #include "GameRules.h"
 #include <memory>
 #include "Helpers.h"
@@ -16,6 +15,13 @@ void Player::update()
 	{
 		playerController();
 		movePlayer();
+	}
+	else
+	{
+		if (SDL_GetTicks() - timeDied > 2000)
+		{
+			isDead = true;
+		}
 	}
 	bombs = checkBombs();
 	bombsDropped = bombs.size();
@@ -231,6 +237,15 @@ void Player::movePlayer() {
 	windowRect.y = posY;
 	collider.y = posY + PLAYER_HEIGHT / 2.f;
 
+	for (const auto& enemy : map->m_enemyList)
+	{
+		if (Helpers::checkCollision(collider, enemy->collider))
+		{
+			die();
+			return;
+		}
+	}
+
 	for (const auto& player : map->m_playerList)
 	{
 		for (const auto& bomb : player->bombs)
@@ -297,11 +312,11 @@ void Player::render() {
 
 void Player::die()
 {
-	state = DEAD;
 	timeDied = SDL_GetTicks();
 	collider.h = 0;
 	collider.w = 0;
 	frame = 0;
+	state = DEAD;
 }
 
 void Player::animate()

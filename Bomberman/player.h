@@ -3,6 +3,10 @@
 #include <vector>
 #include "Helpers.h"
 #include "Bomb.h"
+#include "State.h"
+#include "Service.h"
+
+class Bomb;
 
 class Player {
 public:
@@ -19,6 +23,7 @@ private:
 	void renderBombs();
 	void dropBomb();
 	void animate();
+
 public:
 	bool moving = false;
 	int speed = 3;
@@ -26,6 +31,8 @@ public:
 	int posY = BLOCK_HEIGHT + BLOCK_HEIGHT / 2.0f;
 	int flamePower = 1;
 	int maxBombs = 1;
+	bool isDead = false;
+	int lives = Service<State>::Get()->lives;
 	float speed_x = 0;
 	float speed_y = 0;
 	std::vector<sp<Bomb>> bombs = {};

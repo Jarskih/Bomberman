@@ -1,4 +1,7 @@
 ﻿#include "Hud.h"
+#include "player.h"
+#include "Service.h"
+
 
 bool Hud::loadFromRenderedText(std::string &textureText, SDL_Color textColor)
 {
@@ -40,9 +43,15 @@ bool Hud::loadFont()
 	return success;
 }
 
-void Hud::render()
+void Hud::render(const sp<Timer>& timer)
 {
 	SDL_RenderCopy(m_renderer, m_texture, nullptr, &m_hudRect);
+
+	const auto state = Service<State>::Get();
+	m_sec = timer->getSeconds();
+	m_min = timer->getMinutes();
+	m_score = state->score;
+	m_lives = state->lives;
 
 	auto lives = std::to_string(m_lives);
 	if (!loadFromRenderedText(lives, textColor))
@@ -51,13 +60,19 @@ void Hud::render()
 	}
 	SDL_RenderCopy(m_renderer, m_textTexture, nullptr, &m_livesRect);
 
-
-	auto time = std::to_string(m_time);
-	if (!loadFromRenderedText(time, textColor))
+	std::string min = std::to_string(m_min);
+	if (!loadFromRenderedText(min, textColor))
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to render text texture!\n");
 	}
-	SDL_RenderCopy(m_renderer, m_textTexture, nullptr, &m_timeRect);
+	SDL_RenderCopy(m_renderer, m_textTexture, nullptr, &m_minRect);
+
+	std::string sec = std::to_string(m_sec);
+	if (!loadFromRenderedText(sec, textColor))
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to render text texture!\n");
+	}
+	SDL_RenderCopy(m_renderer, m_textTexture, nullptr, &m_secRect);
 
 	auto score = std::to_string(m_score);
 	if (!loadFromRenderedText(score, textColor))
@@ -65,9 +80,4 @@ void Hud::render()
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to render text texture!\n");
 	}
 	SDL_RenderCopy(m_renderer, m_textTexture, nullptr, &m_scoreRect);
-}
-
-void Hud::incrementScore(int score)
-{
-	m_score = m_score + score;
 }

@@ -143,6 +143,7 @@
     <ClCompile Include="Musicplayer.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="GameRules.cpp" />
+    <ClCompile Include="PowerUp.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="Textures.cpp" />
     <ClCompile Include="Timer.cpp" />
@@ -159,6 +160,7 @@
     <ClInclude Include="Map.h" />
     <ClInclude Include="Musicplayer.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="PowerUp.h" />
     <ClInclude Include="Service.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="Textures.h" />

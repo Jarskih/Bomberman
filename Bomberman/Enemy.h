@@ -53,7 +53,7 @@ private:
 	const Uint32 decisionDelay = 100000;
 
 	bool moving = false;
-	int speed = 1;
+	int speed = 2;
 
 	void loadTexture(std::string sprite);
 	void decide();

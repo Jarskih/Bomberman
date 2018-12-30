@@ -3,6 +3,8 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include "Flame.h"
+#include "PowerUp.h"
+#include "Map.h"
 
 std::pair <int, int> Block::getBlockIndex()
 {
@@ -98,6 +100,13 @@ void Block::render(SDL_Renderer* renderer) {
 	const int totalFrames = 7;
 	if (blockType == DESTROYED)
 	{
+		if (!powerUpAdded && blockHasPowerUp)
+		{
+			auto map = Service<Map>::Get();
+			map->addPowerUp(index_x, index_y, powerUpType);
+			powerUpAdded = true;
+		}
+
 		const int delayPerFrame = 100;
 
 		if (SDL_GetTicks() - timeExploded > delayPerFrame)

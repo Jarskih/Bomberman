@@ -24,6 +24,8 @@ public:
 	int m_pos_x;
 	int m_pos_y;
 	int blockType;
+	bool blockHasPowerUp = false;
+	int powerUpType = 0;
 private:
 	Uint32 timeExploded = 0;
 	Uint32 currentTime = 0;
@@ -35,6 +37,7 @@ private:
 	SDL_Rect textureRect = { 0, 0, 0, 0 };
 	const char* m_sprite = nullptr;
 	SDL_Texture* m_texture = nullptr;
+	bool powerUpAdded = false;
 
 	void GetSprite();
 };

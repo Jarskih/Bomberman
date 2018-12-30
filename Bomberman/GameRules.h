@@ -1,7 +1,7 @@
 #pragma once
 //Gamearea: x = 15 blocks, y = 13 blocks
 static const int SCREEN_WIDTH = 800;
-static const int SCREEN_HEIGHT = 800;
+static const int SCREEN_HEIGHT = 600;
 
 // BLOCKS
 static const int BLOCK_WIDTH = SCREEN_WIDTH / 15;
@@ -12,6 +12,10 @@ static const int BLOCK_OFFSET_Y = BLOCK_HEIGHT / 2;
 // PLAYER
 static const int PLAYER_WIDTH = BLOCK_WIDTH * 2;
 static const int PLAYER_HEIGHT = BLOCK_HEIGHT * 1.5;
+
+static const int NUMBER_OF_PLAYERS = 1;
+static const int STARTING_LIVES = 3;
+static const int ROUND_TIME = 240;
 
 enum Blocks
 {

@@ -10,6 +10,7 @@
 #include "Service.h"
 #include "Textures.h"
 #include "Hud.h"
+#include "State.h"
 
 SDL_Window* window = nullptr;
 SDL_Renderer* renderer = nullptr;
@@ -46,52 +47,123 @@ void SDLInit() {
 	}
 }
 
-
+void handleEvent(const SDL_Event event, const sp<State>& state)
+{
+	if (event.type == SDL_KEYDOWN && event.key.repeat == 0)
+	{
+		switch (event.key.keysym.sym)
+		{
+		case SDLK_SPACE:
+			state->changeScene();
+			break;
+		default:
+			break;
+		}
+	}
+}
 
 //For SDL, you should have the following main method:
 int main(int argc, char** args)
 {
 	SDLInit();
-	{
-		auto timer = makesp<Timer>();
-		timer->start();
-		const auto textures = makesp<Textures>(renderer);
-		auto map = makesp<Map>(14, 15, renderer);
-		map->loadTextures();
-		auto hud = makesp<Hud>(renderer, textures->findTexture("hud"));
+	auto gameState = makesp<State>();
+	Service<State>::Set(gameState);
+	SDL_Rect fullScreen = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT };
+	SDL_Texture* bgTexture;
 
-		Service<Textures>::Set(textures);
-		Service<Map>::Set(map);
-		Service<Hud>::Set(hud);
+	const auto textures = makesp<Textures>(renderer);
+	Service<Textures>::Set(textures);
 
-		MusicPlayer::InitMusicPlayer();
+	bool quit = false;
+	while (!quit) {
 
-		bool quit = false;
-		while (!quit)
+		while (SDL_PollEvent(&input) > 0)
 		{
-			while (SDL_PollEvent(&input) > 0)
-			{
-				if (input.type == SDL_QUIT)
-				{
-					quit = true;
-				}
-				map->handleEvent(input);
+			if (input.type == SDL_QUIT) {
+				quit = true;
 			}
+			handleEvent(input, gameState);
+		}
 
-			// Clear screen
-			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-			SDL_RenderClear(renderer);
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+		SDL_RenderClear(renderer);
 
-			// Update
-			map->update(map);
-			timer->start();
+		if (gameState->lives < 0)
+		{
+			gameState->scene = State::DEFEAT;
+		}
 
-			// Render
-			map->render(map);
-			hud->render();
-
-			// Presenting to screen
+		switch (gameState->scene) {
+		case State::MENU:
+			bgTexture = textures->findTexture("menuScreen");
+			SDL_RenderCopy(renderer, bgTexture, nullptr, &fullScreen);
 			SDL_RenderPresent(renderer);
+			break;
+		case State::LEVEL_INTRO:
+			bgTexture = textures->findTexture("levelIntroScreen");
+			SDL_RenderCopy(renderer, bgTexture, nullptr, &fullScreen);
+			SDL_RenderPresent(renderer);
+			SDL_Delay(2000);
+			gameState->scene = State::LEVEL;
+			break;
+		case State::DEFEAT:
+			bgTexture = textures->findTexture("defeatScreen");
+			SDL_RenderCopy(renderer, bgTexture, nullptr, &fullScreen);
+			SDL_RenderPresent(renderer);
+			break;
+		case State::LEVEL:
+		{
+			auto timer = makesp<Timer>();
+			timer->start();
+			Service<Timer>::Set(timer);
+
+			auto map = makesp<Map>(14, 15, renderer);
+			map->loadTextures();
+			Service<Map>::Set(map);
+
+			auto hud = makesp<Hud>(renderer, textures->findTexture("hud"));
+			Service<Hud>::Set(hud);
+
+			MusicPlayer::InitMusicPlayer();
+
+			bool restart = false;
+			while (!restart)
+			{
+				while (SDL_PollEvent(&input) > 0)
+				{
+					map->handleEvent(input);
+				}
+
+				// Clear screen
+				SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+				SDL_RenderClear(renderer);
+
+				// Update
+				map->update(timer);
+
+				// Render
+				map->render(map);
+				hud->render(timer);
+
+				// Presenting to screen
+				SDL_RenderPresent(renderer);
+
+				SDL_Delay(16);
+
+				for (const auto& player : map->m_playerList)
+				{
+					if (player->isDead)
+					{
+						gameState->lives--;
+						restart = true;
+						gameState->scene = State::LEVEL_INTRO;
+					}
+				}
+			}
+		}
+		break;
+		default:
+			break;
 		}
 	}
 	MusicPlayer::DestroyMusicPlayer();

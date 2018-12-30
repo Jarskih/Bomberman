@@ -41,6 +41,10 @@ void Textures::save_sprite_paths()
 	spritePaths["playerMoveLeft"] = "img/player_move_left.png";
 	spritePaths["playerMoveRight"] = "img/player_move_right.png";
 	spritePaths["hud"] = "img/hud.png";
+	spritePaths["menuScreen"] = "img/menu_screen.png";
+	spritePaths["levelIntroScreen"] = "img/level_intro_screen.png";
+	spritePaths["defeatScreen"] = "img/defeat_screen.png";
+	spritePaths["powerUps"] = "img/power_ups.png";
 }
 
 void Textures::create_textures()

@@ -7,8 +7,10 @@
 #include <utility>
 #include <vector>
 #include "Helpers.h"
+#include "Enemy.h"
 
 class Map;
+class Enemy;
 static const int BOMB_WIDTH = BLOCK_WIDTH;
 static const int BOMB_HEIGHT = BLOCK_HEIGHT;
 
@@ -35,6 +37,7 @@ public:
 	SDL_Rect collider = { 0,0, BLOCK_WIDTH, BLOCK_HEIGHT };
 	bool hitFlame = false;
 	bool firstCollision = true;
+	std::vector<Enemy*> const enemyFirstCollision = {};
 private:
 	Uint32 timeDropped = 0;
 	Uint32 timeExploded = 0;
@@ -58,5 +61,5 @@ private:
 
 	void explode(SDL_Renderer* renderer);
 	void renderFlames(SDL_Renderer* renderer, int frames);
-	static bool canSpawnFlame(const sp<Map> &map, const int index_x, const int index_y);
+	static bool canSpawnFlame(const sp<Map> &map, int index_x, int index_y);
 };
