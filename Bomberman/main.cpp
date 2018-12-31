@@ -11,6 +11,7 @@
 #include "Textures.h"
 #include "Hud.h"
 #include "State.h"
+#include <SDL_mixer.h>
 
 SDL_Window* window = nullptr;
 SDL_Renderer* renderer = nullptr;

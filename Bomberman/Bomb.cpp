@@ -37,8 +37,8 @@ void Bomb::render(SDL_Renderer* renderer)
 
 	//Debug
 
-	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-	SDL_RenderDrawRect(renderer, &collider);
+	//SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+	//SDL_RenderDrawRect(renderer, &collider);
 }
 
 void Bomb::load_textures(SDL_Renderer* renderer, const std::string &sprite)

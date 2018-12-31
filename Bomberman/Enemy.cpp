@@ -32,11 +32,11 @@ void Enemy::render()
 
 	// Debug
 
-	SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);
-	SDL_RenderDrawRect(m_renderer, &collider);
+	//SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);
+	//SDL_RenderDrawRect(m_renderer, &collider);
 
-	SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 0);
-	SDL_RenderDrawRect(m_renderer, &windowRect);
+	//SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 0);
+	//SDL_RenderDrawRect(m_renderer, &windowRect);
 
 	if (!isAlive)
 	{

@@ -8,6 +8,7 @@
 #include "Map.h"
 #include "Service.h"
 #include "Textures.h"
+#include "Musicplayer.h"
 
 void Player::update()
 {
@@ -311,17 +312,21 @@ void Player::render() {
 	animate();
 
 	// Debug
-	SDL_SetRenderDrawColor(m_renderer, 255, 255, 0, 255);
-	SDL_RenderDrawRect(m_renderer, &collider);
+	//SDL_SetRenderDrawColor(m_renderer, 255, 255, 0, 255);
+	//SDL_RenderDrawRect(m_renderer, &collider);
 }
 
 void Player::die()
 {
-	timeDied = SDL_GetTicks();
-	collider.h = 0;
-	collider.w = 0;
-	frame = 0;
-	state = DEAD;
+	if (state != DEAD)
+	{
+		timeDied = SDL_GetTicks();
+		collider.h = 0;
+		collider.w = 0;
+		frame = 0;
+		state = DEAD;
+		MusicPlayer::PlaySound("sounds/plyr_death.wav");
+	}
 }
 
 void Player::animate()

@@ -1,5 +1,6 @@
 #include "PowerUp.h"
 #include "Map.h"
+#include "MusicPlayer.h"
 
 void PowerUp::render()
 {
@@ -46,19 +47,24 @@ void PowerUp::checkCollision(const std::vector<sp<Player>>& m_playerList)
 				auto state = Service<State>::Get();
 				state->incrementScore(m_score);
 				isPickedUp = true;
+
 				auto map = Service<Map>::Get();
 				switch (m_type)
 				{
 				case FLAME:
+					MusicPlayer::PlaySound("sounds/bonus_pickup.wav");
 					player->flamePower++;
 					break;
 				case BOMB:
+					MusicPlayer::PlaySound("sounds/bonus_pickup.wav");
 					player->maxBombs++;
 					break;
 				case SPEED:
+					MusicPlayer::PlaySound("sounds/bonus_pickup.wav");
 					player->speed++;
 					break;
 				case LIFE:
+					MusicPlayer::PlaySound("sounds/bonus_pickup.wav");
 					state->incrementLives();
 					break;
 				case EXIT:

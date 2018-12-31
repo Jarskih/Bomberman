@@ -1,6 +1,4 @@
 #pragma once
-#include <SDL_mixer.h>
-#include <stdio.h>
 
 namespace MusicPlayer {
 	void InitMusicPlayer();
