@@ -54,7 +54,7 @@ void handleEvent(const SDL_Event event, const sp<State>& state)
 		switch (event.key.keysym.sym)
 		{
 		case SDLK_SPACE:
-			state->changeScene();
+			state->sceneTransition();
 			break;
 		default:
 			break;
@@ -90,7 +90,7 @@ int main(int argc, char** args)
 
 		if (gameState->lives < 0)
 		{
-			gameState->scene = State::DEFEAT;
+			gameState->changeScene(State::DEFEAT);
 		}
 
 		switch (gameState->scene) {
@@ -103,8 +103,8 @@ int main(int argc, char** args)
 			bgTexture = textures->findTexture("levelIntroScreen");
 			SDL_RenderCopy(renderer, bgTexture, nullptr, &fullScreen);
 			SDL_RenderPresent(renderer);
-			SDL_Delay(2000);
-			gameState->scene = State::LEVEL;
+			SDL_Delay(1000);
+			gameState->changeScene(State::LEVEL);
 			break;
 		case State::DEFEAT:
 			bgTexture = textures->findTexture("defeatScreen");
@@ -118,7 +118,6 @@ int main(int argc, char** args)
 			Service<Timer>::Set(timer);
 
 			auto map = makesp<Map>(14, 15, renderer);
-			map->loadTextures();
 			Service<Map>::Set(map);
 
 			auto hud = makesp<Hud>(renderer, textures->findTexture("hud"));

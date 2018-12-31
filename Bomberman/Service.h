@@ -1,4 +1,6 @@
 #pragma once
+#include "Helpers.h"
+
 template <typename T>
 class Service
 {

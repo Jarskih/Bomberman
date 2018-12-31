@@ -49,5 +49,6 @@ private:
 	int totalFrames = 2;
 	int frame = 0;
 	bool isPickedUp = false;
+	int m_score = 1000;
 };
 

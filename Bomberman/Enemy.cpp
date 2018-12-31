@@ -215,5 +215,5 @@ void Enemy::die()
 	isAlive = false;
 	collider.h = 0;
 	collider.w = 0;
-	Service<State>::Get()->score + m_score;
+	Service<State>::Get()->incrementScore(m_score);
 }

@@ -8,7 +8,7 @@ class Textures
 public:
 	Textures(SDL_Renderer* renderer);
 	~Textures() = default;
-	SDL_Texture* findTexture(std::string name);
+	SDL_Texture* findTexture(const std::string &name);
 private:
 	SDL_Renderer* m_renderer;
 	std::map<std::string, SDL_Texture*> textures;

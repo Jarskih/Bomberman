@@ -32,7 +32,7 @@ public:
 	int flamePower = 1;
 	int maxBombs = 1;
 	bool isDead = false;
-	int lives = Service<State>::Get()->lives;
+	int m_lives = Service<State>::Get()->lives;
 	float speed_x = 0;
 	float speed_y = 0;
 	std::vector<sp<Bomb>> bombs = {};

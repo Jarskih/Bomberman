@@ -17,5 +17,8 @@ struct State
 	int lives = STARTING_LIVES;
 	int scene = MENU;
 
-	void changeScene();
+	void changeScene(int newScene);
+	void incrementScore(int addedScore);
+	void incrementLives();
+	void sceneTransition();
 };

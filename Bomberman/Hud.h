@@ -5,6 +5,7 @@
 #include <string>
 #include "Timer.h"
 #include "Helpers.h"
+#include <iostream>
 
 class Hud
 {
@@ -34,4 +35,5 @@ private:
 	SDL_Rect m_livesRect = { BLOCK_WIDTH * 9, BLOCK_HEIGHT / 4, BLOCK_WIDTH / 2, BLOCK_HEIGHT / 2 };
 	SDL_Rect m_secRect = { BLOCK_WIDTH * 7, BLOCK_HEIGHT / 4, BLOCK_WIDTH / 2, BLOCK_HEIGHT / 2 };
 	SDL_Rect m_minRect = { BLOCK_WIDTH * 6 + BLOCK_WIDTH / 2, BLOCK_HEIGHT / 4, BLOCK_WIDTH / 3, BLOCK_HEIGHT / 2 };
+	SDL_Rect m_hiScoreRect = { BLOCK_WIDTH * 12 + BLOCK_WIDTH / 2, BLOCK_HEIGHT / 4, BLOCK_WIDTH / 3, BLOCK_HEIGHT / 2 };
 };

@@ -11,6 +11,7 @@
 
 void Player::update()
 {
+	m_lives = Service<State>::Get()->lives;
 	if (state != DEAD)
 	{
 		playerController();

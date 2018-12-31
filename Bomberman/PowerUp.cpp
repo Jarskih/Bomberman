@@ -16,7 +16,15 @@ void PowerUp::render()
 	SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 0);
 	SDL_RenderDrawRect(m_renderer, &windowRect);
 
-	frame = (SDL_GetTicks() / delayPerFrame) % totalFrames;
+	auto map = Service<Map>::Get();
+	if (m_type == EXIT && !map->levelCleared)
+	{
+		frame = 0;
+	}
+	else
+	{
+		frame = (SDL_GetTicks() / delayPerFrame) % totalFrames;
+	}
 
 	textureRect.y = frame * textureRect.h;
 	SDL_QueryTexture(m_texture, nullptr, nullptr, &textureRect.w, &textureRect.h);
@@ -35,14 +43,36 @@ void PowerUp::checkCollision(const std::vector<sp<Player>>& m_playerList)
 		{
 			if (Helpers::checkCollision(collider, player->collider))
 			{
+				auto state = Service<State>::Get();
+				state->incrementScore(m_score);
 				isPickedUp = true;
-				if (m_type == 0)
+				auto map = Service<Map>::Get();
+				switch (m_type)
 				{
+				case FLAME:
 					player->flamePower++;
-				}
-				else if (m_type == 1)
-				{
+					break;
+				case BOMB:
 					player->maxBombs++;
+					break;
+				case SPEED:
+					player->speed++;
+					break;
+				case LIFE:
+					state->incrementLives();
+					break;
+				case EXIT:
+					if (map->levelCleared)
+					{
+						map->win();
+					}
+					else
+					{
+						isPickedUp = false;
+					}
+					break;
+				default:
+					break;
 				}
 			}
 		}

@@ -5,8 +5,7 @@
 
 bool Hud::loadFromRenderedText(std::string &textureText, SDL_Color textColor)
 {
-	free(nullptr);
-
+	SDL_DestroyTexture(m_textTexture);
 	SDL_Surface* textSurface = TTF_RenderText_Solid(m_font, textureText.c_str(), textColor);
 	if (textSurface == nullptr)
 	{
@@ -80,4 +79,5 @@ void Hud::render(const sp<Timer>& timer)
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to render text texture!\n");
 	}
 	SDL_RenderCopy(m_renderer, m_textTexture, nullptr, &m_scoreRect);
+	SDL_RenderCopy(m_renderer, m_textTexture, nullptr, &m_hiScoreRect);
 }

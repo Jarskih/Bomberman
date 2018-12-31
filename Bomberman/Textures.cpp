@@ -9,7 +9,7 @@ Textures::Textures(SDL_Renderer* renderer) : m_renderer(renderer)
 	create_textures();
 }
 
-SDL_Texture* Textures::findTexture(std::string name)
+SDL_Texture* Textures::findTexture(const std::string &name)
 {
 	if (textures[name] != nullptr)
 	{
@@ -45,6 +45,16 @@ void Textures::save_sprite_paths()
 	spritePaths["levelIntroScreen"] = "img/level_intro_screen.png";
 	spritePaths["defeatScreen"] = "img/defeat_screen.png";
 	spritePaths["powerUps"] = "img/power_ups.png";
+	spritePaths["block"] = "img/block.png";
+	spritePaths["whiteBlock"] = "img/whiteBlock.png";
+	spritePaths["wallTop"] = "img/wallTop.png";
+	spritePaths["wallLeft"] = "img/wallLeft.png";
+	spritePaths["wallRight"] = "img/wallRight.png";
+	spritePaths["wallDown"] = "img/wallDown.png";
+	spritePaths["wallTopLeft"] = "img/wallTopLeft.png";
+	spritePaths["wallTopRight"] = "img/wallTopRight.png";
+	spritePaths["grass"] = "img/grass.png";
+	spritePaths["blockBreaking"] = "img/block_breaking.png";
 }
 
 void Textures::create_textures()

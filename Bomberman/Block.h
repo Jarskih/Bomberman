@@ -3,6 +3,8 @@
 #include "GameRules.h"
 #include <utility>
 #include "Flame.h"
+#include "Textures.h"
+#include "Service.h"
 
 class Block
 {
@@ -11,13 +13,16 @@ public:
 	{
 		index_x = Helpers::getCurrentBlock(m_pos_x, m_pos_y).first;
 		index_y = Helpers::getCurrentBlock(m_pos_x, m_pos_y).second;
+		m_textures = Service<Textures>::Get();
+		oldblockType = blockType;
+		LoadTexture();
 	};
 	~Block() = default;
 
 	SDL_Rect collider = { 0,0, BLOCK_WIDTH, BLOCK_HEIGHT };
-	SDL_Texture* LoadTexture(SDL_Renderer* renderer);
+	void LoadTexture();
 	void changeBlockType(int newType);
-	std::pair <int, int> getBlockIndex();
+	std::pair <int, int> getBlockIndex() const;
 	void render(SDL_Renderer* renderer);
 	int index_x;
 	int index_y;
@@ -28,16 +33,15 @@ public:
 	int powerUpType = 0;
 private:
 	Uint32 timeExploded = 0;
-	Uint32 currentTime = 0;
 	int frame = 0;
-	bool isDestroyed = false;
-	bool destroyedTextureLoaded = false;
 	bool textureLoaded = false;
+	int oldblockType;
 	SDL_Rect windowRect = { 0, 0, BLOCK_WIDTH, BLOCK_HEIGHT };
 	SDL_Rect textureRect = { 0, 0, 0, 0 };
 	const char* m_sprite = nullptr;
 	SDL_Texture* m_texture = nullptr;
 	bool powerUpAdded = false;
+	sp<Textures> m_textures = nullptr;
 
 	void GetSprite();
 };
