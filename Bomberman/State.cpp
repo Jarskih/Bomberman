@@ -10,15 +10,15 @@ void State::sceneTransition()
 	switch (scene)
 	{
 	case MENU:
-		scene = LEVEL_INTRO;
+		changeScene(LEVEL_INTRO);
 		break;
 	case LEVEL_INTRO:
-		scene = LEVEL;
+		changeScene(LEVEL);
 		break;
 	case LEVEL:
 		break;
 	case DEFEAT:
-		scene = MENU;
+		changeScene(MENU);
 		break;
 	default:
 		break;

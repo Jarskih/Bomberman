@@ -3,7 +3,6 @@
 #include "Service.h"
 #include "Textures.h"
 #include "Hud.h"
-#include <algorithm>
 
 void Enemy::update()
 {
@@ -213,6 +212,8 @@ void Enemy::die()
 {
 	timeDied = SDL_GetTicks();
 	isAlive = false;
+	collider.x = 0;
+	collider.y = 0;
 	collider.h = 0;
 	collider.w = 0;
 	Service<State>::Get()->incrementScore(m_score);

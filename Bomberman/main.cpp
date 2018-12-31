@@ -77,6 +77,12 @@ int main(int argc, char** args)
 	bool quit = false;
 	while (!quit) {
 
+		if (gameState->scene != State::DEFEAT && gameState->lives < 0)
+		{
+			gameState->changeScene(State::DEFEAT);
+			gameState->lives = STARTING_LIVES;
+		}
+
 		while (SDL_PollEvent(&input) > 0)
 		{
 			if (input.type == SDL_QUIT) {
@@ -87,11 +93,6 @@ int main(int argc, char** args)
 
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 		SDL_RenderClear(renderer);
-
-		if (gameState->lives < 0)
-		{
-			gameState->changeScene(State::DEFEAT);
-		}
 
 		switch (gameState->scene) {
 		case State::MENU:

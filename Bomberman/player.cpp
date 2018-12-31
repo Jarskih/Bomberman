@@ -134,18 +134,22 @@ SDL_Texture* Player::loadTexture()
 }
 
 void Player::handleEvent(SDL_Event& event) {
-	if (event.type == SDL_KEYDOWN && event.key.repeat == 0)
+	if (state != DEAD)
 	{
-		switch (event.key.keysym.sym)
+		if (event.type == SDL_KEYDOWN && event.key.repeat == 0)
 		{
-		case SDLK_SPACE:
-			dropBomb();
-			break;
-		default:
-			break;
+			switch (event.key.keysym.sym)
+			{
+			case SDLK_SPACE:
+				dropBomb();
+				break;
+			default:
+				break;
+			}
 		}
 	}
 }
+
 
 void Player::playerController()
 {
