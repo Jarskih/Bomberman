@@ -164,7 +164,7 @@ void Map::handleEvent(SDL_Event& event)
 
 void Map::addPowerUp(int index_x, int index_y, int powerUpType)
 {
-	const auto powerUp = makesp<PowerUp>(index_x - 1, index_y - 1, powerUpType, m_renderer);
+	const auto powerUp = makesp<PowerUp>(index_x, index_y, powerUpType, m_renderer);
 	powerUps.emplace_back(powerUp);
 }
 

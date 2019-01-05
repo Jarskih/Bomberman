@@ -34,7 +34,7 @@ void Flame::render(int frame)
 		SDL_RenderCopy(m_renderer, m_texture, &textureRect, &windowRect);
 	}
 
-	SDL_RenderDrawRect(m_renderer, &collider);
+	// SDL_RenderDrawRect(m_renderer, &collider);
 }
 
 void Flame::colliderResize(int x, int y, int width, int height)
@@ -65,7 +65,9 @@ void Flame::checkCollision() {
 		{
 			if (Helpers::checkCollision(collider, enemy->collider))
 			{
-				enemy->die();
+				if (enemy->isAlive) {
+					enemy->die();
+				}
 			}
 		}
 	}

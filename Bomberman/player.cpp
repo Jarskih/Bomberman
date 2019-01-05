@@ -248,8 +248,11 @@ void Player::movePlayer() {
 	{
 		if (Helpers::checkCollision(m_collider, enemy->collider))
 		{
-			die();
-			return;
+			if (enemy->isAlive)
+			{
+				die();
+				return;
+			}
 		}
 	}
 

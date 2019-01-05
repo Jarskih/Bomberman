@@ -33,6 +33,7 @@ namespace MusicPlayer {
 	{
 		Mix_Chunk* chunk = Mix_LoadWAV(filePath);
 		Mix_PlayChannel(-1, chunk, 0);
+		chunk = nullptr;
 	}
 
 	void DestroyMusicPlayer() {

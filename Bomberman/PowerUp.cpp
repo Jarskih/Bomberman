@@ -1,6 +1,6 @@
 #include "PowerUp.h"
 #include "Map.h"
-#include "MusicPlayer.h"
+#include "Musicplayer.h"
 
 void PowerUp::render()
 {
@@ -17,7 +17,7 @@ void PowerUp::render()
 	SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 0);
 	SDL_RenderDrawRect(m_renderer, &windowRect);
 
-	auto map = Service<Map>::Get();
+	const auto map = Service<Map>::Get();
 	if (m_type == EXIT && !map->levelCleared)
 	{
 		frame = 0;

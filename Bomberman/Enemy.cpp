@@ -6,13 +6,13 @@
 
 void Enemy::update()
 {
-	loadTexture(m_sprite);
 	if (SDL_GetTicks() - decisionTime > decisionDelay)
 	{
 		decide();
 	}
 	if (isAlive)
 	{
+		loadTexture(m_sprite);
 		move();
 	}
 }
@@ -32,11 +32,11 @@ void Enemy::render()
 
 	// Debug
 
-	//SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);
-	//SDL_RenderDrawRect(m_renderer, &collider);
+	// SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);
+	// SDL_RenderDrawRect(m_renderer, &collider);
 
-	//SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 0);
-	//SDL_RenderDrawRect(m_renderer, &windowRect);
+	// SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 0);
+	// SDL_RenderDrawRect(m_renderer, &windowRect);
 
 	if (!isAlive)
 	{
@@ -212,9 +212,5 @@ void Enemy::die()
 {
 	timeDied = SDL_GetTicks();
 	isAlive = false;
-	collider.x = 0;
-	collider.y = 0;
-	collider.h = 0;
-	collider.w = 0;
 	Service<State>::Get()->incrementScore(m_score);
 }
