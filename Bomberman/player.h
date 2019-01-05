@@ -5,12 +5,26 @@
 #include "Bomb.h"
 #include "State.h"
 #include "Service.h"
+#include "Entity.h"
 
 class Bomb;
 
-class Player {
+class Player : public Entity {
 public:
-	Player(SDL_Renderer* renderer) : m_renderer(renderer) {};
+	Player(SDL_Renderer* renderer) : m_renderer(renderer) {
+		posX = BLOCK_WIDTH + BLOCK_WIDTH / 2.0f;
+		posY = BLOCK_HEIGHT + BLOCK_HEIGHT / 2.0f;
+		m_type = PLAYER;
+		m_active = true;
+		m_visible = true;
+		m_collider = { 0, 0, PLAYER_WIDTH / 3, PLAYER_HEIGHT / 3 };
+		m_windowRect = { 0, 0,  PLAYER_WIDTH, PLAYER_HEIGHT };
+		m_textureRect = { 0, 0, 0, 0 };
+		state = IDLE_DOWN;
+		speed_x = 0;
+		speed_y = 0;
+	};
+	Player() = delete;
 	~Player() = default;
 	void update();
 	void render();
@@ -27,20 +41,15 @@ private:
 public:
 	bool moving = false;
 	int speed = 3;
-	int posX = BLOCK_WIDTH + BLOCK_WIDTH / 2.0f;
-	int posY = BLOCK_HEIGHT + BLOCK_HEIGHT / 2.0f;
+	//int posX = BLOCK_WIDTH + BLOCK_WIDTH / 2.0f;
+	//int posY = BLOCK_HEIGHT + BLOCK_HEIGHT / 2.0f;
 	int flamePower = 1;
 	int maxBombs = 1;
 	bool isDead = false;
 	int m_lives = Service<State>::Get()->lives;
-	float speed_x = 0;
-	float speed_y = 0;
 	std::vector<sp<Bomb>> bombs = {};
 	int bombsDropped = 0;
-	enum states { IDLE_UP, IDLE_DOWN, IDLE_LEFT, IDLE_RIGHT, DOWN, UP, LEFT, RIGHT, DEAD };
-	int state = IDLE_DOWN;
 	int oldState;
-	SDL_Rect collider = { 0, 0, PLAYER_WIDTH / 3, PLAYER_HEIGHT / 3 };
 private:
 	std::string textureName = "playerMoveDown";
 	SDL_Texture* loadTexture();

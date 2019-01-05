@@ -2,7 +2,6 @@
 #include <SDL.h>
 #include "GameRules.h"
 #include <utility>
-#include "Flame.h"
 #include "Textures.h"
 #include "Service.h"
 

@@ -3,7 +3,7 @@
 #include <SDL.h>
 #include "Helpers.h"
 #include "Block.h"
-#include "player.h"
+#include "Player.h"
 #include "Enemy.h"
 #include "Timer.h"
 #include "PowerUp.h"
@@ -15,9 +15,10 @@ class Enemy;
 class Map
 {
 public:
-	Map(int height, int width, SDL_Renderer* renderer) : m_size_Y(height), m_size_X(width), m_renderer(renderer) {
+	Map(int width, int height, SDL_Renderer* renderer) : m_size_X(width), m_size_Y(height), m_renderer(renderer) {
 		generateMap();
 		spawnGameObjects();
+		spawnPowerUps();
 	};
 	~Map() = default;
 	void update(sp<Timer> &timer);
@@ -35,6 +36,7 @@ public:
 private:
 	void generateMap();
 	void spawnGameObjects();
+	void spawnPowerUps();
 	void checkWinCondition();
 
 	int m_size_Y = 0;

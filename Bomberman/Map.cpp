@@ -1,6 +1,7 @@
 #include "Map.h"
-#include "player.h"
+#include "Player.h"
 #include "Enemy.h"
+#include <fstream>
 
 void Map::update(sp<Timer> &timer)
 {
@@ -49,38 +50,45 @@ void Map::render(sp<Map> &map) const
 }
 
 void Map::generateMap() {
+
+	bool levelLoaded = true;
+
+	//Open the map
+	std::ifstream map("assets/level1.map");
+
+	//If the map couldn't be loaded
+	if (!map.is_open())
+	{
+		printf("Unable to load map file!\n");
+		levelLoaded = false;
+	}
+
 	for (int y = 0; y < m_size_Y; y++) {
 		for (int x = 0; x < m_size_X; x++) {
 			int posX = x * BLOCK_WIDTH;
 			int posY = y * BLOCK_HEIGHT;
-			const auto block = makesp<Block>(posX, posY, MAP_LAYOUT[y][x]);
-			const auto blockIndex = Helpers::getCurrentBlock(posX, posY);
-			if (blockIndex.first == 10 && blockIndex.second == 5)
+
+			//Determines what kind of block will be made
+			int blockType = -1;
+
+			//Read block from map file
+			map >> blockType;
+
+
+			//If the was a problem in reading the map
+			if (map.fail())
 			{
-				block->blockHasPowerUp = true;
-				block->powerUpType = 0;
+				//Stop loading map
+				printf("Error loading map: Unexpected end of file!\n");
+				levelLoaded = false;
+				break;
 			}
-			if (blockIndex.first == 4 && blockIndex.second == 3)
+			else
 			{
-				block->blockHasPowerUp = true;
-				block->powerUpType = 1;
+				//const auto block = makesp<Block>(posX, posY, MAP_LAYOUT[y][x]);
+				const auto block = makesp<Block>(posX, posY, blockType);
+				tileSet.emplace_back(block);
 			}
-			if (blockIndex.first == 6 && blockIndex.second == 7)
-			{
-				block->blockHasPowerUp = true;
-				block->powerUpType = 2;
-			}
-			if (blockIndex.first == 8 && blockIndex.second == 10)
-			{
-				block->blockHasPowerUp = true;
-				block->powerUpType = 3;
-			}
-			if (blockIndex.first == 2 && blockIndex.second == 9)
-			{
-				block->blockHasPowerUp = true;
-				block->powerUpType = 4;
-			}
-			tileSet.emplace_back(block);
 		}
 	}
 }
@@ -88,13 +96,62 @@ void Map::spawnGameObjects()
 {
 	const auto player = makesp<Player>(m_renderer);
 	m_playerList.push_back(player);
+	;
+	int x = 0;
+	int y = 0;
 
-	const auto enemy1 = makesp<Enemy>(EASY, m_renderer, 11, 6);
-	const auto enemy2 = makesp<Enemy>(EASY, m_renderer, 9, 8);
-	const auto enemy3 = makesp<Enemy>(EASY, m_renderer, 3, 6);
-	m_enemyList.push_back(enemy1);
-	m_enemyList.push_back(enemy2);
-	m_enemyList.push_back(enemy3);
+	for (int enemy = 0; enemy < NUMBER_OF_ENEMIES; enemy++)
+	{
+		bool allowedBlock = false;
+		while (!allowedBlock)
+		{
+			x = Helpers::randomNumber(MAX_BLOCKS_X);
+			y = Helpers::randomNumber(MAX_BLOCKS_Y);
+
+			// Do not spawn enemies next to player
+			if (x < 5 || y < 5)
+			{
+				continue;
+			}
+
+			for (auto & block : tileSet)
+			{
+				if (block->index_x == x && block->index_y == y && block->blockType == GRASS)
+				{
+					allowedBlock = true;
+					const auto enemyObject = makesp<Enemy>(EASY, m_renderer, x, y);
+					m_enemyList.push_back(enemyObject);
+					break;
+				}
+			}
+		}
+	}
+}
+
+void Map::spawnPowerUps()
+{
+	int x = 0;
+	int y = 0;
+
+	for (int powerUpType = 0; powerUpType < 5; powerUpType++)
+	{
+		bool allowedBlock = false;
+		while (!allowedBlock)
+		{
+			x = Helpers::randomNumber(MAX_BLOCKS_X);
+			y = Helpers::randomNumber(MAX_BLOCKS_Y);
+			for (auto & block : tileSet)
+			{
+				if (block->index_x == x && block->index_y == y && block->blockType == BREAKABLE && !block->blockHasPowerUp)
+				{
+					allowedBlock = true;
+					block->blockHasPowerUp = true;
+					block->powerUpType = powerUpType;
+					break;
+				}
+			}
+		}
+	}
 }
 
 void Map::handleEvent(SDL_Event& event)

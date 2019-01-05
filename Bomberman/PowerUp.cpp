@@ -42,7 +42,7 @@ void PowerUp::checkCollision(const std::vector<sp<Player>>& m_playerList)
 	if (!isPickedUp) {
 		for (const auto& player : m_playerList)
 		{
-			if (Helpers::checkCollision(collider, player->collider))
+			if (Helpers::checkCollision(collider, player->getCollider()))
 			{
 				auto state = Service<State>::Get();
 				state->incrementScore(m_score);

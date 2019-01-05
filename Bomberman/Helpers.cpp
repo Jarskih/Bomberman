@@ -1,6 +1,5 @@
 #include "Helpers.h"
 #include "GameRules.h"
-#include <iostream>
 
 namespace Helpers {
 
@@ -11,20 +10,29 @@ namespace Helpers {
 		const int y = index_y * BLOCK_HEIGHT;; // + BLOCK_OFFSET_Y;
 
 		std::pair<int, int> blockCenter;
-		blockCenter.first = x - 1;
-		blockCenter.second = y - 1;
+		blockCenter.first = x;
+		blockCenter.second = y;
 		return blockCenter;
 	}
 
 	// Get block index from coordinates
-	std::pair<int, int> getCurrentBlock(int x, int y)
+	std::pair<int, int> getCurrentBlock(float x, float y)
 	{
-		const int index_x = (x / BLOCK_WIDTH) + 1;
-		const int index_y = (y / BLOCK_HEIGHT) + 1;
+		if (x <= 0)
+		{
+			x = 1;
+		}
+
+		if (y <= 0)
+		{
+			y = 1;
+		}
+		const float index_x = x / BLOCK_WIDTH;
+		const float index_y = y / BLOCK_HEIGHT;
 
 		std::pair<int, int> blockIndexes;
-		blockIndexes.first = index_x;
-		blockIndexes.second = index_y;
+		blockIndexes.first = ceil(index_x);
+		blockIndexes.second = ceil(index_y);
 		return blockIndexes;
 	}
 
@@ -111,6 +119,11 @@ namespace Helpers {
 
 		//If none of the sides from A are outside B
 		return false;
+	}
+
+	int randomNumber(int max)
+	{
+		return (rand() % max) + 1;
 	}
 
 }

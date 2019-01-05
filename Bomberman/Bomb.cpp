@@ -107,6 +107,7 @@ void Bomb::renderFlames(SDL_Renderer* renderer, int frames)
 				}
 				flame->colliderResize(BLOCK_WIDTH / 4, 0, BLOCK_WIDTH / 2, BLOCK_HEIGHT);
 				flames.push_back(flame);
+				std::cout << "Spawning flame up to x: " << index_x << ". And y: " << y << std::endl;
 			}
 			else
 			{
@@ -130,6 +131,7 @@ void Bomb::renderFlames(SDL_Renderer* renderer, int frames)
 				}
 				flame->colliderResize(BLOCK_WIDTH / 4, 0, BLOCK_WIDTH / 2, BLOCK_HEIGHT);
 				flames.push_back(flame);
+				std::cout << "Spawning flame down to x: " << index_x << ". And y: " << y << std::endl;
 			}
 			else
 			{
@@ -153,6 +155,7 @@ void Bomb::renderFlames(SDL_Renderer* renderer, int frames)
 				}
 				flame->colliderResize(0, BLOCK_HEIGHT / 4, BLOCK_WIDTH, BLOCK_HEIGHT / 2);
 				flames.push_back(flame);
+				std::cout << "Spawning flame left to x: " << x << ". And y: " << index_y << std::endl;
 			}
 			else
 			{
@@ -176,6 +179,7 @@ void Bomb::renderFlames(SDL_Renderer* renderer, int frames)
 				}
 				flame->colliderResize(0, BLOCK_HEIGHT / 4, BLOCK_WIDTH, BLOCK_HEIGHT / 2);
 				flames.push_back(flame);
+				std::cout << "Spawning flame right to x: " << x << ". And y: " << index_y << std::endl;
 			}
 			else
 			{
@@ -195,7 +199,7 @@ bool Bomb::canSpawnFlame(const sp<Map> &map, const int index_x, const int index_
 	bool allowed = false;
 	for (const auto& block : map->tileSet)
 	{
-		if (block->getBlockIndex().first == index_x + 1 && block->getBlockIndex().second == index_y + 1)
+		if (block->getBlockIndex().first == index_x && block->getBlockIndex().second == index_y)
 		{
 			switch (block->blockType) {
 			case GRASS:

@@ -1,4 +1,4 @@
-#include "player.h"
+#include "Player.h"
 #include <SDL_image.h>
 #include "GameRules.h"
 #include <memory>
@@ -9,6 +9,7 @@
 #include "Service.h"
 #include "Textures.h"
 #include "Musicplayer.h"
+#include <iostream>
 
 void Player::update()
 {
@@ -239,13 +240,13 @@ void Player::movePlayer() {
 		break;
 	}
 	windowRect.x = posX;
-	collider.x = posX + PLAYER_WIDTH / 3.f;
+	m_collider.x = posX + PLAYER_WIDTH / 3.f;
 	windowRect.y = posY;
-	collider.y = posY + PLAYER_HEIGHT / 2.f;
+	m_collider.y = posY + PLAYER_HEIGHT / 2.f;
 
 	for (const auto& enemy : map->m_enemyList)
 	{
-		if (Helpers::checkCollision(collider, enemy->collider))
+		if (Helpers::checkCollision(m_collider, enemy->collider))
 		{
 			die();
 			return;
@@ -256,7 +257,7 @@ void Player::movePlayer() {
 	{
 		for (const auto& bomb : player->bombs)
 		{
-			if (Helpers::checkCollision(collider, bomb->collider))
+			if (Helpers::checkCollision(m_collider, bomb->collider))
 			{
 				if (bomb->firstCollision)
 				{
@@ -278,7 +279,7 @@ void Player::movePlayer() {
 	{
 		for (const auto& block : map->tileSet)
 		{
-			if (block->blockType != GRASS && Helpers::checkCollision(collider, block->collider))
+			if (block->blockType != GRASS && Helpers::checkCollision(m_collider, block->collider))
 			{
 				colliding = true;
 				break;
@@ -290,11 +291,11 @@ void Player::movePlayer() {
 	{
 		posX = oldX;
 		windowRect.x = posX;
-		collider.x = posX + PLAYER_WIDTH / 3.f;
+		m_collider.x = posX + PLAYER_WIDTH / 3.f;
 
 		posY = oldY;
 		windowRect.y = posY;
-		collider.y = posY + PLAYER_HEIGHT / 2.f;
+		m_collider.y = posY + PLAYER_HEIGHT / 2.f;
 	}
 }
 
@@ -321,8 +322,8 @@ void Player::die()
 	if (state != DEAD)
 	{
 		timeDied = SDL_GetTicks();
-		collider.h = 0;
-		collider.w = 0;
+		m_collider.h = 0;
+		m_collider.w = 0;
 		frame = 0;
 		state = DEAD;
 		MusicPlayer::PlaySound("sounds/plyr_death.wav");
@@ -414,6 +415,8 @@ void Player::dropBomb() {
 		std::pair<int, int> blockCenter = Helpers::getBlockCenter(currentBlockIndex.first, currentBlockIndex.second);
 		std::pair <int, int> testIndex = Helpers::getCurrentBlock(blockCenter.first, blockCenter.second);
 		const auto bomb = makesp<Bomb>(flamePower, blockCenter.first, blockCenter.second, map);
+
+		std::cout << "Spawning bomb to x: " << currentBlockIndex.first << " . y: " << currentBlockIndex.second << std::endl;
 		bomb->load_textures(m_renderer, "bomb");
 		bombs.emplace_back(bomb);
 	}

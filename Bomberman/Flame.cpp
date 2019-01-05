@@ -49,7 +49,7 @@ void Flame::checkCollision() {
 	auto map = Service<Map>::Get();
 	for (const auto& player : map->m_playerList)
 	{
-		if (Helpers::checkCollision(collider, player->collider))
+		if (Helpers::checkCollision(collider, player->getCollider()))
 		{
 			player->die();
 		}

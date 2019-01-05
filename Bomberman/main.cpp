@@ -12,6 +12,7 @@
 #include "Hud.h"
 #include "State.h"
 #include <SDL_mixer.h>
+#include <time.h>
 
 SDL_Window* window = nullptr;
 SDL_Renderer* renderer = nullptr;
@@ -67,6 +68,7 @@ void handleEvent(const SDL_Event event, const sp<State>& state)
 int main(int argc, char** args)
 {
 	SDLInit();
+	srand(time(nullptr));
 	auto gameState = makesp<State>();
 	Service<State>::Set(gameState);
 	SDL_Rect fullScreen = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT };
@@ -119,7 +121,7 @@ int main(int argc, char** args)
 			timer->start();
 			Service<Timer>::Set(timer);
 
-			auto map = makesp<Map>(14, 15, renderer);
+			auto map = makesp<Map>(MAX_BLOCKS_X, MAX_BLOCKS_Y, renderer);
 			Service<Map>::Set(map);
 
 			auto hud = makesp<Hud>(renderer, textures->findTexture("hud"));
@@ -139,7 +141,7 @@ int main(int argc, char** args)
 				SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 				SDL_RenderClear(renderer);
 
-				// Update
+				// update
 				map->update(timer);
 
 				// Render
