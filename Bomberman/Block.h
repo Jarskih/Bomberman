@@ -34,7 +34,7 @@ public:
 	// Pathfinding
 	int gCost = 0;
 	int hCost = 0;
-	int fCost() { return gCost + hCost; };
+	int fCost() const { return gCost + hCost; };
 	sp<Block> parent = nullptr;
 private:
 	Uint32 timeExploded = 0;

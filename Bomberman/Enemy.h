@@ -2,6 +2,7 @@
 #include "Block.h"
 #include <vector>
 #include "Map.h"
+#include <list>
 
 static const int ACTOR_WIDTH = 100;
 static const int ACTOR_HEIGHT = 80;
@@ -36,8 +37,13 @@ public:
 	void die();
 private:
 	SDL_Renderer* m_renderer;
+	sp<Block> nextBlock;
+	sp<Block> targetBlock;
+	sp<Block> currentBlock;
 	int m_pos_x;
 	int m_pos_y;
+	int speed_x = 0;
+	int speed_y = 0;
 	int frame = 0;
 	int m_score = 100;
 	Uint32 timeDied;
@@ -48,7 +54,8 @@ private:
 	SDL_Rect windowRect = { 0, 0, BLOCK_WIDTH, BLOCK_HEIGHT };
 	SDL_Rect textureRect = { 0, 0, 0, 0 };
 	Uint32 decisionTime = 0;
-	const Uint32 decisionDelay = 100000;
+	const Uint32 decisionDelay = 100;
+	std::list<sp<Block>> path;
 
 	bool moving = false;
 	int speed = 2;

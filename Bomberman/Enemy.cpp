@@ -39,6 +39,12 @@ void Enemy::render()
 	// SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 0);
 	// SDL_RenderDrawRect(m_renderer, &windowRect);
 
+	for (auto block : path)
+	{
+		SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);
+		SDL_RenderDrawRect(m_renderer, &block->collider);
+	}
+
 	if (!isAlive)
 	{
 		frame = 5;
@@ -68,15 +74,17 @@ void Enemy::loadTexture(std::string sprite)
 
 void Enemy::decide()
 {
+	decisionTime = SDL_GetTicks();
+
 	auto map = Service<Map>::Get();
 	auto player = map->m_playerList.front();
-	const auto targetBlock = map->findBlockByCoordinates(player->getPositionX(), player->getPositionY());
-	const auto currentBlock = map->findBlockByCoordinates(m_pos_x, m_pos_y);
-	Pathfinding::calculatePath(targetBlock, currentBlock);
+	targetBlock = map->findBlockByCoordinates(player->getPositionX(), player->getPositionY());
+	currentBlock = map->findBlockByCoordinates(m_pos_x, m_pos_y);
+	path = Pathfinding::calculatePath(targetBlock, currentBlock);
 
-	decisionTime = SDL_GetTicks();
 	int random = rand() % 10;
 
+	/*
 	switch (state)
 	{
 	case UP:
@@ -138,6 +146,7 @@ void Enemy::decide()
 	default:
 		break;
 	}
+	*/
 }
 
 void Enemy::move()
@@ -147,6 +156,44 @@ void Enemy::move()
 	const int oldY = m_pos_y;
 	bool colliding = false;
 
+	if (!path.empty())
+	{
+		nextBlock = path.front();
+
+
+		int delta_x = abs(nextBlock->index_x - currentBlock->index_x);
+		int delta_y = abs(nextBlock->index_y - currentBlock->index_y);
+
+		if (delta_x >= delta_y)
+		{
+			if (nextBlock->index_x < currentBlock->index_x)
+			{
+				speed_x = -speed;
+			}
+			else
+			{
+				speed_x = speed;
+			}
+
+		}
+		else
+		{
+			if (nextBlock->index_y < currentBlock->index_y)
+			{
+				speed_y = -speed;
+			}
+			else
+			{
+				speed_y = speed;
+			}
+		}
+
+		m_pos_y += speed_y;
+		m_pos_x += speed_x;
+	}
+
+
+	/*
 	switch (state) {
 	case UP:
 		m_pos_y -= speed;
@@ -163,6 +210,7 @@ void Enemy::move()
 	default:
 		break;
 	}
+	*/
 	windowRect.x = m_pos_x;
 	collider.x = m_pos_x + PADDING_X;
 	windowRect.y = m_pos_y;
