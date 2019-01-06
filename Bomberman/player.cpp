@@ -280,13 +280,14 @@ void Player::movePlayer() {
 	}
 	if (!colliding)
 	{
-		for (const auto& block : map->tileSet)
+		for (const auto& blocksY : map->tileSet)
 		{
-			if (block->blockType != GRASS && Helpers::checkCollision(m_collider, block->collider))
-			{
-				colliding = true;
-				break;
-			}
+			for (const auto& block : blocksY)
+				if (block->blockType != GRASS && Helpers::checkCollision(m_collider, block->collider))
+				{
+					colliding = true;
+					break;
+				}
 		}
 	}
 

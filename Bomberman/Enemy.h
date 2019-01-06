@@ -18,9 +18,9 @@ class Map;
 class Enemy {
 public:
 	Enemy(const EnemyType enemy_type, SDL_Renderer* renderer, const int index_x, const int index_y) :
-		m_enemy_type(enemy_type), m_renderer(renderer), m_index_x(index_x), m_index_y(index_y)
+		m_enemy_type(enemy_type), m_renderer(renderer)
 	{
-		const auto blockCenter = Helpers::getBlockCenter(m_index_x, m_index_y);
+		const auto blockCenter = Helpers::getBlockCenter(index_x, index_y);
 		m_pos_x = blockCenter.first;
 		m_pos_y = blockCenter.second;
 	};
@@ -36,8 +36,6 @@ public:
 	void die();
 private:
 	SDL_Renderer* m_renderer;
-	int m_index_x;
-	int m_index_y;
 	int m_pos_x;
 	int m_pos_y;
 	int frame = 0;

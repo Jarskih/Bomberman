@@ -13,6 +13,7 @@
 #include "State.h"
 #include <SDL_mixer.h>
 #include <time.h>
+#include "Pathfinding.h"
 
 SDL_Window* window = nullptr;
 SDL_Renderer* renderer = nullptr;
@@ -121,7 +122,7 @@ int main(int argc, char** args)
 			timer->start();
 			Service<Timer>::Set(timer);
 
-			auto map = makesp<Map>(MAX_BLOCKS_X, MAX_BLOCKS_Y, renderer);
+			auto map = makesp<Map>(renderer);
 			Service<Map>::Set(map);
 
 			auto hud = makesp<Hud>(renderer, textures->findTexture("hud"));

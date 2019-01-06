@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include <fstream>
+#include <iostream>
 
 void Map::update(sp<Timer> &timer)
 {
@@ -29,8 +30,10 @@ void Map::update(sp<Timer> &timer)
 
 void Map::render(sp<Map> &map) const
 {
-	for (const auto& block : tileSet) {
-		block->render(m_renderer);
+	for (const auto& blocksY : tileSet) {
+		for (const auto& blockX : blocksY) {
+			blockX->render(m_renderer);
+		}
 	}
 
 	for (const auto& powerUp : powerUps)
@@ -49,8 +52,8 @@ void Map::render(sp<Map> &map) const
 	}
 }
 
-void Map::generateMap() {
-
+void Map::generateMap()
+{
 	bool levelLoaded = true;
 
 	//Open the map
@@ -63,8 +66,8 @@ void Map::generateMap() {
 		levelLoaded = false;
 	}
 
-	for (int y = 0; y < m_size_Y; y++) {
-		for (int x = 0; x < m_size_X; x++) {
+	for (int y = 0; y < m_size_y; y++) {
+		for (int x = 0; x < m_size_x; x++) {
 			int posX = x * BLOCK_WIDTH;
 			int posY = y * BLOCK_HEIGHT;
 
@@ -79,15 +82,16 @@ void Map::generateMap() {
 			if (map.fail())
 			{
 				//Stop loading map
-				printf("Error loading map: Unexpected end of file!\n");
+				std::cout << "Error loading map: Unexpected end of file!\n" << std::endl;
 				levelLoaded = false;
 				break;
 			}
 			else
 			{
 				//const auto block = makesp<Block>(posX, posY, MAP_LAYOUT[y][x]);
-				const auto block = makesp<Block>(posX, posY, blockType);
-				tileSet.emplace_back(block);
+				sp<Block> block = makesp<Block>(posX, posY, blockType);
+				tileSet[x][y] = block;
+				//tileSet.emplace_back(block);
 			}
 		}
 	}
@@ -105,8 +109,8 @@ void Map::spawnGameObjects()
 		bool allowedBlock = false;
 		while (!allowedBlock)
 		{
-			x = Helpers::randomNumber(MAX_BLOCKS_X);
-			y = Helpers::randomNumber(MAX_BLOCKS_Y);
+			x = Helpers::randomNumber(MAX_BLOCKS_X - 1);
+			y = Helpers::randomNumber(MAX_BLOCKS_Y - 1);
 
 			// Do not spawn enemies next to player
 			if (x < 5 || y < 5)
@@ -114,15 +118,13 @@ void Map::spawnGameObjects()
 				continue;
 			}
 
-			for (auto & block : tileSet)
+			const auto block = tileSet[x][y];
+			if (block->blockType == GRASS)
 			{
-				if (block->index_x == x && block->index_y == y && block->blockType == GRASS)
-				{
-					allowedBlock = true;
-					const auto enemyObject = makesp<Enemy>(EASY, m_renderer, x, y);
-					m_enemyList.push_back(enemyObject);
-					break;
-				}
+				const auto enemyObject = makesp<Enemy>(EASY, m_renderer, x, y);
+				m_enemyList.push_back(enemyObject);
+				allowedBlock = true;
+				break;
 			}
 		}
 	}
@@ -138,17 +140,14 @@ void Map::spawnPowerUps()
 		bool allowedBlock = false;
 		while (!allowedBlock)
 		{
-			x = Helpers::randomNumber(MAX_BLOCKS_X);
-			y = Helpers::randomNumber(MAX_BLOCKS_Y);
-			for (auto & block : tileSet)
-			{
-				if (block->index_x == x && block->index_y == y && block->blockType == BREAKABLE && !block->blockHasPowerUp)
-				{
-					allowedBlock = true;
-					block->blockHasPowerUp = true;
-					block->powerUpType = powerUpType;
-					break;
-				}
+			x = Helpers::randomNumber(MAX_BLOCKS_X - 1);
+			y = Helpers::randomNumber(MAX_BLOCKS_Y - 1);
+
+			if (tileSet[x][y]->blockType == BREAKABLE && !tileSet[x][y]->blockHasPowerUp) {
+				tileSet[x][y]->blockHasPowerUp = true;
+				tileSet[x][y]->powerUpType = powerUpType;
+				allowedBlock = true;
+				break;
 			}
 		}
 	}
@@ -166,6 +165,24 @@ void Map::addPowerUp(int index_x, int index_y, int powerUpType)
 {
 	const auto powerUp = makesp<PowerUp>(index_x, index_y, powerUpType, m_renderer);
 	powerUps.emplace_back(powerUp);
+}
+
+// Get block object from coordinates
+sp<Block> Map::findBlockByCoordinates(int x, int y)
+{
+	auto block = Helpers::getCurrentBlock(x, y);
+	return findBlockByIndex(block.first, block.second);
+}
+
+sp<Block> Map::findBlockByIndex(int x, int y)
+{
+	if (x > 0 && y > 0 && x < MAX_BLOCKS_X - 1 && y < MAX_BLOCKS_Y - 1) {
+		return tileSet[x][y];
+	}
+	else
+	{
+		return nullptr;
+	}
 }
 
 

@@ -27,9 +27,15 @@ public:
 	int index_y;
 	int m_pos_x;
 	int m_pos_y;
-	int blockType;
+	int blockType = -1;
 	bool blockHasPowerUp = false;
 	int powerUpType = 0;
+
+	// Pathfinding
+	int gCost = 0;
+	int hCost = 0;
+	int fCost() { return gCost + hCost; };
+	sp<Block> parent = nullptr;
 private:
 	Uint32 timeExploded = 0;
 	int frame = 0;

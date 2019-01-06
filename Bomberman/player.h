@@ -61,5 +61,5 @@ private:
 	int frame = 0;
 	Uint32 timeDied;
 	Uint32 oldTime = 0;
-	Uint32 delayPerFrame = 200;
+	Uint32 delayPerFrame = 100;
 };

@@ -194,24 +194,18 @@ void Bomb::renderFlames(SDL_Renderer* renderer, int frames)
 	}
 }
 
-bool Bomb::canSpawnFlame(const sp<Map> &map, const int index_x, const int index_y)
+bool Bomb::canSpawnFlame(const sp<Map> &map, const int x, const int y)
 {
 	bool allowed = false;
-	for (const auto& block : map->tileSet)
-	{
-		if (block->getBlockIndex().first == index_x && block->getBlockIndex().second == index_y)
-		{
-			switch (block->blockType) {
-			case GRASS:
-				allowed = true;
-				break;
-			case BREAKABLE:
-				block->changeBlockType(DESTROYED);
-				break;
-			default:
-				break;
-			}
-		}
+	switch (map->tileSet[x][y]->blockType) {
+	case GRASS:
+		allowed = true;
+		break;
+	case BREAKABLE:
+		map->tileSet[x][y]->changeBlockType(DESTROYED);
+		break;
+	default:
+		break;
 	}
 	return allowed;
 }

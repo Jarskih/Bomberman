@@ -3,6 +3,7 @@
 #include "Service.h"
 #include "Textures.h"
 #include "Hud.h"
+#include "Pathfinding.h"
 
 void Enemy::update()
 {
@@ -67,6 +68,12 @@ void Enemy::loadTexture(std::string sprite)
 
 void Enemy::decide()
 {
+	auto map = Service<Map>::Get();
+	auto player = map->m_playerList.front();
+	const auto targetBlock = map->findBlockByCoordinates(player->getPositionX(), player->getPositionY());
+	const auto currentBlock = map->findBlockByCoordinates(m_pos_x, m_pos_y);
+	Pathfinding::calculatePath(targetBlock, currentBlock);
+
 	decisionTime = SDL_GetTicks();
 	int random = rand() % 10;
 
@@ -185,26 +192,29 @@ void Enemy::move()
 	}
 	if (!colliding)
 	{
-		for (const auto& block : map->tileSet)
-		{
-			if (block->blockType != GRASS && Helpers::checkCollision(collider, block->collider))
-			{
-				colliding = true;
-				break;
+		for (int x = 0; x < MAX_BLOCKS_X; x++) {
+			for (int y = 0; y < MAX_BLOCKS_Y; y++) {
+				{
+					if (map->tileSet[x][y]->blockType != GRASS && Helpers::checkCollision(collider, map->tileSet[x][y]->collider))
+					{
+						colliding = true;
+						break;
+					}
+				}
 			}
 		}
-	}
 
-	if (colliding)
-	{
-		m_pos_x = oldX;
-		windowRect.x = m_pos_x;
-		collider.x = m_pos_x + PADDING_X;;
+		if (colliding)
+		{
+			m_pos_x = oldX;
+			windowRect.x = m_pos_x;
+			collider.x = m_pos_x + PADDING_X;;
 
-		m_pos_y = oldY;
-		windowRect.y = m_pos_y;
-		collider.y = m_pos_y + PADDING_Y;
-		decide();
+			m_pos_y = oldY;
+			windowRect.y = m_pos_y;
+			collider.y = m_pos_y + PADDING_Y;
+			decide();
+		}
 	}
 }
 

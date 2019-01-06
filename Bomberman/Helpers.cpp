@@ -36,6 +36,7 @@ namespace Helpers {
 		return blockIndexes;
 	}
 
+
 	bool checkCollision(SDL_Rect a, SDL_Rect b)
 	{
 		//The sides of the rectangles

@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <SDL.h>
+#include <array>
 #include "Helpers.h"
 #include "Block.h"
 #include "Player.h"
@@ -15,7 +16,7 @@ class Enemy;
 class Map
 {
 public:
-	Map(int width, int height, SDL_Renderer* renderer) : m_size_X(width), m_size_Y(height), m_renderer(renderer) {
+	Map(SDL_Renderer* renderer) : m_renderer(renderer) {
 		generateMap();
 		spawnGameObjects();
 		spawnPowerUps();
@@ -25,9 +26,12 @@ public:
 	void render(sp<Map> &map) const;
 	void handleEvent(SDL_Event& event);
 	void addPowerUp(int index_x, int index_y, int powerUpType);
+	sp<Block> findBlockByCoordinates(int x, int y);
+	sp<Block> findBlockByIndex(int x, int y);
 	static void win();
 
-	std::vector<sp<Block>> tileSet = {};
+	//std::vector<sp<Block>> tileSet = {};
+	sp<Block> tileSet[MAX_BLOCKS_X][MAX_BLOCKS_Y] = {};
 	int m_score = 0;
 	int m_players = 1;
 	std::vector<sp<Player>> m_playerList = {};
@@ -39,8 +43,8 @@ private:
 	void spawnPowerUps();
 	void checkWinCondition();
 
-	int m_size_Y = 0;
-	int m_size_X = 0;
+	int m_size_x = MAX_BLOCKS_X;
+	int m_size_y = MAX_BLOCKS_Y;
 	SDL_Renderer* m_renderer = nullptr;
 	bool enemiesDead = false;
 	bool m_timeOut = false;
