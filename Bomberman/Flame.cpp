@@ -21,8 +21,6 @@ void Flame::setTexture(SDL_Texture* texture)
 
 void Flame::render(int frame)
 {
-	const int totalFrames = 4;
-
 	if (frame < totalFrames)
 	{
 		m_texture_rect.y = frame * m_texture_rect.h;

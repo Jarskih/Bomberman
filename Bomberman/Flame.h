@@ -4,7 +4,6 @@
 #include <map>
 #include "Config.h"
 #include "Helpers.h"
-#include "State.h"
 
 class Flame
 {
@@ -12,8 +11,7 @@ public:
 	Flame(int x, int y, SDL_Renderer* renderer) :
 		m_index_x(x),
 		m_index_y(y),
-		m_renderer(renderer),
-		m_texture(nullptr)
+		m_renderer(renderer)
 	{
 		m_window_rect = { Helpers::GetBlockCenter(x, y).first, Helpers::GetBlockCenter(x, y).second, Config::BLOCK_WIDTH, Config::BLOCK_HEIGHT };
 		m_texture_rect = { 0, 0, Config::BLOCK_WIDTH, Config::BLOCK_HEIGHT };
@@ -25,6 +23,7 @@ public:
 	void render(int frame);
 	void colliderResize(int x, int y, int width, int height);
 	void checkCollision() const;
+	int totalFrames = 4;
 
 private:
 	int m_index_x = 0;

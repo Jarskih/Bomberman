@@ -58,7 +58,6 @@ void Bomb::load_textures(SDL_Renderer* renderer, const std::string &sprite)
 
 void Bomb::explode(SDL_Renderer* renderer)
 {
-	SDL_Texture* m_texture = Service<Textures>::Get()->findTexture("explosionCenter");
 	const Uint32 delayPerFrame = 200;
 
 	const int totalFrames = 5;
@@ -75,13 +74,6 @@ void Bomb::explode(SDL_Renderer* renderer)
 
 	renderFlames(renderer, explosion_frame);
 
-	textureRect.y = explosion_frame * textureRect.h;
-	SDL_QueryTexture(m_texture, nullptr, nullptr, &textureRect.w, &textureRect.h);
-
-	textureRect.h /= totalFrames;
-
-	SDL_RenderCopy(renderer, m_texture, &textureRect, &windowRect);
-
 	if (explosion_frame >= totalFrames)
 	{
 		isExploded = true;
@@ -92,6 +84,14 @@ void Bomb::renderFlames(SDL_Renderer* renderer, int frames)
 {
 	if (flames.empty())
 	{
+		// Middle flame
+		{
+			auto flame = makesp<Flame>(index_x, index_y, renderer);
+			flame->colliderResize(BLOCK_WIDTH / 4, 0, BLOCK_WIDTH / 2, BLOCK_HEIGHT);
+			flame->loadTextures("explosionCenter");
+			flame->totalFrames = 5;
+			flames.push_back(flame);
+		}
 		// Up
 		for (int range = 1; range <= m_flamePower; range++)
 		{
