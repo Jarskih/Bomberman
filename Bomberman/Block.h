@@ -1,9 +1,10 @@
 #pragma once
 #include <SDL.h>
-#include "GameRules.h"
+#include "Config.h"
 #include <utility>
 #include "Textures.h"
 #include "Service.h"
+#include "Config.h"
 
 class Block
 {
@@ -18,7 +19,7 @@ public:
 	};
 	~Block() = default;
 
-	SDL_Rect m_collider = { 0,0, BLOCK_WIDTH, BLOCK_HEIGHT };
+	SDL_Rect m_collider = { 0,0, Config::BLOCK_WIDTH, Config::BLOCK_HEIGHT };
 	void LoadTexture();
 	void changeBlockType(int newType);
 	std::pair <int, int> getBlockIndex() const;
@@ -43,7 +44,7 @@ private:
 	bool m_texture_loaded = false;
 	bool m_power_up_added = false;
 	const char* m_sprite = nullptr;
-	SDL_Rect m_window_rect = { 0, 0, BLOCK_WIDTH, BLOCK_HEIGHT };
+	SDL_Rect m_window_rect = { 0, 0, Config::BLOCK_WIDTH, Config::BLOCK_HEIGHT };
 	SDL_Rect m_texture_rect = { 0, 0, 0, 0 };
 	SDL_Texture* m_texture = nullptr;
 	sp<Textures> m_textures = nullptr;

@@ -131,18 +131,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Actor.cpp" />
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="Enemy.cpp" />
-    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Flame.cpp" />
     <ClCompile Include="Helpers.cpp" />
     <ClCompile Include="Hud.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Musicplayer.cpp" />
-    <ClCompile Include="GameRules.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PowerUp.cpp" />
     <ClCompile Include="State.cpp" />
@@ -150,13 +147,12 @@
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Actor.h" />
     <ClInclude Include="Block.h" />
     <ClInclude Include="Bomb.h" />
+    <ClInclude Include="Config.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Flame.h" />
-    <ClInclude Include="GameRules.h" />
     <ClInclude Include="Helpers.h" />
     <ClInclude Include="Hud.h" />
     <ClInclude Include="Map.h" />

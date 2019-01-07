@@ -3,7 +3,7 @@
 #include <SDL_ttf.h>
 #include <memory>
 #include "Helpers.h"
-#include "GameRules.h"
+#include "Config.h"
 #include "Musicplayer.h"
 #include "Map.h"
 #include "Timer.h"
@@ -80,10 +80,10 @@ int main(int argc, char** args)
 	bool quit = false;
 	while (!quit) {
 
-		if (gameState->scene != State::DEFEAT && gameState->lives < 0)
+		if (gameState->m_scene != State::DEFEAT && gameState->m_lives < 0)
 		{
 			gameState->changeScene(State::DEFEAT);
-			gameState->lives = STARTING_LIVES;
+			gameState->m_lives = STARTING_LIVES;
 		}
 
 		while (SDL_PollEvent(&input) > 0)
@@ -97,7 +97,7 @@ int main(int argc, char** args)
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 		SDL_RenderClear(renderer);
 
-		switch (gameState->scene) {
+		switch (gameState->m_scene) {
 		case State::MENU:
 			bgTexture = textures->findTexture("menuScreen");
 			SDL_RenderCopy(renderer, bgTexture, nullptr, &fullScreen);
@@ -157,10 +157,15 @@ int main(int argc, char** args)
 				{
 					if (!player->isAlive())
 					{
-						gameState->lives--;
+						gameState->decrementLives();
 						restart = true;
-						gameState->scene = State::LEVEL_INTRO;
+						gameState->changeScene(State::LEVEL_INTRO);
 					}
+				}
+
+				if (map->m_level_cleared)
+				{
+					gameState->changeScene(State::MENU);
 				}
 			}
 		}

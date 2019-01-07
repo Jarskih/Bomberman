@@ -1,6 +1,7 @@
 ﻿#include "Hud.h"
-#include "player.h"
+#include "Player.h"
 #include "Service.h"
+#include "State.h"
 
 
 bool Hud::loadFromRenderedText(std::string &textureText, SDL_Color textColor)
@@ -49,8 +50,8 @@ void Hud::render(const sp<Timer>& timer)
 	const auto state = Service<State>::Get();
 	m_sec = timer->getSeconds();
 	m_min = timer->getMinutes();
-	m_score = state->score;
-	m_lives = state->lives;
+	m_score = state->m_score;
+	m_lives = state->m_lives;
 
 	auto lives = std::to_string(m_lives);
 	if (!loadFromRenderedText(lives, m_text_color))

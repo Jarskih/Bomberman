@@ -2,12 +2,12 @@
 
 void State::changeScene(int newScene)
 {
-	scene = newScene;
+	m_scene = newScene;
 }
 
 void State::sceneTransition()
 {
-	switch (scene)
+	switch (m_scene)
 	{
 	case MENU:
 		changeScene(LEVEL_INTRO);
@@ -27,10 +27,16 @@ void State::sceneTransition()
 
 void State::incrementScore(int addedScore)
 {
-	score += addedScore;
+	m_score += addedScore;
 }
 
 void State::incrementLives()
 {
-	lives++;
+	m_lives++;
 }
+
+void State::decrementLives()
+{
+	m_lives--;
+}
+

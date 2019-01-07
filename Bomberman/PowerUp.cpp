@@ -1,6 +1,7 @@
 #include "PowerUp.h"
 #include "Map.h"
 #include "Musicplayer.h"
+#include "State.h"
 
 void PowerUp::render()
 {
@@ -18,7 +19,7 @@ void PowerUp::render()
 	SDL_RenderDrawRect(m_renderer, &m_window_rect);
 
 	const auto map = Service<Map>::Get();
-	if (m_type == EXIT && !map->levelCleared)
+	if (m_type == EXIT && !map->m_level_cleared)
 	{
 		m_frame = 0;
 	}
@@ -45,36 +46,37 @@ void PowerUp::checkCollision(const std::vector<sp<Player>>& m_playerList)
 			if (Helpers::CheckCollision(m_collider, player->getCollider()))
 			{
 				auto state = Service<State>::Get();
-				state->incrementScore(m_score);
-				m_is_picked_up = true;
-
 				auto map = Service<Map>::Get();
 				switch (m_type)
 				{
 				case FLAME:
 					MusicPlayer::PlaySound("sounds/bonus_pickup.wav");
 					player->m_flame_power++;
+					state->incrementScore(m_score);
+					m_is_picked_up = true;
 					break;
 				case BOMB:
 					MusicPlayer::PlaySound("sounds/bonus_pickup.wav");
 					player->m_max_bombs++;
+					state->incrementScore(m_score);
+					m_is_picked_up = true;
 					break;
 				case SPEED:
 					MusicPlayer::PlaySound("sounds/bonus_pickup.wav");
 					player->m_speed++;
+					state->incrementScore(m_score);
+					m_is_picked_up = true;
 					break;
 				case LIFE:
 					MusicPlayer::PlaySound("sounds/bonus_pickup.wav");
-					state->incrementLives();
+					player->m_lives++;
+					state->incrementScore(m_score);
+					m_is_picked_up = true;
 					break;
 				case EXIT:
-					if (map->levelCleared)
+					if (map->m_level_cleared)
 					{
 						map->win();
-					}
-					else
-					{
-						m_is_picked_up = false;
 					}
 					break;
 				default:

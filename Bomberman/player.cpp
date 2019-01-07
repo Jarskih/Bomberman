@@ -1,6 +1,5 @@
 #include "Player.h"
 #include <SDL_image.h>
-#include "GameRules.h"
 #include <memory>
 #include "Helpers.h"
 #include "Bomb.h"
@@ -13,7 +12,6 @@
 
 void Player::update()
 {
-	m_lives = Service<State>::Get()->lives;
 	if (m_state != DEAD)
 	{
 		playerController();
@@ -240,9 +238,9 @@ void Player::movePlayer() {
 		break;
 	}
 	m_window_rect.x = m_pos_x;
-	m_collider.x = m_pos_x + PLAYER_WIDTH / 3.f;
+	m_collider.x = m_pos_x + Config::PLAYER_WIDTH / 3.f;
 	m_window_rect.y = m_pos_y;
-	m_collider.y = m_pos_y + PLAYER_HEIGHT / 2.f;
+	m_collider.y = m_pos_y + Config::PLAYER_HEIGHT / 2.f;
 
 	for (const auto& enemy : map->m_enemyList)
 	{
@@ -283,7 +281,7 @@ void Player::movePlayer() {
 		for (const auto& blocksY : map->tileSet)
 		{
 			for (const auto& block : blocksY)
-				if (block->m_block_type != GRASS && Helpers::CheckCollision(m_collider, block->m_collider))
+				if (block->m_block_type != Config::GRASS && Helpers::CheckCollision(m_collider, block->m_collider))
 				{
 					colliding = true;
 					break;
@@ -295,11 +293,11 @@ void Player::movePlayer() {
 	{
 		m_pos_x = oldX;
 		m_window_rect.x = m_pos_x;
-		m_collider.x = m_pos_x + PLAYER_WIDTH / 3.f;
+		m_collider.x = m_pos_x + Config::PLAYER_WIDTH / 3.f;
 
 		m_pos_y = oldY;
 		m_window_rect.y = m_pos_y;
-		m_collider.y = m_pos_y + PLAYER_HEIGHT / 2.f;
+		m_collider.y = m_pos_y + Config::PLAYER_HEIGHT / 2.f;
 	}
 }
 

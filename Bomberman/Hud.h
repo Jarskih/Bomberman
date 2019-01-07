@@ -1,10 +1,12 @@
 ﻿#pragma once
 #include <SDL.h>
 #include <SDL_ttf.h>
-#include "GameRules.h"
+#include "Config.h"
 #include <string>
 #include "Timer.h"
 #include "Helpers.h"
+
+using namespace Config;
 
 class Hud
 {

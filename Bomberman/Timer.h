@@ -1,6 +1,6 @@
 #pragma once
 #include <SDL.h>
-#include "GameRules.h"
+#include "Config.h"
 
 class Timer
 {
@@ -15,6 +15,6 @@ private:
 	bool m_isPaused = false;
 	Uint32 m_pause = 0;
 	Uint32 m_start = 0;
-	Uint32 m_roundTime = ROUND_TIME;
+	Uint32 m_roundTime = Config::ROUND_TIME;
 };
 

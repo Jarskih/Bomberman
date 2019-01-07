@@ -1,6 +1,6 @@
 #pragma once
 #include <SDL.h>
-#include "GameRules.h"
+#include "Config.h"
 #include "Textures.h"
 #include "Service.h"
 #include "Map.h"
@@ -10,7 +10,7 @@ class Player;
 class PowerUp
 {
 public:
-	PowerUp(int index_x, int index_y, int type, SDL_Renderer* renderer) : m_index_x(index_x), m_index_y(index_y), m_type(type), m_renderer(renderer)
+	PowerUp(const int indexX, const int indexY, const int type, SDL_Renderer* renderer) : m_type(type), m_index_x(indexX), m_index_y(indexY), m_renderer(renderer)
 	{
 		const auto blockCenter = Helpers::GetBlockCenter(m_index_x, m_index_y);
 		m_collider.x = blockCenter.first;
@@ -25,7 +25,12 @@ public:
 	};
 	~PowerUp() = default;
 	void render();
-	void checkCollision(const std::vector<sp<Player>>& m_playerList);
+	void checkCollision(const std::vector<sp<Player>>& playerList);
+	SDL_Rect m_collider = { 0,0, Config::BLOCK_WIDTH, Config::BLOCK_HEIGHT };
+	bool m_is_picked_up = false;
+	int m_type;
+	int m_index_x;
+	int m_index_y;
 
 	enum PowerUpTypes
 	{
@@ -36,19 +41,13 @@ public:
 		EXIT
 	};
 private:
-	SDL_Rect m_collider = { 0,0,BLOCK_WIDTH, BLOCK_HEIGHT };
 	SDL_Texture* m_texture;
-	int m_index_x;
-	int m_index_y;
-	int m_type;
 	SDL_Renderer* m_renderer;
-	SDL_Rect m_window_rect = { 0, 0, BLOCK_WIDTH, BLOCK_HEIGHT };
-	SDL_Rect m_texture_rect = { 0, 0, 0, 0 };
+	SDL_Rect m_window_rect = { 0, 0, Config::BLOCK_WIDTH, Config::BLOCK_HEIGHT };
+	SDL_Rect m_texture_rect = {};
 	int m_pos_x;
 	int m_pos_y;
 	int m_total_frames = 2;
 	int m_frame = 0;
-	bool m_is_picked_up = false;
 	int m_score = 1000;
 };
-

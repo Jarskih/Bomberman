@@ -6,6 +6,8 @@
 #include "Service.h"
 #include "Musicplayer.h"
 
+using namespace Config;
+
 void Bomb::render(SDL_Renderer* renderer)
 {
 	const Uint32 currentTime = SDL_GetTicks() - timeDropped;
@@ -96,7 +98,7 @@ void Bomb::renderFlames(SDL_Renderer* renderer, int frames)
 			int y = index_y - range;
 			if (canSpawnFlame(m_map, index_x, y))
 			{
-				auto flame = makesp<Flame>(index_x, y, range, m_flamePower, renderer);
+				auto flame = makesp<Flame>(index_x, y, renderer);
 				if (range < m_flamePower)
 				{
 					flame->loadTextures("flameY");
@@ -120,7 +122,7 @@ void Bomb::renderFlames(SDL_Renderer* renderer, int frames)
 			int y = index_y + range;
 			if (canSpawnFlame(m_map, index_x, y))
 			{
-				auto flame = makesp<Flame>(index_x, y, range, m_flamePower, renderer);
+				auto flame = makesp<Flame>(index_x, y, renderer);
 				if (range < m_flamePower)
 				{
 					flame->loadTextures("flameY");
@@ -144,7 +146,7 @@ void Bomb::renderFlames(SDL_Renderer* renderer, int frames)
 			int x = index_x - range;
 			if (canSpawnFlame(m_map, x, index_y))
 			{
-				auto flame = makesp<Flame>(x, index_y, range, m_flamePower, renderer);
+				auto flame = makesp<Flame>(x, index_y, renderer);
 				if (range < m_flamePower)
 				{
 					flame->loadTextures("flameX");
@@ -168,7 +170,7 @@ void Bomb::renderFlames(SDL_Renderer* renderer, int frames)
 			int x = index_x + range;
 			if (canSpawnFlame(m_map, x, index_y))
 			{
-				auto flame = makesp<Flame>(x, index_y, range, m_flamePower, renderer);
+				auto flame = makesp<Flame>(x, index_y, renderer);
 				if (range < m_flamePower)
 				{
 					flame->loadTextures("flameX");

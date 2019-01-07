@@ -4,23 +4,25 @@
 #include "Textures.h"
 #include "Hud.h"
 #include "Pathfinding.h"
+#include "State.h"
 
 void Enemy::update()
 {
-	if (SDL_GetTicks() - m_decision_time > m_decision_delay)
-	{
-		decide();
-	}
 	if (m_is_alive)
 	{
-		loadTexture(m_sprite);
-		if (m_enemy_type == HARD)
+		if (SDL_GetTicks() - m_decision_time > m_decision_delay)
 		{
-			smartMove();
+			decide();
+			if (m_enemy_type == HARD)
+			{
+				smartMove();
+			}
 		}
-		else if (m_enemy_type == EASY)
+
+		loadTexture(m_sprite);
+		if (m_enemy_type == EASY)
 		{
-			randomMove();
+			move();
 		}
 	}
 }
@@ -40,11 +42,11 @@ void Enemy::render()
 
 	// Debug
 
-	// SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);
-	// SDL_RenderDrawRect(m_renderer, &collider);
+	SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);
+	SDL_RenderDrawRect(m_renderer, &m_collider);
 
 	// SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 0);
-	// SDL_RenderDrawRect(m_renderer, &windowRect);
+	//SDL_RenderDrawRect(m_renderer, &m_window_rect);
 
 	for (const auto& block : m_path)
 	{
@@ -69,7 +71,7 @@ void Enemy::render()
 	SDL_RenderCopy(m_renderer, m_texture, &m_texture_rect, &m_window_rect);
 }
 
-void Enemy::loadTexture(const std::string sprite)
+void Enemy::loadTexture(std::string sprite)
 {
 	if (!m_texture_loaded)
 	{
@@ -81,8 +83,6 @@ void Enemy::loadTexture(const std::string sprite)
 
 void Enemy::decide()
 {
-	m_decision_time = SDL_GetTicks();
-
 	if (m_enemy_type == HARD)
 	{
 		auto map = Service<Map>::Get();
@@ -90,6 +90,7 @@ void Enemy::decide()
 		target_block = map->findBlockByCoordinates(player->getPositionX(), player->getPositionY());
 		current_block = map->findBlockByCoordinates(m_pos_x, m_pos_y);
 		m_path = Pathfinding::calculatePath(target_block, current_block);
+		m_decision_time = SDL_GetTicks();
 	}
 	else if (m_enemy_type == EASY)
 	{
@@ -156,11 +157,17 @@ void Enemy::decide()
 		default:
 			break;
 		}
+		m_decision_time = SDL_GetTicks();
 	}
 }
 
-void Enemy::randomMove()
+void Enemy::move()
 {
+	auto map = Service<Map>::Get();
+	const int oldX = m_pos_x;
+	const int oldY = m_pos_y;
+	bool colliding = false;
+
 	switch (m_state) {
 	case UP:
 		m_pos_y -= m_speed;
@@ -177,56 +184,6 @@ void Enemy::randomMove()
 	default:
 		break;
 	}
-}
-
-void Enemy::smartMove()
-{
-	auto map = Service<Map>::Get();
-
-	if (!m_path.empty())
-	{
-		m_next_block = m_path.front();
-		const auto nextBlockCoordinates = Helpers::GetBlockCenter(m_next_block->m_index_x, m_next_block->m_index_y);
-
-		m_speed_x = 0;
-		m_speed_y = 0;
-
-		const int delta_x = abs(m_next_block->m_index_x - current_block->m_index_x);
-		const int delta_y = abs(m_next_block->m_index_y - current_block->m_index_y);
-
-		if (delta_x >= delta_y) {
-
-			if (m_pos_x > nextBlockCoordinates.first)
-			{
-				m_speed_x = -m_speed;
-			}
-			else
-			{
-				m_speed_x = m_speed;
-			}
-		}
-		else
-		{
-			if (m_pos_y > nextBlockCoordinates.second)
-			{
-				m_speed_y = -m_speed;
-			}
-			else
-			{
-				m_speed_y = m_speed;
-			}
-		}
-		m_pos_y += m_speed_y;
-		m_pos_x += m_speed_x;
-	}
-}
-
-void Enemy::checkCollisions()
-{
-	const int oldX = m_pos_x;
-	const int oldY = m_pos_y;
-	bool colliding = false;
-
 	m_window_rect.x = m_pos_x;
 	m_collider.x = m_pos_x + PADDING_X;
 	m_window_rect.y = m_pos_y;
@@ -256,18 +213,104 @@ void Enemy::checkCollisions()
 				}
 			}
 		}
+	}
+	if (colliding)
+	{
+		m_pos_x = oldX;
+		m_window_rect.x = m_pos_x;
+		m_collider.x = m_pos_x + PADDING_X;;
 
-		if (colliding)
-		{
-			m_pos_x = oldX;
-			m_window_rect.x = m_pos_x;
-			m_collider.x = m_pos_x + PADDING_X;;
+		m_pos_y = oldY;
+		m_window_rect.y = m_pos_y;
+		m_collider.y = m_pos_y + PADDING_Y;
+		decide();
+	}
 
-			m_pos_y = oldY;
-			m_window_rect.y = m_pos_y;
-			m_collider.y = m_pos_y + PADDING_Y;
-			decide();
+}
+void Enemy::smartMove()
+{
+	auto map = Service<Map>::Get();
+	const int oldX = m_pos_x;
+	const int oldY = m_pos_y;
+	bool colliding = false;
+
+	if (!m_path.empty())
+	{
+		m_next_block = m_path.front();
+		const auto nextBlockCoordinates = Helpers::GetBlockCenter(m_next_block->m_index_x, m_next_block->m_index_y);
+
+		m_speed_x = 0;
+		m_speed_y = 0;
+
+		const int delta_x = abs(m_next_block->m_index_x - current_block->m_index_x);
+		const int delta_y = abs(m_next_block->m_index_y - current_block->m_index_y);
+
+		if (delta_x >= delta_y) {
+
+			if (m_pos_x > nextBlockCoordinates.first)
+			{
+				m_speed_x -= m_speed;
+			}
+			else
+			{
+				m_speed_x += m_speed;
+			}
 		}
+		else
+		{
+			if (m_pos_y > nextBlockCoordinates.second)
+			{
+				m_speed_y -= m_speed;
+			}
+			else
+			{
+				m_speed_y += m_speed;
+			}
+		}
+		m_pos_y += m_speed_y;
+		m_pos_x += m_speed_x;
+	}
+
+	m_window_rect.x = m_pos_x;
+	m_collider.x = m_pos_x + PADDING_X;
+	m_window_rect.y = m_pos_y;
+	m_collider.y = m_pos_y + PADDING_Y;
+
+	for (const auto& player : map->m_playerList)
+	{
+		for (const auto& bomb : player->m_bombs)
+		{
+			if (Helpers::CheckCollision(m_collider, bomb->collider))
+			{
+				colliding = true;
+				break;
+			}
+		}
+	}
+	if (!colliding)
+	{
+		for (auto& x : map->tileSet)
+		{
+			for (const auto& y : x)
+			{
+				if (y->m_block_type != GRASS && Helpers::CheckCollision(m_collider, y->m_collider))
+				{
+					colliding = true;
+					break;
+				}
+			}
+		}
+	}
+
+	if (colliding)
+	{
+		m_pos_x = oldX;
+		m_window_rect.x = m_pos_x;
+		m_collider.x = m_pos_x + PADDING_X;;
+
+		m_pos_y = oldY;
+		m_window_rect.y = m_pos_y;
+		m_collider.y = m_pos_y + PADDING_Y;
 	}
 }
 

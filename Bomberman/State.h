@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "GameRules.h"
+#include "Config.h"
 
 struct State
 {
@@ -11,14 +11,15 @@ struct State
 		DEFEAT
 
 	};
-	State() {};
-	int score = 0;
-	int players = NUMBER_OF_PLAYERS;
-	int lives = STARTING_LIVES;
-	int scene = MENU;
+	State() = default;
+	int m_score = 0;
+	int m_players = Config::NUMBER_OF_PLAYERS;
+	int m_scene = MENU;
+	int m_lives = Config::STARTING_LIVES;
 
 	void changeScene(int newScene);
 	void incrementScore(int addedScore);
 	void incrementLives();
+	void decrementLives();
 	void sceneTransition();
 };

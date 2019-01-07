@@ -1,13 +1,13 @@
 #include "Helpers.h"
-#include "GameRules.h"
+#include "Config.h"
 
 namespace Helpers {
 
 	// Get block center coordinates from indexes
 	std::pair<int, int> GetBlockCenter(int index_x, int index_y)
 	{
-		const int x = index_x * BLOCK_WIDTH; // + BLOCK_OFFSET_X;
-		const int y = index_y * BLOCK_HEIGHT;; // + BLOCK_OFFSET_Y;
+		const int x = index_x * Config::BLOCK_WIDTH; // + BLOCK_OFFSET_X;
+		const int y = index_y * Config::BLOCK_HEIGHT;; // + BLOCK_OFFSET_Y;
 
 		std::pair<int, int> blockCenter;
 		blockCenter.first = x;
@@ -27,8 +27,8 @@ namespace Helpers {
 		{
 			y = 1;
 		}
-		const float index_x = x / BLOCK_WIDTH;
-		const float index_y = y / BLOCK_HEIGHT;
+		const float index_x = x / Config::BLOCK_WIDTH;
+		const float index_y = y / Config::BLOCK_HEIGHT;
 
 		std::pair<int, int> blockIndexes;
 		blockIndexes.first = ceil(index_x);

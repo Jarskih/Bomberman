@@ -5,6 +5,10 @@
 #include "Block.h"
 #include "Map.h"
 
+/*
+ * A* implementation of searching shortest path to player through grass and breakable blocks
+ */
+
 namespace Pathfinding {
 	inline std::list<sp<Block>> discoverNeighbors(sp<Block> &block)
 	{

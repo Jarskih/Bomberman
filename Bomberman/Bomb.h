@@ -2,7 +2,7 @@
 #include <SDL.h>
 #include <string>
 #include <map>
-#include "GameRules.h"
+#include "Config.h"
 #include "Flame.h"
 #include <utility>
 #include <vector>
@@ -11,8 +11,8 @@
 
 class Map;
 class Enemy;
-static const int BOMB_WIDTH = BLOCK_WIDTH;
-static const int BOMB_HEIGHT = BLOCK_HEIGHT;
+static const int BOMB_WIDTH = Config::BLOCK_WIDTH;
+static const int BOMB_HEIGHT = Config::BLOCK_HEIGHT;
 
 class Bomb
 {
@@ -34,7 +34,7 @@ public:
 	bool isExploded = false;
 	void render(SDL_Renderer* renderer);
 	void load_textures(SDL_Renderer* renderer, const std::string &sprite);
-	SDL_Rect collider = { 0,0, BLOCK_WIDTH, BLOCK_HEIGHT };
+	SDL_Rect collider = { 0,0, Config::BLOCK_WIDTH, Config::BLOCK_HEIGHT };
 	bool hitFlame = false;
 	bool firstCollision = true;
 	std::vector<Enemy*> const enemyFirstCollision = {};

@@ -3,6 +3,8 @@
 #include "PowerUp.h"
 #include "Map.h"
 
+using namespace Config;
+
 std::pair <int, int> Block::getBlockIndex() const
 {
 	return Helpers::GetCurrentBlock(m_pos_x, m_pos_y);
