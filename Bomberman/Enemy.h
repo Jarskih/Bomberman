@@ -9,57 +9,70 @@ static const int ACTOR_HEIGHT = 80;
 static const int PADDING_X = BLOCK_WIDTH / 10;
 static const int PADDING_Y = BLOCK_HEIGHT / 10;
 
-const enum EnemyType {
+const enum EnemyType
+{
 	EASY,
 	HARD
 };
 
 class Map;
 
-class Enemy {
+class Enemy
+{
 public:
 	Enemy(const EnemyType enemy_type, SDL_Renderer* renderer, const int index_x, const int index_y) :
 		m_enemy_type(enemy_type), m_renderer(renderer)
 	{
-		const auto blockCenter = Helpers::getBlockCenter(index_x, index_y);
+		const auto blockCenter = Helpers::GetBlockCenter(index_x, index_y);
 		m_pos_x = blockCenter.first;
 		m_pos_y = blockCenter.second;
+		if (m_enemy_type == EASY)
+		{
+			m_speed = 2;
+		}
+		else if (m_enemy_type == HARD)
+		{
+			m_speed = 4;
+		}
 	};
 	void update();
 	void render();
-	void move();
+	void smartMove();
 
-	bool isAlive = true;
-	enum states { DOWN, UP, LEFT, RIGHT };
-	int state = DOWN;
+	bool m_is_alive = true;
+
+	enum States { DOWN, UP, LEFT, RIGHT };
+
+	int m_state = DOWN;
 	EnemyType m_enemy_type = EASY;
-	SDL_Rect collider = { 0, 0, BLOCK_WIDTH - PADDING_X, BLOCK_HEIGHT - PADDING_Y };
+	SDL_Rect m_collider = { 0, 0, BLOCK_WIDTH - PADDING_X, BLOCK_HEIGHT - PADDING_Y };
 	void die();
 private:
 	SDL_Renderer* m_renderer;
-	sp<Block> nextBlock;
-	sp<Block> targetBlock;
-	sp<Block> currentBlock;
+	sp<Block> m_next_block;
+	sp<Block> target_block;
+	sp<Block> current_block;
 	int m_pos_x;
 	int m_pos_y;
-	int speed_x = 0;
-	int speed_y = 0;
-	int frame = 0;
+	int m_speed_x = 0;
+	int m_speed_y = 0;
+	int m_frame = 0;
 	int m_score = 100;
-	Uint32 timeDied;
-	Uint32 deathDelay = 1500;
+	Uint32 m_time_died = 0;
+	Uint32 m_death_delay = 1500;
 	SDL_Texture* m_texture = nullptr;
 	bool m_texture_loaded = false;
 	std::string m_sprite = "easyEnemy";
-	SDL_Rect windowRect = { 0, 0, BLOCK_WIDTH, BLOCK_HEIGHT };
-	SDL_Rect textureRect = { 0, 0, 0, 0 };
-	Uint32 decisionTime = 0;
-	const Uint32 decisionDelay = 100;
-	std::list<sp<Block>> path;
+	SDL_Rect m_window_rect = { 0, 0, BLOCK_WIDTH, BLOCK_HEIGHT };
+	SDL_Rect m_texture_rect = { 0, 0, 0, 0 };
+	Uint32 m_decision_time = 0;
+	const Uint32 m_decision_delay = 50;
+	std::list<sp<Block>> m_path;
 
-	bool moving = false;
-	int speed = 2;
+	bool m_moving = false;
+	int m_speed = 2;
 
 	void loadTexture(std::string sprite);
 	void decide();
+	void randomMove();
 };

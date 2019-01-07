@@ -9,8 +9,9 @@ namespace Pathfinding {
 	inline std::list<sp<Block>> discoverNeighbors(sp<Block> &block)
 	{
 		std::list<sp<Block>> neighbors;
-		auto map = Service<Map>::Get();
+		const auto map = Service<Map>::Get();
 
+		/*
 		for (int x = -1; x <= 1; x++)
 		{
 			for (int y = -1; y <= 1; y++)
@@ -20,8 +21,8 @@ namespace Pathfinding {
 					continue;
 				}
 
-				const int checkX = block->index_x + x;
-				const int checkY = block->index_y + y;
+				const int checkX = block->m_index_x + x;
+				const int checkY = block->m_index_y + y;
 
 				if (checkX >= 0 && checkX < MAX_BLOCKS_X && checkY >= 0 && checkY < MAX_BLOCKS_Y)
 				{
@@ -29,13 +30,48 @@ namespace Pathfinding {
 				}
 			}
 		}
+		*/
+
+		for (int y = -1; y <= 1; y++)
+		{
+			if (y == 0)
+			{
+				continue;
+			}
+
+			const auto checkX = block->m_index_x;
+			const auto checkY = block->m_index_y + y;
+
+			if (checkY >= 0 && checkY < MAX_BLOCKS_Y)
+			{
+				neighbors.push_front(map->tileSet[checkX][checkY]);
+			}
+		}
+
+
+		for (int x = -1; x <= 1; x++)
+		{
+			if (x == 0)
+			{
+				continue;
+			}
+
+			const auto checkY = block->m_index_y;
+			const auto checkX = block->m_index_x + x;
+
+			if (checkX >= 0 && checkX < MAX_BLOCKS_X)
+			{
+				neighbors.push_front(map->tileSet[checkX][checkY]);
+			}
+		}
+
 		return neighbors;
 	}
 
 	inline int getDistance(sp<Block> &target, sp<Block> &start)
 	{
-		const int distX = abs(target->index_x - start->index_x);
-		const int distY = abs(target->index_y - start->index_y);
+		const int distX = abs(target->m_index_x - start->m_index_x);
+		const int distY = abs(target->m_index_y - start->m_index_y);
 
 
 		if (distX > distY)
@@ -56,10 +92,8 @@ namespace Pathfinding {
 		while (current != start)
 		{
 			path.emplace_front(current);
-			current = current->parent;
+			current = current->m_parent;
 		}
-
-		path.reverse();
 		return path;
 	}
 
@@ -84,7 +118,7 @@ namespace Pathfinding {
 			// Find closest block to target from start
 			for (auto &block : open)
 			{
-				if (block->fCost() < current->fCost() || block->fCost() == current->fCost() && block->hCost < current->hCost)
+				if (block->fCost() < current->fCost() || block->fCost() == current->fCost() && block->m_h_cost < current->m_h_cost)
 				{
 					current = block;
 				}
@@ -104,18 +138,18 @@ namespace Pathfinding {
 			for (auto &neighbor : discoverNeighbors(current))
 			{
 				// if block is not walkable or it is already in closed set
-				if (neighbor->blockType != GRASS || std::find(closed.begin(), closed.end(), neighbor) != closed.end())
+				if ((neighbor->m_block_type != GRASS && neighbor->m_block_type != BREAKABLE) || std::find(closed.begin(), closed.end(), neighbor) != closed.end())
 				{
 					continue;
 				}
 
-				const int newCostToNeighbor = current->gCost + getDistance(current, neighbor);
+				const int newCostToNeighbor = current->m_g_cost + getDistance(current, neighbor);
 				//if new path to neighbor is shorter or neighbor is not in open
-				if (newCostToNeighbor < neighbor->gCost || std::find(open.begin(), open.end(), neighbor) == open.end())
+				if (newCostToNeighbor < neighbor->m_g_cost || std::find(open.begin(), open.end(), neighbor) == open.end())
 				{
-					neighbor->gCost = newCostToNeighbor;
-					neighbor->hCost = getDistance(neighbor, target);
-					neighbor->parent = current;
+					neighbor->m_g_cost = newCostToNeighbor;
+					neighbor->m_h_cost = getDistance(neighbor, target);
+					neighbor->m_parent = current;
 
 					if (std::find(open.begin(), open.end(), neighbor) == open.end())
 					{

@@ -4,7 +4,7 @@
 Uint32 Timer::getTicks() const
 {
 
-	Uint32 time = 0;
+	Uint32 time;
 
 	if (m_isPaused) {
 		time = m_pause;
@@ -17,21 +17,21 @@ Uint32 Timer::getTicks() const
 
 Uint32 Timer::getSeconds() const
 {
-	Uint32 seconds = m_roundTime - getTicks() / 1000 - getMinutes() * 60;
+	const Uint32 seconds = m_roundTime - getTicks() / 1000 - getMinutes() * 60;
 
 	return seconds;
 }
 
 Uint32 Timer::getMinutes() const
 {
-	Uint32 minutes = (m_roundTime - getTicks() / 1000) / 60;
+	const Uint32 minutes = (m_roundTime - getTicks() / 1000) / 60;
 
 	return minutes;
 }
 
 int Timer::getTimeLeft() const
 {
-	auto timeLeft = m_roundTime - getTicks() / 1000;
+	const auto timeLeft = m_roundTime - getTicks() / 1000;
 	return timeLeft;
 }
 

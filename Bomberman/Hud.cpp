@@ -53,28 +53,28 @@ void Hud::render(const sp<Timer>& timer)
 	m_lives = state->lives;
 
 	auto lives = std::to_string(m_lives);
-	if (!loadFromRenderedText(lives, textColor))
+	if (!loadFromRenderedText(lives, m_text_color))
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to render text texture!\n");
 	}
 	SDL_RenderCopy(m_renderer, m_textTexture, nullptr, &m_livesRect);
 
 	std::string min = std::to_string(m_min);
-	if (!loadFromRenderedText(min, textColor))
+	if (!loadFromRenderedText(min, m_text_color))
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to render text texture!\n");
 	}
 	SDL_RenderCopy(m_renderer, m_textTexture, nullptr, &m_minRect);
 
 	std::string sec = std::to_string(m_sec);
-	if (!loadFromRenderedText(sec, textColor))
+	if (!loadFromRenderedText(sec, m_text_color))
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to render text texture!\n");
 	}
 	SDL_RenderCopy(m_renderer, m_textTexture, nullptr, &m_secRect);
 
 	auto score = std::to_string(m_score);
-	if (!loadFromRenderedText(score, textColor))
+	if (!loadFromRenderedText(score, m_text_color))
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to render text texture!\n");
 	}

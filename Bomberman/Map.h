@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 #include <SDL.h>
-#include <array>
 #include "Helpers.h"
 #include "Block.h"
 #include "Player.h"

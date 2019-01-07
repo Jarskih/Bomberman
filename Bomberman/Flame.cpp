@@ -45,27 +45,28 @@ void Flame::colliderResize(int x, int y, int width, int height)
 	collider.h = height;
 }
 
-void Flame::checkCollision() {
+void Flame::checkCollision() const
+{
 	auto map = Service<Map>::Get();
 	for (const auto& player : map->m_playerList)
 	{
-		if (Helpers::checkCollision(collider, player->getCollider()))
+		if (Helpers::CheckCollision(collider, player->getCollider()))
 		{
 			player->die();
 		}
 
-		for (const auto& bomb : player->bombs)
+		for (const auto& bomb : player->m_bombs)
 		{
-			if (Helpers::checkCollision(collider, bomb->collider))
+			if (Helpers::CheckCollision(collider, bomb->collider))
 			{
 				bomb->hitFlame = true;
 			}
 		}
 		for (const auto& enemy : map->m_enemyList)
 		{
-			if (Helpers::checkCollision(collider, enemy->collider))
+			if (Helpers::CheckCollision(collider, enemy->m_collider))
 			{
-				if (enemy->isAlive) {
+				if (enemy->m_is_alive) {
 					enemy->die();
 				}
 			}

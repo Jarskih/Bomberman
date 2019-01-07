@@ -7,20 +7,27 @@
 
 void Enemy::update()
 {
-	if (SDL_GetTicks() - decisionTime > decisionDelay)
+	if (SDL_GetTicks() - m_decision_time > m_decision_delay)
 	{
 		decide();
 	}
-	if (isAlive)
+	if (m_is_alive)
 	{
 		loadTexture(m_sprite);
-		move();
+		if (m_enemy_type == HARD)
+		{
+			smartMove();
+		}
+		else if (m_enemy_type == EASY)
+		{
+			randomMove();
+		}
 	}
 }
 
 void Enemy::render()
 {
-	if (!isAlive && SDL_GetTicks() - timeDied > deathDelay) {
+	if (!m_is_alive && SDL_GetTicks() - m_time_died > m_death_delay) {
 		return;
 	}
 
@@ -28,8 +35,8 @@ void Enemy::render()
 	const int animatedFrames = 4;
 	const int delayPerFrame = 200;
 
-	collider.x = m_pos_x;
-	collider.y = m_pos_y;
+	m_collider.x = m_pos_x;
+	m_collider.y = m_pos_y;
 
 	// Debug
 
@@ -39,30 +46,30 @@ void Enemy::render()
 	// SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 0);
 	// SDL_RenderDrawRect(m_renderer, &windowRect);
 
-	for (auto block : path)
+	for (const auto& block : m_path)
 	{
 		SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);
-		SDL_RenderDrawRect(m_renderer, &block->collider);
+		SDL_RenderDrawRect(m_renderer, &block->m_collider);
 	}
 
-	if (!isAlive)
+	if (!m_is_alive)
 	{
-		frame = 5;
+		m_frame = 5;
 	}
 	else
 	{
-		frame = (SDL_GetTicks() / delayPerFrame) % animatedFrames;
+		m_frame = (SDL_GetTicks() / delayPerFrame) % animatedFrames;
 	}
 
-	textureRect.y = frame * textureRect.h;
-	SDL_QueryTexture(m_texture, nullptr, nullptr, &textureRect.w, &textureRect.h);
+	m_texture_rect.y = m_frame * m_texture_rect.h;
+	SDL_QueryTexture(m_texture, nullptr, nullptr, &m_texture_rect.w, &m_texture_rect.h);
 
-	textureRect.h /= totalFrames;
+	m_texture_rect.h /= totalFrames;
 
-	SDL_RenderCopy(m_renderer, m_texture, &textureRect, &windowRect);
+	SDL_RenderCopy(m_renderer, m_texture, &m_texture_rect, &m_window_rect);
 }
 
-void Enemy::loadTexture(std::string sprite)
+void Enemy::loadTexture(const std::string sprite)
 {
 	if (!m_texture_loaded)
 	{
@@ -74,167 +81,165 @@ void Enemy::loadTexture(std::string sprite)
 
 void Enemy::decide()
 {
-	decisionTime = SDL_GetTicks();
+	m_decision_time = SDL_GetTicks();
 
-	auto map = Service<Map>::Get();
-	auto player = map->m_playerList.front();
-	targetBlock = map->findBlockByCoordinates(player->getPositionX(), player->getPositionY());
-	currentBlock = map->findBlockByCoordinates(m_pos_x, m_pos_y);
-	path = Pathfinding::calculatePath(targetBlock, currentBlock);
-
-	int random = rand() % 10;
-
-	/*
-	switch (state)
+	if (m_enemy_type == HARD)
 	{
+		auto map = Service<Map>::Get();
+		const auto player = map->m_playerList.front();
+		target_block = map->findBlockByCoordinates(player->getPositionX(), player->getPositionY());
+		current_block = map->findBlockByCoordinates(m_pos_x, m_pos_y);
+		m_path = Pathfinding::calculatePath(target_block, current_block);
+	}
+	else if (m_enemy_type == EASY)
+	{
+		int random = rand() % 10;
+
+		switch (m_state)
+		{
+		case UP:
+			if (random < 4)
+			{
+				m_state = LEFT;
+			}
+			else if (random > 3 && random < 8)
+			{
+				m_state = RIGHT;
+			}
+			else
+			{
+				m_state = DOWN;
+			}
+			break;
+		case DOWN:
+			if (random < 4)
+			{
+				m_state = LEFT;
+			}
+			else if (random > 3 && random < 8)
+			{
+				m_state = RIGHT;
+			}
+			else
+			{
+				m_state = UP;
+			}
+			break;
+		case LEFT:
+			if (random < 4)
+			{
+				m_state = UP;
+			}
+			else if (random > 3 && random < 8)
+			{
+				m_state = DOWN;
+			}
+			else
+			{
+				m_state = RIGHT;
+			}
+			break;
+		case RIGHT:
+			if (random < 4)
+			{
+				m_state = UP;
+			}
+			else if (random > 3 && random < 8)
+			{
+				m_state = DOWN;
+			}
+			else
+			{
+				m_state = LEFT;
+			}
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void Enemy::randomMove()
+{
+	switch (m_state) {
 	case UP:
-		if (random < 4)
-		{
-			state = LEFT;
-		}
-		else if (random > 3 && random < 8)
-		{
-			state = RIGHT;
-		}
-		else
-		{
-			state = DOWN;
-		}
+		m_pos_y -= m_speed;
 		break;
 	case DOWN:
-		if (random < 4)
-		{
-			state = LEFT;
-		}
-		else if (random > 3 && random < 8)
-		{
-			state = RIGHT;
-		}
-		else
-		{
-			state = UP;
-		}
+		m_pos_y += m_speed;
 		break;
 	case LEFT:
-		if (random < 4)
-		{
-			state = UP;
-		}
-		else if (random > 3 && random < 8)
-		{
-			state = DOWN;
-		}
-		else
-		{
-			state = RIGHT;
-		}
+		m_pos_x -= m_speed;
 		break;
 	case RIGHT:
-		if (random < 4)
-		{
-			state = UP;
-		}
-		else if (random > 3 && random < 8)
-		{
-			state = DOWN;
-		}
-		else
-		{
-			state = LEFT;
-		}
+		m_pos_x += m_speed;
 		break;
 	default:
 		break;
 	}
-	*/
 }
 
-void Enemy::move()
+void Enemy::smartMove()
 {
 	auto map = Service<Map>::Get();
+
+	if (!m_path.empty())
+	{
+		m_next_block = m_path.front();
+		const auto nextBlockCoordinates = Helpers::GetBlockCenter(m_next_block->m_index_x, m_next_block->m_index_y);
+
+		m_speed_x = 0;
+		m_speed_y = 0;
+
+		const int delta_x = abs(m_next_block->m_index_x - current_block->m_index_x);
+		const int delta_y = abs(m_next_block->m_index_y - current_block->m_index_y);
+
+		if (delta_x >= delta_y) {
+
+			if (m_pos_x > nextBlockCoordinates.first)
+			{
+				m_speed_x = -m_speed;
+			}
+			else
+			{
+				m_speed_x = m_speed;
+			}
+		}
+		else
+		{
+			if (m_pos_y > nextBlockCoordinates.second)
+			{
+				m_speed_y = -m_speed;
+			}
+			else
+			{
+				m_speed_y = m_speed;
+			}
+		}
+		m_pos_y += m_speed_y;
+		m_pos_x += m_speed_x;
+	}
+}
+
+void Enemy::checkCollisions()
+{
 	const int oldX = m_pos_x;
 	const int oldY = m_pos_y;
 	bool colliding = false;
 
-	if (!path.empty())
-	{
-		nextBlock = path.front();
-
-
-		int delta_x = abs(nextBlock->index_x - currentBlock->index_x);
-		int delta_y = abs(nextBlock->index_y - currentBlock->index_y);
-
-		if (delta_x >= delta_y)
-		{
-			if (nextBlock->index_x < currentBlock->index_x)
-			{
-				speed_x = -speed;
-			}
-			else
-			{
-				speed_x = speed;
-			}
-
-		}
-		else
-		{
-			if (nextBlock->index_y < currentBlock->index_y)
-			{
-				speed_y = -speed;
-			}
-			else
-			{
-				speed_y = speed;
-			}
-		}
-
-		m_pos_y += speed_y;
-		m_pos_x += speed_x;
-	}
-
-
-	/*
-	switch (state) {
-	case UP:
-		m_pos_y -= speed;
-		break;
-	case DOWN:
-		m_pos_y += speed;
-		break;
-	case LEFT:
-		m_pos_x -= speed;
-		break;
-	case RIGHT:
-		m_pos_x += speed;
-		break;
-	default:
-		break;
-	}
-	*/
-	windowRect.x = m_pos_x;
-	collider.x = m_pos_x + PADDING_X;
-	windowRect.y = m_pos_y;
-	collider.y = m_pos_y + PADDING_Y;
+	m_window_rect.x = m_pos_x;
+	m_collider.x = m_pos_x + PADDING_X;
+	m_window_rect.y = m_pos_y;
+	m_collider.y = m_pos_y + PADDING_Y;
 
 	for (const auto& player : map->m_playerList)
 	{
-		for (const auto& bomb : player->bombs)
+		for (const auto& bomb : player->m_bombs)
 		{
-			if (Helpers::checkCollision(collider, bomb->collider))
+			if (Helpers::CheckCollision(m_collider, bomb->collider))
 			{
-				// auto collisionList = bomb->enemyFirstCollision;
-				// auto it = std::find(collisionList.begin(), collisionList.end(), this);
-				if (true)
-				{
-					colliding = true;
-					break;
-				}
-				else
-				{
-					// TODO add to list
-					//collisionList->push_back(this);
-				}
-
+				colliding = true;
+				break;
 			}
 		}
 	}
@@ -243,7 +248,7 @@ void Enemy::move()
 		for (int x = 0; x < MAX_BLOCKS_X; x++) {
 			for (int y = 0; y < MAX_BLOCKS_Y; y++) {
 				{
-					if (map->tileSet[x][y]->blockType != GRASS && Helpers::checkCollision(collider, map->tileSet[x][y]->collider))
+					if (map->tileSet[x][y]->m_block_type != GRASS && Helpers::CheckCollision(m_collider, map->tileSet[x][y]->m_collider))
 					{
 						colliding = true;
 						break;
@@ -255,12 +260,12 @@ void Enemy::move()
 		if (colliding)
 		{
 			m_pos_x = oldX;
-			windowRect.x = m_pos_x;
-			collider.x = m_pos_x + PADDING_X;;
+			m_window_rect.x = m_pos_x;
+			m_collider.x = m_pos_x + PADDING_X;;
 
 			m_pos_y = oldY;
-			windowRect.y = m_pos_y;
-			collider.y = m_pos_y + PADDING_Y;
+			m_window_rect.y = m_pos_y;
+			m_collider.y = m_pos_y + PADDING_Y;
 			decide();
 		}
 	}
@@ -268,7 +273,7 @@ void Enemy::move()
 
 void Enemy::die()
 {
-	timeDied = SDL_GetTicks();
-	isAlive = false;
+	m_time_died = SDL_GetTicks();
+	m_is_alive = false;
 	Service<State>::Get()->incrementScore(m_score);
 }

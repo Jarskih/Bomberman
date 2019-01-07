@@ -5,7 +5,6 @@
 #include <string>
 #include "Timer.h"
 #include "Helpers.h"
-#include <iostream>
 
 class Hud
 {
@@ -15,7 +14,6 @@ public:
 		loadFont();
 	};
 	void render(const sp<Timer>& timer);
-	void incrementScore(int score);
 private:
 	bool loadFromRenderedText(std::string &textureText, SDL_Color textColor);
 	bool loadFont();
@@ -23,7 +21,7 @@ private:
 	int m_height = 0;
 	SDL_Renderer* m_renderer;
 	TTF_Font* m_font = nullptr;
-	SDL_Color textColor = { 255, 255, 255 };
+	SDL_Color m_text_color = { 255, 255, 255 };
 	int m_score = 0;
 	int m_min = 0;
 	int m_sec = 0;

@@ -3,11 +3,11 @@
 #include <memory>
 
 namespace Helpers {
-	std::pair<int, int> getBlockCenter(int index_x, int index_y);
-	std::pair<int, int> getCurrentBlock(float x, float y);
-	bool checkCollision(SDL_Rect a, SDL_Rect b);
-	bool isOutOfGameArea(SDL_Rect a, SDL_Rect b);
-	int randomNumber(int max);
+	std::pair<int, int> GetBlockCenter(int indexX, int indexY);
+	std::pair<int, int> GetCurrentBlock(float x, float y);
+	bool CheckCollision(SDL_Rect a, SDL_Rect b);
+	bool IsOutOfGameArea(SDL_Rect a, SDL_Rect b);
+	int RandomNumber(int max);
 }
 
 template <class T> using sp = std::shared_ptr<T>;

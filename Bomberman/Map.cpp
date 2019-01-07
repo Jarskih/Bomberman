@@ -54,8 +54,6 @@ void Map::render(sp<Map> &map) const
 
 void Map::generateMap()
 {
-	bool levelLoaded = true;
-
 	//Open the map
 	std::ifstream map("assets/level1.map");
 
@@ -63,7 +61,6 @@ void Map::generateMap()
 	if (!map.is_open())
 	{
 		printf("Unable to load map file!\n");
-		levelLoaded = false;
 	}
 
 	for (int y = 0; y < m_size_y; y++) {
@@ -83,13 +80,12 @@ void Map::generateMap()
 			{
 				//Stop loading map
 				std::cout << "Error loading map: Unexpected end of file!\n" << std::endl;
-				levelLoaded = false;
 				break;
 			}
 			else
 			{
 				//const auto block = makesp<Block>(posX, posY, MAP_LAYOUT[y][x]);
-				sp<Block> block = makesp<Block>(posX, posY, blockType);
+				const sp<Block> block = makesp<Block>(posX, posY, blockType);
 				tileSet[x][y] = block;
 				//tileSet.emplace_back(block);
 			}
@@ -109,8 +105,8 @@ void Map::spawnGameObjects()
 		bool allowedBlock = false;
 		while (!allowedBlock)
 		{
-			x = Helpers::randomNumber(MAX_BLOCKS_X - 1);
-			y = Helpers::randomNumber(MAX_BLOCKS_Y - 1);
+			x = Helpers::RandomNumber(MAX_BLOCKS_X - 1);
+			y = Helpers::RandomNumber(MAX_BLOCKS_Y - 1);
 
 			// Do not spawn enemies next to player
 			if (x < 5 || y < 5)
@@ -119,7 +115,7 @@ void Map::spawnGameObjects()
 			}
 
 			const auto block = tileSet[x][y];
-			if (block->blockType == GRASS)
+			if (block->m_block_type == GRASS)
 			{
 				const auto enemyObject = makesp<Enemy>(EASY, m_renderer, x, y);
 				m_enemyList.push_back(enemyObject);
@@ -140,12 +136,12 @@ void Map::spawnPowerUps()
 		bool allowedBlock = false;
 		while (!allowedBlock)
 		{
-			x = Helpers::randomNumber(MAX_BLOCKS_X - 1);
-			y = Helpers::randomNumber(MAX_BLOCKS_Y - 1);
+			x = Helpers::RandomNumber(MAX_BLOCKS_X - 1);
+			y = Helpers::RandomNumber(MAX_BLOCKS_Y - 1);
 
-			if (tileSet[x][y]->blockType == BREAKABLE && !tileSet[x][y]->blockHasPowerUp) {
-				tileSet[x][y]->blockHasPowerUp = true;
-				tileSet[x][y]->powerUpType = powerUpType;
+			if (tileSet[x][y]->m_block_type == BREAKABLE && !tileSet[x][y]->m_block_has_power_up) {
+				tileSet[x][y]->m_block_has_power_up = true;
+				tileSet[x][y]->m_power_up_type = powerUpType;
 				allowedBlock = true;
 				break;
 			}
@@ -170,7 +166,7 @@ void Map::addPowerUp(int index_x, int index_y, int powerUpType)
 // Get block object from coordinates
 sp<Block> Map::findBlockByCoordinates(int x, int y)
 {
-	auto block = Helpers::getCurrentBlock(x, y);
+	const auto block = Helpers::GetCurrentBlock(x, y);
 	return findBlockByIndex(block.first, block.second);
 }
 
@@ -193,7 +189,7 @@ void Map::checkWinCondition()
 	for (const auto& enemy : m_enemyList)
 	{
 		totalEnemies++;
-		if (!enemy->isAlive)
+		if (!enemy->m_is_alive)
 		{
 			deadEnemies++;
 		}

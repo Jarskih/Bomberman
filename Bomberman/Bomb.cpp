@@ -197,7 +197,7 @@ void Bomb::renderFlames(SDL_Renderer* renderer, int frames)
 bool Bomb::canSpawnFlame(const sp<Map> &map, const int x, const int y)
 {
 	bool allowed = false;
-	switch (map->tileSet[x][y]->blockType) {
+	switch (map->tileSet[x][y]->m_block_type) {
 	case GRASS:
 		allowed = true;
 		break;

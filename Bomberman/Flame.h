@@ -15,16 +15,16 @@ public:
 		m_bomb_power(power), m_renderer(renderer),
 		m_texture(nullptr)
 	{
-		windowRect = { Helpers::getBlockCenter(x, y).first, Helpers::getBlockCenter(x, y).second, BLOCK_WIDTH, BLOCK_HEIGHT };
+		windowRect = { Helpers::GetBlockCenter(x, y).first, Helpers::GetBlockCenter(x, y).second, BLOCK_WIDTH, BLOCK_HEIGHT };
 		textureRect = { 0, 0, BLOCK_WIDTH, BLOCK_HEIGHT };
-		collider = { Helpers::getBlockCenter(x, y).first, Helpers::getBlockCenter(x, y).second, 0, 0 };
+		collider = { Helpers::GetBlockCenter(x, y).first, Helpers::GetBlockCenter(x, y).second, 0, 0 };
 	};
 	~Flame() = default;
 	void loadTextures(std::string sprite);
 	void setTexture(SDL_Texture* texture);
 	void render(int frame);
 	void colliderResize(int x, int y, int width, int height);
-	void checkCollision();
+	void checkCollision() const;
 
 private:
 	int m_index_x;

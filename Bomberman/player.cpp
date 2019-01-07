@@ -14,27 +14,27 @@
 void Player::update()
 {
 	m_lives = Service<State>::Get()->lives;
-	if (state != DEAD)
+	if (m_state != DEAD)
 	{
 		playerController();
 		movePlayer();
 	}
 	else
 	{
-		if (SDL_GetTicks() - timeDied > 2000)
+		if (SDL_GetTicks() - m_time_died > 2000)
 		{
-			isDead = true;
+			m_is_alive = false;
 		}
 	}
-	bombs = checkBombs();
-	bombsDropped = bombs.size();
+	m_bombs = checkBombs();
+	m_bombs_dropped = m_bombs.size();
 }
 
 std::vector<sp<Bomb>> Player::checkBombs()
 {
 	std::vector<sp<Bomb>> newBombs = {};
 
-	for (const auto& bomb : bombs)
+	for (const auto& bomb : m_bombs)
 	{
 		if (!bomb->isExploded)
 		{
@@ -100,7 +100,7 @@ SDL_Texture* Player::loadTexture()
 	*/
 	std::string name;
 
-	switch (state) {
+	switch (m_state) {
 	case DOWN:
 		name = "playerMoveDown";
 		break;
@@ -131,12 +131,12 @@ SDL_Texture* Player::loadTexture()
 	default:
 		break;
 	}
-	textureName = name;
-	return Service<Textures>::Get()->findTexture(textureName);
+	m_texture_name = name;
+	return Service<Textures>::Get()->findTexture(m_texture_name);
 }
 
 void Player::handleEvent(SDL_Event& event) {
-	if (state != DEAD)
+	if (m_state != DEAD)
 	{
 		if (event.type == SDL_KEYDOWN && event.key.repeat == 0)
 		{
@@ -158,97 +158,97 @@ void Player::playerController()
 	const Uint8* currentKeyStates = SDL_GetKeyboardState(nullptr);
 	if (currentKeyStates[SDL_SCANCODE_UP])
 	{
-		oldState = state;
-		state = UP;
+		m_old_state = m_state;
+		m_state = UP;
 	}
 	else if (currentKeyStates[SDL_SCANCODE_DOWN])
 	{
-		oldState = state;
-		state = DOWN;
+		m_old_state = m_state;
+		m_state = DOWN;
 	}
 	else if (currentKeyStates[SDL_SCANCODE_LEFT])
 	{
-		oldState = state;
-		state = LEFT;
+		m_old_state = m_state;
+		m_state = LEFT;
 	}
 	else if (currentKeyStates[SDL_SCANCODE_RIGHT])
 	{
-		oldState = state;
-		state = RIGHT;
+		m_old_state = m_state;
+		m_state = RIGHT;
 	}
 	else {
-		if (state == UP)
+		if (m_state == UP)
 		{
-			oldState = state;
-			state = IDLE_UP;
+			m_old_state = m_state;
+			m_state = IDLE_UP;
 		}
-		if (state == DOWN)
+		if (m_state == DOWN)
 		{
-			oldState = state;
-			state = IDLE_DOWN;
+			m_old_state = m_state;
+			m_state = IDLE_DOWN;
 		}
-		if (state == LEFT)
+		if (m_state == LEFT)
 		{
-			oldState = state;
-			state = IDLE_LEFT;
+			m_old_state = m_state;
+			m_state = IDLE_LEFT;
 		}
-		if (state == RIGHT)
+		if (m_state == RIGHT)
 		{
-			oldState = state;
-			state = IDLE_RIGHT;
+			m_old_state = m_state;
+			m_state = IDLE_RIGHT;
 		}
-		moving = false;
+		m_moving = false;
 	}
 }
 
 void Player::movePlayer() {
-	const int oldX = posX;
-	const int oldY = posY;
+	const int oldX = m_pos_x;
+	const int oldY = m_pos_y;
 	auto map = Service<Map>::Get();
 	bool colliding = false;
 
-	switch (state) {
+	switch (m_state) {
 	case UP:
-		posY -= speed;
-		moving = true;
+		m_pos_y -= m_speed;
+		m_moving = true;
 		break;
 	case IDLE_UP:
-		moving = false;
+		m_moving = false;
 		break;
 	case DOWN:
-		posY += speed;
-		moving = true;
+		m_pos_y += m_speed;
+		m_moving = true;
 		break;
 	case IDLE_DOWN:
-		moving = false;
+		m_moving = false;
 		break;
 	case LEFT:
-		posX -= speed;
-		moving = true;
+		m_pos_x -= m_speed;
+		m_moving = true;
 		break;
 	case IDLE_LEFT:
-		moving = false;
+		m_moving = false;
 		break;
 	case RIGHT:
-		posX += speed;
-		moving = true;
+		m_pos_x += m_speed;
+		m_moving = true;
 		break;
 	case IDLE_RIGHT:
-		moving = false;
+		m_moving = false;
 		break;
 	default:
 		break;
 	}
-	windowRect.x = posX;
-	m_collider.x = posX + PLAYER_WIDTH / 3.f;
-	windowRect.y = posY;
-	m_collider.y = posY + PLAYER_HEIGHT / 2.f;
+	m_window_rect.x = m_pos_x;
+	m_collider.x = m_pos_x + PLAYER_WIDTH / 3.f;
+	m_window_rect.y = m_pos_y;
+	m_collider.y = m_pos_y + PLAYER_HEIGHT / 2.f;
 
 	for (const auto& enemy : map->m_enemyList)
 	{
-		if (Helpers::checkCollision(m_collider, enemy->collider))
+		if (Helpers::CheckCollision(m_collider, enemy->m_collider))
 		{
-			if (enemy->isAlive)
+			if (enemy->m_is_alive)
 			{
 				die();
 				return;
@@ -258,9 +258,9 @@ void Player::movePlayer() {
 
 	for (const auto& player : map->m_playerList)
 	{
-		for (const auto& bomb : player->bombs)
+		for (const auto& bomb : player->m_bombs)
 		{
-			if (Helpers::checkCollision(m_collider, bomb->collider))
+			if (Helpers::CheckCollision(m_collider, bomb->collider))
 			{
 				if (bomb->firstCollision)
 				{
@@ -283,7 +283,7 @@ void Player::movePlayer() {
 		for (const auto& blocksY : map->tileSet)
 		{
 			for (const auto& block : blocksY)
-				if (block->blockType != GRASS && Helpers::checkCollision(m_collider, block->collider))
+				if (block->m_block_type != GRASS && Helpers::CheckCollision(m_collider, block->m_collider))
 				{
 					colliding = true;
 					break;
@@ -293,19 +293,19 @@ void Player::movePlayer() {
 
 	if (colliding)
 	{
-		posX = oldX;
-		windowRect.x = posX;
-		m_collider.x = posX + PLAYER_WIDTH / 3.f;
+		m_pos_x = oldX;
+		m_window_rect.x = m_pos_x;
+		m_collider.x = m_pos_x + PLAYER_WIDTH / 3.f;
 
-		posY = oldY;
-		windowRect.y = posY;
-		m_collider.y = posY + PLAYER_HEIGHT / 2.f;
+		m_pos_y = oldY;
+		m_window_rect.y = m_pos_y;
+		m_collider.y = m_pos_y + PLAYER_HEIGHT / 2.f;
 	}
 }
 
 void Player::renderBombs()
 {
-	for (const auto& bomb : bombs)
+	for (const auto& bomb : m_bombs)
 	{
 		bomb->render(m_renderer);
 	}
@@ -323,14 +323,14 @@ void Player::render() {
 
 void Player::die()
 {
-	if (state != DEAD)
+	if (m_state != DEAD)
 	{
-		timeDied = SDL_GetTicks();
+		m_time_died = SDL_GetTicks();
 		m_collider.h = 0;
 		m_collider.w = 0;
-		frame = 0;
-		state = DEAD;
-		MusicPlayer::PlaySound("sounds/plyr_death.wav");
+		m_frame = 0;
+		m_state = DEAD;
+		MusicPlayer::PlaySound("sounds/player_death.wav");
 	}
 }
 
@@ -338,90 +338,89 @@ void Player::animate()
 {
 	int totalFrames = 8;
 
-	switch (state) {
+	switch (m_state) {
 	case DEAD:
 		totalFrames = 5;
 		break;
 	case UP:
 		totalFrames = 7;
-		moving = true;
+		m_moving = true;
 		break;
 	case IDLE_UP:
 		totalFrames = 7;
-		moving = false;
+		m_moving = false;
 		break;
 	case DOWN:
 		totalFrames = 8;
-		moving = true;
+		m_moving = true;
 		break;
 	case IDLE_DOWN:
 		totalFrames = 8;
-		moving = false;
+		m_moving = false;
 		break;
 	case LEFT:
 		totalFrames = 8;
-		moving = true;
+		m_moving = true;
 		break;
 	case IDLE_LEFT:
 		totalFrames = 8;
-		moving = false;
+		m_moving = false;
 		break;
 	case RIGHT:
 		totalFrames = 9;
-		moving = true;
+		m_moving = true;
 		break;
 	case IDLE_RIGHT:
 		totalFrames = 9;
-		moving = false;
+		m_moving = false;
 		break;
 	default:
 		break;
 	}
 
-	if (oldState != state)
+	if (m_old_state != m_state)
 	{
-		texture = loadTexture();
-		oldState = state;
+		m_texture = loadTexture();
+		m_old_state = m_state;
 	}
 
-	if (state == DEAD)
+	if (m_state == DEAD)
 	{
-		const Uint32 currentTime = SDL_GetTicks() - timeDied;
-		const Uint32 timeSpent = currentTime - oldTime;
-		if (timeSpent > delayPerFrame)
+		const Uint32 currentTime = SDL_GetTicks() - m_time_died;
+		const Uint32 timeSpent = currentTime - m_old_time;
+		if (timeSpent > m_delay_per_frame)
 		{
-			oldTime = timeSpent;
-			frame++;
+			m_old_time = timeSpent;
+			m_frame++;
 		}
-		if (frame > totalFrames)
+		if (m_frame > totalFrames)
 		{
 			return;
 		}
 	}
-	else if (moving) {
-		frame = (SDL_GetTicks() / delayPerFrame) % totalFrames;
+	else if (m_moving) {
+		m_frame = (SDL_GetTicks() / m_delay_per_frame) % totalFrames;
 	}
 
-	textureRect.y = frame * textureRect.h;
+	m_texture_rect.y = m_frame * m_texture_rect.h;
 
-	SDL_QueryTexture(texture, nullptr, nullptr, &textureRect.w, &textureRect.h);
+	SDL_QueryTexture(m_texture, nullptr, nullptr, &m_texture_rect.w, &m_texture_rect.h);
 
-	textureRect.h /= totalFrames;
+	m_texture_rect.h /= totalFrames;
 
-	SDL_RenderCopy(m_renderer, texture, &textureRect, &windowRect);
+	SDL_RenderCopy(m_renderer, m_texture, &m_texture_rect, &m_window_rect);
 }
 
 void Player::dropBomb() {
 	auto map = Service<Map>::Get();
-	if (maxBombs > bombsDropped)
+	if (m_max_bombs > m_bombs_dropped)
 	{
-		const std::pair<int, int> currentBlockIndex = Helpers::getCurrentBlock(posX, posY);
-		std::pair<int, int> blockCenter = Helpers::getBlockCenter(currentBlockIndex.first, currentBlockIndex.second);
-		std::pair <int, int> testIndex = Helpers::getCurrentBlock(blockCenter.first, blockCenter.second);
-		const auto bomb = makesp<Bomb>(flamePower, blockCenter.first, blockCenter.second, map);
+		const std::pair<int, int> currentBlockIndex = Helpers::GetCurrentBlock(m_pos_x, m_pos_y);
+		std::pair<int, int> blockCenter = Helpers::GetBlockCenter(currentBlockIndex.first, currentBlockIndex.second);
+		const auto bomb = makesp<Bomb>(m_flame_power, blockCenter.first, blockCenter.second, map);
 
 		std::cout << "Spawning bomb to x: " << currentBlockIndex.first << " . y: " << currentBlockIndex.second << std::endl;
 		bomb->load_textures(m_renderer, "bomb");
-		bombs.emplace_back(bomb);
+		m_bombs.emplace_back(bomb);
 	}
 }

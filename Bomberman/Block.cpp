@@ -1,18 +1,16 @@
 #include "Block.h"
-#include <iostream>
 #include <SDL.h>
-#include <SDL_image.h>
 #include "PowerUp.h"
 #include "Map.h"
 
 std::pair <int, int> Block::getBlockIndex() const
 {
-	return Helpers::getCurrentBlock(m_pos_x, m_pos_y);
+	return Helpers::GetCurrentBlock(m_pos_x, m_pos_y);
 }
 
-void Block::GetSprite()
+void Block::getSprite()
 {
-	switch (blockType) {
+	switch (m_block_type) {
 	case BREAKABLE:
 		m_sprite = "img/block.png";
 		break;
@@ -74,7 +72,7 @@ SDL_Texture* Block::LoadTexture(SDL_Renderer* renderer) {
 */
 
 void Block::LoadTexture() {
-	switch (blockType) {
+	switch (m_block_type) {
 	case BREAKABLE:
 		m_texture = m_textures->findTexture("block");
 		break;
@@ -136,52 +134,52 @@ void Block::render(SDL_Renderer* renderer) {
 		textureLoaded = true;
 	}*/
 
-	if (oldblockType != blockType)
+	if (m_old_block_type != m_block_type)
 	{
 		LoadTexture();
-		oldblockType = blockType;
+		m_old_block_type = m_block_type;
 	}
 
-	windowRect.x = m_pos_x;
-	windowRect.y = m_pos_y;
-	collider.x = m_pos_x;
-	collider.y = m_pos_y;
+	m_window_rect.x = m_pos_x;
+	m_window_rect.y = m_pos_y;
+	m_collider.x = m_pos_x;
+	m_collider.y = m_pos_y;
 
 	const int totalFrames = 7;
-	if (blockType == DESTROYED)
+	if (m_block_type == DESTROYED)
 	{
-		if (blockHasPowerUp && !powerUpAdded) {
+		if (m_block_has_power_up && !m_power_up_added) {
 			auto map = Service<Map>::Get();
-			map->addPowerUp(index_x, index_y, powerUpType);
-			powerUpAdded = true;
+			map->addPowerUp(m_index_x, m_index_y, m_power_up_type);
+			m_power_up_added = true;
 		}
 
 		const int delayPerFrame = 100;
 
 		if (SDL_GetTicks() - timeExploded > delayPerFrame)
 		{
-			textureRect.y = frame * textureRect.h;
-			SDL_QueryTexture(m_texture, nullptr, nullptr, &textureRect.w, &textureRect.h);
+			m_texture_rect.y = m_frame * m_texture_rect.h;
+			SDL_QueryTexture(m_texture, nullptr, nullptr, &m_texture_rect.w, &m_texture_rect.h);
 
-			textureRect.h /= totalFrames;
-			frame++;
+			m_texture_rect.h /= totalFrames;
+			m_frame++;
 		}
-		if (frame >= totalFrames - 1)
+		if (m_frame >= totalFrames - 1)
 		{
 			changeBlockType(GRASS);
 		}
-		SDL_RenderCopy(renderer, m_texture, &textureRect, &windowRect);
+		SDL_RenderCopy(renderer, m_texture, &m_texture_rect, &m_window_rect);
 	}
 	else
 	{
-		SDL_RenderCopy(renderer, m_texture, nullptr, &windowRect);
+		SDL_RenderCopy(renderer, m_texture, nullptr, &m_window_rect);
 	}
 
 }
 
 void Block::changeBlockType(int newType)
 {
-	blockType = newType;
-	textureLoaded = false;
+	m_block_type = newType;
+	m_texture_loaded = false;
 	timeExploded = SDL_GetTicks();
 }

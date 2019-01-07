@@ -12,8 +12,7 @@
 #include "Hud.h"
 #include "State.h"
 #include <SDL_mixer.h>
-#include <time.h>
-#include "Pathfinding.h"
+#include <ctime>
 
 SDL_Window* window = nullptr;
 SDL_Renderer* renderer = nullptr;
@@ -156,7 +155,7 @@ int main(int argc, char** args)
 
 				for (const auto& player : map->m_playerList)
 				{
-					if (player->isDead)
+					if (!player->isAlive())
 					{
 						gameState->lives--;
 						restart = true;

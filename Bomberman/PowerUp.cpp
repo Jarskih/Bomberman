@@ -4,7 +4,7 @@
 
 void PowerUp::render()
 {
-	if (isPickedUp) {
+	if (m_is_picked_up) {
 		return;
 	}
 	const int delayPerFrame = 200;
@@ -12,56 +12,56 @@ void PowerUp::render()
 	// Debug
 
 	SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);
-	SDL_RenderDrawRect(m_renderer, &collider);
+	SDL_RenderDrawRect(m_renderer, &m_collider);
 
 	SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 0);
-	SDL_RenderDrawRect(m_renderer, &windowRect);
+	SDL_RenderDrawRect(m_renderer, &m_window_rect);
 
 	const auto map = Service<Map>::Get();
 	if (m_type == EXIT && !map->levelCleared)
 	{
-		frame = 0;
+		m_frame = 0;
 	}
 	else
 	{
-		frame = (SDL_GetTicks() / delayPerFrame) % totalFrames;
+		m_frame = (SDL_GetTicks() / delayPerFrame) % m_total_frames;
 	}
 
-	textureRect.y = frame * textureRect.h;
-	SDL_QueryTexture(m_texture, nullptr, nullptr, &textureRect.w, &textureRect.h);
+	m_texture_rect.y = m_frame * m_texture_rect.h;
+	SDL_QueryTexture(m_texture, nullptr, nullptr, &m_texture_rect.w, &m_texture_rect.h);
 
-	textureRect.h /= totalFrames;
-	textureRect.w /= 5;
-	textureRect.x = m_type * textureRect.w;
+	m_texture_rect.h /= m_total_frames;
+	m_texture_rect.w /= 5;
+	m_texture_rect.x = m_type * m_texture_rect.w;
 
-	SDL_RenderCopy(m_renderer, m_texture, &textureRect, &windowRect);
+	SDL_RenderCopy(m_renderer, m_texture, &m_texture_rect, &m_window_rect);
 }
 
 void PowerUp::checkCollision(const std::vector<sp<Player>>& m_playerList)
 {
-	if (!isPickedUp) {
+	if (!m_is_picked_up) {
 		for (const auto& player : m_playerList)
 		{
-			if (Helpers::checkCollision(collider, player->getCollider()))
+			if (Helpers::CheckCollision(m_collider, player->getCollider()))
 			{
 				auto state = Service<State>::Get();
 				state->incrementScore(m_score);
-				isPickedUp = true;
+				m_is_picked_up = true;
 
 				auto map = Service<Map>::Get();
 				switch (m_type)
 				{
 				case FLAME:
 					MusicPlayer::PlaySound("sounds/bonus_pickup.wav");
-					player->flamePower++;
+					player->m_flame_power++;
 					break;
 				case BOMB:
 					MusicPlayer::PlaySound("sounds/bonus_pickup.wav");
-					player->maxBombs++;
+					player->m_max_bombs++;
 					break;
 				case SPEED:
 					MusicPlayer::PlaySound("sounds/bonus_pickup.wav");
-					player->speed++;
+					player->m_speed++;
 					break;
 				case LIFE:
 					MusicPlayer::PlaySound("sounds/bonus_pickup.wav");
@@ -74,7 +74,7 @@ void PowerUp::checkCollision(const std::vector<sp<Player>>& m_playerList)
 					}
 					else
 					{
-						isPickedUp = false;
+						m_is_picked_up = false;
 					}
 					break;
 				default:

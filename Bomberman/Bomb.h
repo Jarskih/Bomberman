@@ -25,8 +25,8 @@ public:
 		windowRect = { posX, posY, BOMB_WIDTH, BOMB_HEIGHT };
 		textureRect = { 0,0, BOMB_WIDTH, BOMB_HEIGHT };
 		timeDropped = SDL_GetTicks();
-		index_x = Helpers::getCurrentBlock(m_posX, m_posY).first;
-		index_y = Helpers::getCurrentBlock(m_posX, m_posY).second;
+		index_x = Helpers::GetCurrentBlock(m_posX, m_posY).first;
+		index_y = Helpers::GetCurrentBlock(m_posX, m_posY).second;
 		collider.x = posX;
 		collider.y = posY;
 	};

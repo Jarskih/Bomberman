@@ -8,46 +8,46 @@
 class Block
 {
 public:
-	Block(int x, int y, int blockType) : m_pos_x(x), m_pos_y(y), blockType(blockType)
+	Block(int x, int y, int blockType) : m_pos_x(x), m_pos_y(y), m_block_type(blockType)
 	{
-		index_x = Helpers::getCurrentBlock(m_pos_x, m_pos_y).first;
-		index_y = Helpers::getCurrentBlock(m_pos_x, m_pos_y).second;
+		m_index_x = Helpers::GetCurrentBlock(m_pos_x, m_pos_y).first;
+		m_index_y = Helpers::GetCurrentBlock(m_pos_x, m_pos_y).second;
 		m_textures = Service<Textures>::Get();
-		oldblockType = blockType;
+		m_old_block_type = blockType;
 		LoadTexture();
 	};
 	~Block() = default;
 
-	SDL_Rect collider = { 0,0, BLOCK_WIDTH, BLOCK_HEIGHT };
+	SDL_Rect m_collider = { 0,0, BLOCK_WIDTH, BLOCK_HEIGHT };
 	void LoadTexture();
 	void changeBlockType(int newType);
 	std::pair <int, int> getBlockIndex() const;
 	void render(SDL_Renderer* renderer);
-	int index_x;
-	int index_y;
+	int m_index_x;
+	int m_index_y;
 	int m_pos_x;
 	int m_pos_y;
-	int blockType = -1;
-	bool blockHasPowerUp = false;
-	int powerUpType = 0;
+	int m_block_type = -1;
+	bool m_block_has_power_up = false;
+	int m_power_up_type = 0;
 
-	// Pathfinding
-	int gCost = 0;
-	int hCost = 0;
-	int fCost() const { return gCost + hCost; };
-	sp<Block> parent = nullptr;
+	// A* Pathfinding
+	int m_g_cost = 0;
+	int m_h_cost = 0;
+	int fCost() const { return m_g_cost + m_h_cost; };
+	sp<Block> m_parent = nullptr;
 private:
 	Uint32 timeExploded = 0;
-	int frame = 0;
-	bool textureLoaded = false;
-	int oldblockType;
-	SDL_Rect windowRect = { 0, 0, BLOCK_WIDTH, BLOCK_HEIGHT };
-	SDL_Rect textureRect = { 0, 0, 0, 0 };
+	int m_frame = 0;
+	int m_old_block_type;
+	bool m_texture_loaded = false;
+	bool m_power_up_added = false;
 	const char* m_sprite = nullptr;
+	SDL_Rect m_window_rect = { 0, 0, BLOCK_WIDTH, BLOCK_HEIGHT };
+	SDL_Rect m_texture_rect = { 0, 0, 0, 0 };
 	SDL_Texture* m_texture = nullptr;
-	bool powerUpAdded = false;
 	sp<Textures> m_textures = nullptr;
 
-	void GetSprite();
+	void getSprite();
 };
 

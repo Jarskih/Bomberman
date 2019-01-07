@@ -4,7 +4,7 @@
 namespace Helpers {
 
 	// Get block center coordinates from indexes
-	std::pair<int, int> getBlockCenter(int index_x, int index_y)
+	std::pair<int, int> GetBlockCenter(int index_x, int index_y)
 	{
 		const int x = index_x * BLOCK_WIDTH; // + BLOCK_OFFSET_X;
 		const int y = index_y * BLOCK_HEIGHT;; // + BLOCK_OFFSET_Y;
@@ -16,7 +16,7 @@ namespace Helpers {
 	}
 
 	// Get block index from coordinates
-	std::pair<int, int> getCurrentBlock(float x, float y)
+	std::pair<int, int> GetCurrentBlock(float x, float y)
 	{
 		if (x <= 0)
 		{
@@ -37,25 +37,19 @@ namespace Helpers {
 	}
 
 
-	bool checkCollision(SDL_Rect a, SDL_Rect b)
+	bool CheckCollision(SDL_Rect a, SDL_Rect b)
 	{
-		//The sides of the rectangles
-		int leftA, leftB;
-		int rightA, rightB;
-		int topA, topB;
-		int bottomA, bottomB;
-
 		//Calculate the sides of rect A
-		leftA = a.x;
-		rightA = a.x + a.w;
-		topA = a.y;
-		bottomA = a.y + a.h;
+		const int leftA = a.x;
+		const int rightA = a.x + a.w;
+		const int topA = a.y;
+		const int bottomA = a.y + a.h;
 
 		//Calculate the sides of rect B
-		leftB = b.x;
-		rightB = b.x + b.w;
-		topB = b.y;
-		bottomB = b.y + b.h;
+		const int leftB = b.x;
+		const int rightB = b.x + b.w;
+		const int topB = b.y;
+		const int bottomB = b.y + b.h;
 		if (bottomA <= topB)
 		{
 			return false;
@@ -80,24 +74,18 @@ namespace Helpers {
 		return true;
 	}
 
-	bool isOutOfGameArea(SDL_Rect a, SDL_Rect border) {
-		//The sides of the rectangles
-		int leftA, leftBorder;
-		int rightA, rightBorder;
-		int topA, topBorder;
-		int bottomA, bottomBorder;
-
+	bool IsOutOfGameArea(SDL_Rect a, SDL_Rect border) {
 		//Calculate the sides of rect A
-		leftA = a.x + a.w;
-		rightA = a.x;
-		topA = a.y + a.h;
-		bottomA = a.y;
+		const int leftA = a.x + a.w;
+		const int rightA = a.x;
+		const int topA = a.y + a.h;
+		const int bottomA = a.y;
 
 		//Calculate the sides of rect B
-		leftBorder = border.x;
-		rightBorder = border.x + border.w;
-		topBorder = border.y;
-		bottomBorder = border.y + border.h;
+		const int leftBorder = border.x;
+		const int rightBorder = border.x + border.w;
+		const int topBorder = border.y;
+		const int bottomBorder = border.y + border.h;
 		if (bottomA <= topBorder)
 		{
 			return true;
@@ -122,7 +110,7 @@ namespace Helpers {
 		return false;
 	}
 
-	int randomNumber(int max)
+	int RandomNumber(int max)
 	{
 		return (rand() % max) + 1;
 	}
