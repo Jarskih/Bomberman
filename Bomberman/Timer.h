@@ -8,7 +8,7 @@ public:
 	Uint32 getTicks() const;
 	Uint32 getSeconds() const;
 	Uint32 getMinutes() const;
-	int getTimeLeft() const;
+	int getTimeLeft();
 	void start();
 private:
 	bool m_isStarted = false;

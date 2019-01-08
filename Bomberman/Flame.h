@@ -9,6 +9,7 @@
 class Flame
 {
 public:
+	Flame() = delete;
 	Flame(int x, int y, SDL_Renderer* renderer) :
 		m_index_x(x),
 		m_index_y(y),
@@ -18,7 +19,7 @@ public:
 		m_texture_rect = { 0, 0, Config::BLOCK_WIDTH, Config::BLOCK_HEIGHT };
 		m_collider = { Helpers::GetBlockCenter(x, y).first, Helpers::GetBlockCenter(x, y).second, 0, 0 };
 	};
-	~Flame();;
+	~Flame() = default;
 	void loadTextures(std::string sprite);
 	void setTexture(SDL_Texture* texture);
 	void render(int frame);

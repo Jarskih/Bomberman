@@ -89,8 +89,16 @@ void Enemy::decide()
 		const auto player = map->m_playerList.front();
 		target_block = map->findBlockByCoordinates(player->getPositionX(), player->getPositionY());
 		current_block = map->findBlockByCoordinates(m_pos_x, m_pos_y);
-		m_path = Pathfinding::calculatePath(target_block, current_block);
+
+		// Only get new path if target block has changed
+		if (m_old_target_x != target_block->m_index_x || m_old_target_y != target_block->m_index_y)
+		{
+			m_path = Pathfinding::calculatePath(target_block, current_block);
+		}
+
 		m_decision_time = SDL_GetTicks();
+		m_old_target_x = target_block->m_index_x;
+		m_old_target_y = target_block->m_index_y;
 	}
 	else if (m_enemy_type == EASY)
 	{

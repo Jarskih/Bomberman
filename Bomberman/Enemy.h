@@ -70,6 +70,8 @@ private:
 	Uint32 m_decision_time = 0;
 	Uint32 m_decision_delay = 0;
 	std::list<sp<Block>> m_path{};
+	int m_old_target_x;
+	int m_old_target_y;
 
 	bool m_moving = false;
 	int m_speed = 2;

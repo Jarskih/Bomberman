@@ -9,7 +9,6 @@ using namespace Config;
 Bomb::~Bomb()
 {
 	Mix_FreeChunk(m_chunk);
-	std::cout << "Bomb destroyed" << std::endl;
 }
 
 void Bomb::render(SDL_Renderer* renderer)
@@ -113,7 +112,6 @@ void Bomb::renderFlames(SDL_Renderer* renderer, int frames)
 				}
 				flame->colliderResize(BLOCK_WIDTH / 4, 0, BLOCK_WIDTH / 2, BLOCK_HEIGHT);
 				flames.push_back(flame);
-				std::cout << "Spawning flame up to x: " << index_x << ". And y: " << y << std::endl;
 			}
 			else
 			{
@@ -137,7 +135,6 @@ void Bomb::renderFlames(SDL_Renderer* renderer, int frames)
 				}
 				flame->colliderResize(BLOCK_WIDTH / 4, 0, BLOCK_WIDTH / 2, BLOCK_HEIGHT);
 				flames.push_back(flame);
-				std::cout << "Spawning flame down to x: " << index_x << ". And y: " << y << std::endl;
 			}
 			else
 			{
@@ -161,7 +158,6 @@ void Bomb::renderFlames(SDL_Renderer* renderer, int frames)
 				}
 				flame->colliderResize(0, BLOCK_HEIGHT / 4, BLOCK_WIDTH, BLOCK_HEIGHT / 2);
 				flames.push_back(flame);
-				std::cout << "Spawning flame left to x: " << x << ". And y: " << index_y << std::endl;
 			}
 			else
 			{
@@ -185,7 +181,6 @@ void Bomb::renderFlames(SDL_Renderer* renderer, int frames)
 				}
 				flame->colliderResize(0, BLOCK_HEIGHT / 4, BLOCK_WIDTH, BLOCK_HEIGHT / 2);
 				flames.push_back(flame);
-				std::cout << "Spawning flame right to x: " << x << ". And y: " << index_y << std::endl;
 			}
 			else
 			{

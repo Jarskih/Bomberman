@@ -3,7 +3,6 @@
 #include "Enemy.h"
 #include <fstream>
 #include <iostream>
-#include "State.h"
 
 using namespace Config;
 
@@ -19,7 +18,7 @@ void Map::update(sp<Timer> &timer)
 		enemy->update();
 	}
 
-	if (timer->getTimeLeft() < 0)
+	if (timer->getTimeLeft() <= 0)
 	{
 		m_timeOut = true;
 	}
@@ -29,10 +28,10 @@ void Map::update(sp<Timer> &timer)
 		powerUp->checkCollision(m_playerList);
 	}
 	checkWinCondition();
-	if (Service<Timer>::Get()->getTimeLeft() <= 0 && m_spawned_time_out_enemies)
+	if (m_timeOut && !m_spawned_time_out_enemies)
 	{
-		const auto block = findRandomGrassBlock();
-		spawnEnemies(block->m_index_x, block->m_index_y, 10, HARD);
+		spawnEnemies(10, HARD);
+		m_spawned_time_out_enemies = true;
 	}
 }
 
@@ -99,11 +98,21 @@ void Map::generateMap()
 	}
 }
 
-void Map::spawnEnemies(const int indexX, const int indexY, int number, int enemyType)
+void Map::spawnEnemiesAtPosition(int x, int y, int number, int enemyType)
 {
 	for (auto numberOfEnemies = 0; numberOfEnemies < number; numberOfEnemies++)
 	{
-		const auto enemyObject = makesp<Enemy>(HARD, m_renderer, indexX, indexY);
+		const auto enemyObject = makesp<Enemy>(HARD, m_renderer, x, y);
+		m_enemyList.push_back(enemyObject);
+	}
+}
+
+void Map::spawnEnemies(int number, int enemyType)
+{
+	for (auto numberOfEnemies = 0; numberOfEnemies < number; numberOfEnemies++)
+	{
+		const auto block = findRandomGrassBlock();
+		const auto enemyObject = makesp<Enemy>(HARD, m_renderer, block->m_index_x, block->m_index_y);
 		m_enemyList.push_back(enemyObject);
 	}
 }

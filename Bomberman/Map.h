@@ -25,14 +25,14 @@ public:
 	void update(sp<Timer> &timer);
 	void render(sp<Map> &map) const;
 	void handleEvent(SDL_Event& event);
-	void addPowerUp(int index_x, int index_y, int powerUpType);
+	void addPowerUp(int indexX, int indexY, int powerUpType);
 	sp<Block> findBlockByCoordinates(int x, int y);
 	sp<Block> findBlockByIndex(int x, int y);
 	sp<Block> findRandomGrassBlock();
 	static void win();
-	void spawnEnemies(int indexX, int indexY, int number, int enemyType);
+	void spawnEnemies(int number, int enemyType);
+	void spawnEnemiesAtPosition(int x, int y, int number, int enemyType);
 
-	//std::vector<sp<Block>> tileSet = {};
 	sp<Block> tileSet[Config::MAX_BLOCKS_X][Config::MAX_BLOCKS_Y] = {};
 	int m_score = 0;
 	int m_players = 1;

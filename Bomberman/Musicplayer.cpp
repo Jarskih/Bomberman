@@ -11,10 +11,6 @@ namespace MusicPlayer {
 		if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1) {
 			std::cout << "Could not start music player" << std::endl;
 		}
-		else
-		{
-			printf("Failed to play music! SDL_mixer Error: %s\n", Mix_GetError());
-		}
 	}
 
 	void PlayMusic() {

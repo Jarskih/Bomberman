@@ -1,39 +1,41 @@
 #include "Timer.h"
 
-
 Uint32 Timer::getTicks() const
 {
-	Uint32 time;
-
-	if (m_isPaused) {
-		time = m_pause;
-	}
-	else {
-		time = SDL_GetTicks() - m_start;
-	}
-	return time;
+	return SDL_GetTicks() - m_start;
 }
 
 Uint32 Timer::getSeconds() const
 {
-	const Uint32 seconds = m_roundTime - getTicks() / 1000 - getMinutes() * 60;
+	if (!m_isPaused)
+	{
+		return m_roundTime - getTicks() / 1000 - getMinutes() * 60;
+	}
+	else
+	{
+		return 0;
+	}
 
-	return seconds;
 }
 
 Uint32 Timer::getMinutes() const
 {
-	const Uint32 minutes = (m_roundTime - getTicks() / 1000) / 60;
-
-	return minutes;
+	if (!m_isPaused)
+	{
+		return (m_roundTime - getTicks() / 1000) / 60;
+	}
+	else
+	{
+		return 0;
+	}
 }
 
-int Timer::getTimeLeft() const
+int Timer::getTimeLeft()
 {
-	int timeLeft = m_roundTime - getTicks() / 1000;
+	const int timeLeft = m_roundTime - getTicks() / 1000;
 	if (timeLeft < 0)
 	{
-		timeLeft = 0;
+		m_isPaused = true;
 	}
 	return timeLeft;
 }
@@ -43,5 +45,4 @@ void Timer::start()
 	m_isStarted = true;
 	m_isPaused = false;
 	m_start = SDL_GetTicks();
-	m_pause = 0;
 }

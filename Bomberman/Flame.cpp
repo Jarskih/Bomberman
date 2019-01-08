@@ -4,11 +4,6 @@
 #include "Textures.h"
 #include "Map.h"
 
-Flame::~Flame()
-{
-	std::cout << "Flame destroyed" << std::endl;
-}
-
 void Flame::loadTextures(std::string sprite)
 {
 	if (!m_texture_loaded)
@@ -85,7 +80,7 @@ void Flame::checkCollision() const
 			}
 			else
 			{
-				map->spawnEnemies(power_up->m_index_x, power_up->m_index_y, 3, HARD);
+				map->spawnEnemiesAtPosition(power_up->m_index_x, power_up->m_index_y, 3, HARD);
 			}
 
 		}

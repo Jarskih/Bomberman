@@ -417,7 +417,6 @@ void Player::dropBomb() {
 		std::pair<int, int> blockCenter = Helpers::GetBlockCenter(currentBlockIndex.first, currentBlockIndex.second);
 		const auto bomb = makesp<Bomb>(m_flame_power, blockCenter.first, blockCenter.second, map);
 
-		std::cout << "Spawning bomb to x: " << currentBlockIndex.first << " . y: " << currentBlockIndex.second << std::endl;
 		bomb->load_textures(m_renderer, "bomb");
 		m_bombs.emplace_back(bomb);
 	}
