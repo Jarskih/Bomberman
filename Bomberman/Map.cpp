@@ -130,7 +130,7 @@ void Map::spawnEnemiesAtStart()
 			const auto block = tileSet[x][y];
 			if (block->m_block_type == GRASS)
 			{
-				const auto enemyObject = makesp<Enemy>(EASY, m_renderer, x, y);
+				const auto enemyObject = makesp<Enemy>(HARD, m_renderer, x, y);
 				m_enemyList.push_back(enemyObject);
 				allowedBlock = true;
 				break;
@@ -227,15 +227,10 @@ void Map::checkWinCondition()
 	}
 	if (deadEnemies >= totalEnemies)
 	{
-		m_level_cleared = true;
+		m_enemies_dead = true;
 	}
 	else
 	{
-		m_level_cleared = false;
+		m_enemies_dead = false;
 	}
-}
-
-void Map::win()
-{
-	Service<State>::Get()->changeScene(State::MENU);
 }

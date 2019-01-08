@@ -4,7 +4,6 @@
 #include <utility>
 #include "Textures.h"
 #include "Service.h"
-#include "Config.h"
 
 class Block
 {

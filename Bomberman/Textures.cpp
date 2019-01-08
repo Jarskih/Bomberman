@@ -55,6 +55,7 @@ void Textures::save_sprite_paths()
 	spritePaths["wallTopRight"] = "img/wallTopRight.png";
 	spritePaths["grass"] = "img/grass.png";
 	spritePaths["blockBreaking"] = "img/block_breaking.png";
+	spritePaths["arrow"] = "img/arrow.png";
 }
 
 void Textures::create_textures()

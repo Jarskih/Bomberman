@@ -328,7 +328,7 @@ void Player::die()
 		m_collider.w = 0;
 		m_frame = 0;
 		m_state = DEAD;
-		MusicPlayer::PlaySound("sounds/player_death.wav");
+		MusicPlayer::PlaySoundFromPath("sounds/player_death.wav");
 	}
 }
 

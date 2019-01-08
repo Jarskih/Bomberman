@@ -3,7 +3,6 @@
 
 Uint32 Timer::getTicks() const
 {
-
 	Uint32 time;
 
 	if (m_isPaused) {
@@ -31,7 +30,11 @@ Uint32 Timer::getMinutes() const
 
 int Timer::getTimeLeft() const
 {
-	const auto timeLeft = m_roundTime - getTicks() / 1000;
+	int timeLeft = m_roundTime - getTicks() / 1000;
+	if (timeLeft < 0)
+	{
+		timeLeft = 0;
+	}
 	return timeLeft;
 }
 

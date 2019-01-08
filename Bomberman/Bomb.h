@@ -8,6 +8,7 @@
 #include <vector>
 #include "Helpers.h"
 #include "Enemy.h"
+#include <SDL_mixer.h>
 
 class Map;
 class Enemy;
@@ -30,7 +31,7 @@ public:
 		collider.x = posX;
 		collider.y = posY;
 	};
-	~Bomb() = default;
+	~Bomb();
 	bool isExploded = false;
 	void render(SDL_Renderer* renderer);
 	void load_textures(SDL_Renderer* renderer, const std::string &sprite);
@@ -55,6 +56,7 @@ private:
 	sp<Map> m_map = nullptr;
 	int index_x = 0;
 	int index_y = 0;
+	Mix_Chunk* m_chunk = Mix_LoadWAV("sounds/bomb.wav");
 
 	std::vector<sp<Flame>> flames = {};
 	std::map<std::string, std::string> spritePaths;

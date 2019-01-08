@@ -4,6 +4,11 @@
 #include "Textures.h"
 #include "Map.h"
 
+Flame::~Flame()
+{
+	std::cout << "Flame destroyed" << std::endl;
+}
+
 void Flame::loadTextures(std::string sprite)
 {
 	if (!m_texture_loaded)

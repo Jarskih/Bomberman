@@ -5,12 +5,15 @@ void State::changeScene(int newScene)
 	m_scene = newScene;
 }
 
-void State::sceneTransition()
+void State::sceneTransition(sp<GUIArrow> &arrow)
 {
 	switch (m_scene)
 	{
 	case MENU:
-		changeScene(LEVEL_INTRO);
+		if (arrow->getPosition() == 0)
+		{
+			changeScene(LEVEL_INTRO);
+		}
 		break;
 	case LEVEL_INTRO:
 		changeScene(LEVEL);
@@ -18,7 +21,15 @@ void State::sceneTransition()
 	case LEVEL:
 		break;
 	case DEFEAT:
-		changeScene(MENU);
+		if (arrow->getPosition() == 0)
+		{
+			changeScene(LEVEL_INTRO);
+		}
+		else if (arrow->getPosition() == 1)
+		{
+			changeScene(MENU);
+		}
+
 		break;
 	default:
 		break;
@@ -39,4 +50,3 @@ void State::decrementLives()
 {
 	m_lives--;
 }
-

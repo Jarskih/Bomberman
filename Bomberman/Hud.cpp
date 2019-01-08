@@ -3,6 +3,13 @@
 #include "Service.h"
 #include "State.h"
 
+Hud::Hud(SDL_Renderer * renderer)
+{
+	m_renderer = renderer;
+	auto textures = Service<Textures>::Get();
+	m_texture = textures->findTexture("hud");
+	loadFont();
+}
 
 bool Hud::loadFromRenderedText(std::string &textureText, SDL_Color textColor)
 {

@@ -13,11 +13,10 @@ namespace MusicPlayer {
 		}
 		else
 		{
-			PlayMusic();
+			printf("Failed to play music! SDL_mixer Error: %s\n", Mix_GetError());
 		}
 	}
 
-	//Load music
 	void PlayMusic() {
 		gMusic = Mix_LoadMUS("sounds/music.mp3");
 		if (gMusic == nullptr)
@@ -29,11 +28,20 @@ namespace MusicPlayer {
 		}
 	}
 
-	void PlaySound(const char* filePath)
+	void StopMusic()
+	{
+		Mix_PauseMusic();
+	}
+
+	void PlaySoundFromPath(const char* filePath)
 	{
 		Mix_Chunk* chunk = Mix_LoadWAV(filePath);
 		Mix_PlayChannel(-1, chunk, 0);
-		chunk = nullptr;
+	}
+
+	void PlayChunk(Mix_Chunk* chunk)
+	{
+		Mix_PlayChannel(-1, chunk, 0);
 	}
 
 	void DestroyMusicPlayer() {

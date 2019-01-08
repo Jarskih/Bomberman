@@ -3,7 +3,6 @@
 #include <vector>
 #include "Map.h"
 #include <list>
-#include "State.h"
 
 static const int ACTOR_WIDTH = 100;
 static const int ACTOR_HEIGHT = 80;

@@ -4,6 +4,7 @@
 #include <map>
 #include "Config.h"
 #include "Helpers.h"
+#include <iostream>
 
 class Flame
 {
@@ -17,7 +18,7 @@ public:
 		m_texture_rect = { 0, 0, Config::BLOCK_WIDTH, Config::BLOCK_HEIGHT };
 		m_collider = { Helpers::GetBlockCenter(x, y).first, Helpers::GetBlockCenter(x, y).second, 0, 0 };
 	};
-	~Flame() = default;
+	~Flame();;
 	void loadTextures(std::string sprite);
 	void setTexture(SDL_Texture* texture);
 	void render(int frame);

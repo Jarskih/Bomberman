@@ -11,10 +11,7 @@ using namespace Config;
 class Hud
 {
 public:
-	Hud(SDL_Renderer* renderer, SDL_Texture* hudTexture) : m_renderer(renderer), m_texture(hudTexture)
-	{
-		loadFont();
-	};
+	Hud(SDL_Renderer* renderer);
 	void render(const sp<Timer>& timer);
 private:
 	bool loadFromRenderedText(std::string &textureText, SDL_Color textColor);

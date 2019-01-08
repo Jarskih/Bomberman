@@ -40,6 +40,7 @@ public:
 	std::vector<sp<Enemy>> m_enemyList = {};
 	std::vector<sp<PowerUp>> m_powerUps = {};
 	bool m_level_cleared = false;
+	bool m_enemies_dead = false;
 private:
 	void generateMap();
 	void spawnEnemiesAtStart();
@@ -49,7 +50,6 @@ private:
 	int m_size_x = Config::MAX_BLOCKS_X;
 	int m_size_y = Config::MAX_BLOCKS_Y;
 	SDL_Renderer* m_renderer = nullptr;
-	bool m_enemies_dead = false;
 	bool m_timeOut = false;
 	bool m_spawned_time_out_enemies = false;
 

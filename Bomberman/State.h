@@ -1,5 +1,9 @@
 ﻿#pragma once
 #include "Config.h"
+#include "Helpers.h"
+#include "GUIArrow.h"
+
+class GUIArrow;
 
 struct State
 {
@@ -21,5 +25,5 @@ struct State
 	void incrementScore(int addedScore);
 	void incrementLives();
 	void decrementLives();
-	void sceneTransition();
+	void sceneTransition(sp<GUIArrow> &arrow);
 };

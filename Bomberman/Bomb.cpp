@@ -2,11 +2,15 @@
 #include <iostream>
 #include <SDL_image.h>
 #include "Map.h"
-#include "Textures.h"
-#include "Service.h"
 #include "Musicplayer.h"
 
 using namespace Config;
+
+Bomb::~Bomb()
+{
+	Mix_FreeChunk(m_chunk);
+	std::cout << "Bomb destroyed" << std::endl;
+}
 
 void Bomb::render(SDL_Renderer* renderer)
 {
@@ -17,7 +21,7 @@ void Bomb::render(SDL_Renderer* renderer)
 	{
 		if (!explosionSound)
 		{
-			MusicPlayer::PlaySound("sounds/bomb.wav");
+			MusicPlayer::PlayChunk(m_chunk);
 			explosionSound = true;
 		}
 		explode(renderer);
