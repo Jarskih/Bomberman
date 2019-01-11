@@ -37,7 +37,7 @@ void SDLInit() {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
 	}
 
-	window = SDL_CreateWindow("Bomberman", SDL_WINDOWPOS_UNDEFINED,
+	window = SDL_CreateWindow("Dynablaster (amiga version). Use arrow keys to move, space for dropping bomb and left CTRL for debug mode.", SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 	if (window == nullptr) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not create SDL_Window: %s", SDL_GetError());
@@ -55,6 +55,13 @@ void handleEvent(const SDL_Event event, const sp<State> &state, sp<GUIArrow> &ar
 	{
 		switch (event.key.keysym.sym)
 		{
+		case SDLK_w:
+
+		case SDLK_ESCAPE:
+			state->goToMenu();
+		case SDLK_LCTRL:
+			state->toggleDebug();
+			break;
 		case SDLK_SPACE:
 			state->sceneTransition(arrow);
 			break;
@@ -111,10 +118,9 @@ int main(int argc, char** args)
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 		SDL_RenderClear(renderer);
 
-		gameState->m_score = 0;
-
 		switch (gameState->m_scene) {
 		case State::MENU:
+			gameState->m_score = 0;
 			bgTexture = textures->findTexture("menuScreen");
 			SDL_RenderCopy(renderer, bgTexture, nullptr, &fullScreen);
 			arrow->update(gameState);
@@ -129,6 +135,7 @@ int main(int argc, char** args)
 			gameState->changeScene(State::LEVEL);
 			break;
 		case State::DEFEAT:
+			gameState->m_score = 0;
 			bgTexture = textures->findTexture("defeatScreen");
 			SDL_RenderCopy(renderer, bgTexture, nullptr, &fullScreen);
 			arrow->update(gameState);
@@ -155,6 +162,7 @@ int main(int argc, char** args)
 			{
 				while (SDL_PollEvent(&input) > 0)
 				{
+					handleEvent(input, gameState, arrow);
 					map->handleEvent(input);
 				}
 
@@ -184,11 +192,18 @@ int main(int argc, char** args)
 					}
 				}
 
-				if (map->m_level_cleared)
+				if (gameState->m_level_cleared)
 				{
-					gameState->changeScene(State::MENU);
-					restart = true;
-					MusicPlayer::StopMusic();
+					if (gameState->m_level == 1)
+					{
+						gameState->nextLevel();
+						restart = true;
+					}
+					else
+					{
+						gameState->goToMenu();
+						restart = true;
+					}
 				}
 			}
 		}

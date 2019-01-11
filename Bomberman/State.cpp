@@ -1,4 +1,5 @@
 ﻿#include "State.h"
+#include "Musicplayer.h"
 
 void State::changeScene(int newScene)
 {
@@ -36,6 +37,30 @@ void State::sceneTransition(sp<GUIArrow> &arrow)
 	}
 }
 
+void State::toggleDebug()
+{
+	if (m_debug)
+	{
+		m_debug = false;
+	}
+	else
+	{
+		m_debug = true;
+	}
+}
+
+void State::goToMenu()
+{
+	changeScene(State::MENU);
+	MusicPlayer::StopMusic();
+}
+
+void State::nextLevel()
+{
+	m_level++;
+	m_enemies += 2;
+}
+
 void State::incrementScore(int addedScore)
 {
 	m_score += addedScore;
@@ -43,7 +68,7 @@ void State::incrementScore(int addedScore)
 
 void State::incrementLives()
 {
-	m_lives++;
+	m_lives += 1;
 }
 
 void State::decrementLives()

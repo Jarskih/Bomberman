@@ -8,11 +8,6 @@ enum EntityType
 	HARD_ENEMY
 };
 
-//  Base Class for all entity types
-class Sprite;
-class Collider;
-struct SDL_Renderer;
-
 class Entity
 {
 protected:

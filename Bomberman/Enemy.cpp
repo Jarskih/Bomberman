@@ -6,21 +6,49 @@
 #include "Pathfinding.h"
 #include "State.h"
 
+Enemy::Enemy(const EntityType enemy_type, SDL_Renderer* renderer, const int index_x, const int index_y) :
+	m_type(enemy_type), m_renderer(renderer)
+{
+	const auto blockCenter = Helpers::GetBlockCenter(index_x, index_y);
+	m_pos_x = blockCenter.first;
+	m_pos_y = blockCenter.second;
+	if (m_type == EASY_ENEMY)
+	{
+		m_speed = 2;
+		m_decision_delay = 5000;
+		m_sprite = "easyEnemy";
+	}
+	else if (m_type == HARD_ENEMY)
+	{
+		m_speed = 3;
+		m_decision_delay = 10;
+		m_sprite = "hardEnemy";
+	}
+	m_state = DOWN;
+	m_windowRect = { 0, 0, Config::BLOCK_WIDTH, Config::BLOCK_HEIGHT };
+	m_collider = { 0, 0, Config::BLOCK_WIDTH - PADDING_X, Config::BLOCK_HEIGHT - PADDING_Y };
+}
+
 void Enemy::update()
 {
 	if (m_is_alive)
 	{
+		loadTexture(m_sprite);
+
+		// Add delay to decisions to change direction and stop A* from overshooting the target block
 		if (SDL_GetTicks() - m_decision_time > m_decision_delay)
 		{
 			decide();
-			if (m_enemy_type == HARD)
-			{
-				smartMove();
-			}
 		}
 
-		loadTexture(m_sprite);
-		if (m_enemy_type == EASY)
+		// A* pathfinding
+		if (m_type == HARD_ENEMY)
+		{
+			smartMove();
+		}
+
+		// Random movement
+		if (m_type == EASY_ENEMY)
 		{
 			move();
 		}
@@ -40,20 +68,6 @@ void Enemy::render()
 	m_collider.x = m_pos_x;
 	m_collider.y = m_pos_y;
 
-	// Debug
-
-	SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);
-	SDL_RenderDrawRect(m_renderer, &m_collider);
-
-	// SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 0);
-	//SDL_RenderDrawRect(m_renderer, &m_window_rect);
-
-	for (const auto& block : m_path)
-	{
-		SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);
-		SDL_RenderDrawRect(m_renderer, &block->m_collider);
-	}
-
 	if (!m_is_alive)
 	{
 		m_frame = 5;
@@ -63,12 +77,30 @@ void Enemy::render()
 		m_frame = (SDL_GetTicks() / delayPerFrame) % animatedFrames;
 	}
 
-	m_texture_rect.y = m_frame * m_texture_rect.h;
-	SDL_QueryTexture(m_texture, nullptr, nullptr, &m_texture_rect.w, &m_texture_rect.h);
+	m_textureRect.y = m_frame * m_textureRect.h;
+	SDL_QueryTexture(m_texture, nullptr, nullptr, &m_textureRect.w, &m_textureRect.h);
 
-	m_texture_rect.h /= totalFrames;
+	m_textureRect.h /= totalFrames;
 
-	SDL_RenderCopy(m_renderer, m_texture, &m_texture_rect, &m_window_rect);
+	SDL_RenderCopy(m_renderer, m_texture, &m_textureRect, &m_windowRect);
+
+
+	// Debug
+	const auto state = Service<State>::Get();
+	if (state->m_debug)
+	{
+		SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);
+		SDL_RenderDrawRect(m_renderer, &m_collider);
+
+		SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 0);
+		SDL_RenderDrawRect(m_renderer, &m_windowRect);
+
+		for (const auto& block : m_path)
+		{
+			SDL_SetRenderDrawColor(m_renderer, 0, 0, 255, 255);
+			SDL_RenderDrawRect(m_renderer, &block->m_collider);
+		}
+	}
 }
 
 void Enemy::loadTexture(std::string sprite)
@@ -83,7 +115,7 @@ void Enemy::loadTexture(std::string sprite)
 
 void Enemy::decide()
 {
-	if (m_enemy_type == HARD)
+	if (m_type == HARD_ENEMY)
 	{
 		auto map = Service<Map>::Get();
 		const auto player = map->m_playerList.front();
@@ -100,9 +132,9 @@ void Enemy::decide()
 		m_old_target_x = target_block->m_index_x;
 		m_old_target_y = target_block->m_index_y;
 	}
-	else if (m_enemy_type == EASY)
+	else if (m_type == EASY_ENEMY)
 	{
-		int random = rand() % 10;
+		const int random = rand() % 12;
 
 		switch (m_state)
 		{
@@ -111,7 +143,7 @@ void Enemy::decide()
 			{
 				m_state = LEFT;
 			}
-			else if (random > 3 && random < 8)
+			else if (random > 3 && random < 9)
 			{
 				m_state = RIGHT;
 			}
@@ -125,7 +157,7 @@ void Enemy::decide()
 			{
 				m_state = LEFT;
 			}
-			else if (random > 3 && random < 8)
+			else if (random > 3 && random < 9)
 			{
 				m_state = RIGHT;
 			}
@@ -139,7 +171,7 @@ void Enemy::decide()
 			{
 				m_state = UP;
 			}
-			else if (random > 3 && random < 8)
+			else if (random > 3 && random < 9)
 			{
 				m_state = DOWN;
 			}
@@ -153,7 +185,7 @@ void Enemy::decide()
 			{
 				m_state = UP;
 			}
-			else if (random > 3 && random < 8)
+			else if (random > 3 && random < 9)
 			{
 				m_state = DOWN;
 			}
@@ -192,9 +224,9 @@ void Enemy::move()
 	default:
 		break;
 	}
-	m_window_rect.x = m_pos_x;
+	m_windowRect.x = m_pos_x;
 	m_collider.x = m_pos_x + PADDING_X;
-	m_window_rect.y = m_pos_y;
+	m_windowRect.y = m_pos_y;
 	m_collider.y = m_pos_y + PADDING_Y;
 
 	for (const auto& player : map->m_playerList)
@@ -225,11 +257,11 @@ void Enemy::move()
 	if (colliding)
 	{
 		m_pos_x = oldX;
-		m_window_rect.x = m_pos_x;
+		m_windowRect.x = m_pos_x;
 		m_collider.x = m_pos_x + PADDING_X;;
 
 		m_pos_y = oldY;
-		m_window_rect.y = m_pos_y;
+		m_windowRect.y = m_pos_y;
 		m_collider.y = m_pos_y + PADDING_Y;
 		decide();
 	}
@@ -279,9 +311,9 @@ void Enemy::smartMove()
 		m_pos_x += m_speed_x;
 	}
 
-	m_window_rect.x = m_pos_x;
+	m_windowRect.x = m_pos_x;
 	m_collider.x = m_pos_x + PADDING_X;
-	m_window_rect.y = m_pos_y;
+	m_windowRect.y = m_pos_y;
 	m_collider.y = m_pos_y + PADDING_Y;
 
 	for (const auto& player : map->m_playerList)
@@ -313,11 +345,11 @@ void Enemy::smartMove()
 	if (colliding)
 	{
 		m_pos_x = oldX;
-		m_window_rect.x = m_pos_x;
+		m_windowRect.x = m_pos_x;
 		m_collider.x = m_pos_x + PADDING_X;;
 
 		m_pos_y = oldY;
-		m_window_rect.y = m_pos_y;
+		m_windowRect.y = m_pos_y;
 		m_collider.y = m_pos_y + PADDING_Y;
 	}
 }

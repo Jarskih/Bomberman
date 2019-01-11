@@ -7,9 +7,11 @@
 
 /*
  * A* implementation of searching shortest path to player through grass and breakable blocks
+ * No optimizations or weighted blocks. (for example prefer grass to unbreakable blocks)
  */
 
 namespace Pathfinding {
+	// loop through all neighboring blocks where enemy can move
 	inline std::list<sp<Block>> discoverNeighbors(sp<Block> &block)
 	{
 		std::list<sp<Block>> neighbors;
@@ -72,6 +74,7 @@ namespace Pathfinding {
 		return neighbors;
 	}
 
+	// Find distance from current block to target
 	inline int getDistance(sp<Block> &target, sp<Block> &start)
 	{
 		const int distX = abs(target->m_index_x - start->m_index_x);

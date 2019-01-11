@@ -30,7 +30,7 @@ void Map::update(sp<Timer> &timer)
 	checkWinCondition();
 	if (m_timeOut && !m_spawned_time_out_enemies)
 	{
-		spawnEnemies(10, HARD);
+		spawnEnemies(10, HARD_ENEMY);
 		m_spawned_time_out_enemies = true;
 	}
 }
@@ -61,8 +61,22 @@ void Map::render(sp<Map> &map) const
 
 void Map::generateMap()
 {
+	const auto state = Service<State>::Get();
+	std::string levelPath;
+
 	//Open the map
-	std::ifstream map("assets/level1.map");
+	switch (state->m_level)
+	{
+	case 1:
+		levelPath = "assets/level1.map";
+		break;
+	case 2:
+		levelPath = "assets/level2.map";
+	default:
+		break;
+	}
+
+	std::ifstream map(levelPath);
 
 	//If the map couldn't be loaded
 	if (!map.is_open())
@@ -102,7 +116,7 @@ void Map::spawnEnemiesAtPosition(int x, int y, int number, int enemyType)
 {
 	for (auto numberOfEnemies = 0; numberOfEnemies < number; numberOfEnemies++)
 	{
-		const auto enemyObject = makesp<Enemy>(HARD, m_renderer, x, y);
+		const auto enemyObject = makesp<Enemy>(HARD_ENEMY, m_renderer, x, y);
 		m_enemyList.push_back(enemyObject);
 	}
 }
@@ -112,7 +126,7 @@ void Map::spawnEnemies(int number, int enemyType)
 	for (auto numberOfEnemies = 0; numberOfEnemies < number; numberOfEnemies++)
 	{
 		const auto block = findRandomGrassBlock();
-		const auto enemyObject = makesp<Enemy>(HARD, m_renderer, block->m_index_x, block->m_index_y);
+		const auto enemyObject = makesp<Enemy>(HARD_ENEMY, m_renderer, block->m_index_x, block->m_index_y);
 		m_enemyList.push_back(enemyObject);
 	}
 }
@@ -122,7 +136,9 @@ void Map::spawnEnemiesAtStart()
 	const auto player = makesp<Player>(m_renderer);
 	m_playerList.push_back(player);
 
-	for (int enemy = 0; enemy < NUMBER_OF_ENEMIES; enemy++)
+	const auto state = Service<State>::Get();
+
+	for (int enemy = 0; enemy < state->m_enemies; enemy++)
 	{
 		bool allowedBlock = false;
 		while (!allowedBlock)
@@ -139,7 +155,7 @@ void Map::spawnEnemiesAtStart()
 			const auto block = tileSet[x][y];
 			if (block->m_block_type == GRASS)
 			{
-				const auto enemyObject = makesp<Enemy>(HARD, m_renderer, x, y);
+				const auto enemyObject = makesp<Enemy>(EASY_ENEMY, m_renderer, x, y);
 				m_enemyList.push_back(enemyObject);
 				allowedBlock = true;
 				break;
@@ -153,7 +169,7 @@ void Map::spawnPowerUps()
 	int x = 0;
 	int y = 0;
 
-	for (int powerUpType = 0; powerUpType < 5; powerUpType++)
+	for (auto powerUpType = 0; powerUpType < 5; powerUpType++)
 	{
 		bool allowedBlock = false;
 		while (!allowedBlock)
@@ -179,20 +195,20 @@ void Map::handleEvent(SDL_Event& event)
 	}
 }
 
-void Map::addPowerUp(int index_x, int index_y, int powerUpType)
+void Map::addPowerUp(int indexX, int indexY, int powerUpType)
 {
-	const auto powerUp = makesp<PowerUp>(index_x, index_y, powerUpType, m_renderer);
+	const auto powerUp = makesp<PowerUp>(indexX, indexY, powerUpType, m_renderer);
 	m_powerUps.emplace_back(powerUp);
 }
 
 // Get block object from coordinates
-sp<Block> Map::findBlockByCoordinates(int x, int y)
+sp<Block> Map::findBlockByCoordinates(const int x, const int y)
 {
 	const auto block = Helpers::GetCurrentBlock(x, y);
 	return findBlockByIndex(block.first, block.second);
 }
 
-sp<Block> Map::findBlockByIndex(int x, int y)
+sp<Block> Map::findBlockByIndex(const int x, const int y)
 {
 	if (x > 0 && y > 0 && x < MAX_BLOCKS_X - 1 && y < MAX_BLOCKS_Y - 1) {
 		return tileSet[x][y];
@@ -224,22 +240,23 @@ sp<Block> Map::findRandomGrassBlock()
 
 void Map::checkWinCondition()
 {
+	const auto state = Service<State>::Get();
 	int deadEnemies = 0;
 	int totalEnemies = 0;
 	for (const auto& enemy : m_enemyList)
 	{
 		totalEnemies++;
-		if (!enemy->m_is_alive)
+		if (!enemy->isAlive())
 		{
 			deadEnemies++;
 		}
 	}
 	if (deadEnemies >= totalEnemies)
 	{
-		m_enemies_dead = true;
+		state->m_enemies_dead = true;
 	}
 	else
 	{
-		m_enemies_dead = false;
+		state->m_enemies_dead = false;
 	}
 }

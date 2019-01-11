@@ -8,7 +8,21 @@
 #include "Service.h"
 #include "Textures.h"
 #include "Musicplayer.h"
-#include <iostream>
+
+Player::Player(SDL_Renderer* renderer) : m_renderer(renderer)
+{
+	m_pos_x = Config::BLOCK_WIDTH + Config::BLOCK_WIDTH / 2.0f;
+	m_pos_y = Config::BLOCK_HEIGHT + Config::BLOCK_HEIGHT / 2.0f;
+	m_type = PLAYER;
+	m_is_alive = true;
+	m_visible = true;
+	m_collider = { 0, 0, Config::PLAYER_WIDTH / 3, Config::PLAYER_HEIGHT / 3 };
+	m_windowRect = { 0, 0, Config::PLAYER_WIDTH, Config::PLAYER_HEIGHT };
+	m_textureRect = { 0, 0, 0, 0 };
+	m_state = IDLE_DOWN;
+	m_speed_x = 0;
+	m_speed_y = 0;
+}
 
 void Player::update()
 {
@@ -42,60 +56,8 @@ std::vector<sp<Bomb>> Player::checkBombs()
 	return newBombs;
 }
 
-/*
-const char* Player::GetSprite() const
-{
-	switch (state) {
-	case DOWN:
-		return "img/player_move_down.png";
-		break;
-	case IDLE_DOWN:
-		return "img/player_move_down.png";
-		break;
-	case UP:
-		return "img/player_move_up.png";
-		break;
-	case IDLE_UP:
-		return "img/player_move_up.png";
-		break;
-	case RIGHT:
-		return "img/player_move_right.png";
-		break;
-	case IDLE_RIGHT:
-		return "img/player_move_right.png";
-		break;
-	case LEFT:
-		return "img/player_move_left.png";
-		break;
-	case IDLE_LEFT:
-		return "img/player_move_left.png";
-		break;
-	default:
-		return "error";
-		break;
-	}
-}
-*/
-
 SDL_Texture* Player::loadTexture()
 {
-	/*
-	SDL_Texture* texture = nullptr;
-
-	const char* sprite = GetSprite();
-
-	if (sprite == "error") {
-		std::cout << "Error loading sprite" << std::endl;
-	}
-
-	SDL_Surface* surface = IMG_Load(sprite);
-	if (!surface) {
-		std::cout << "Cant load player" << std::endl;
-	}
-	texture = SDL_CreateTextureFromSurface(m_renderer, surface);
-	SDL_FreeSurface(surface);
-	return texture;
-	*/
 	std::string name;
 
 	switch (m_state) {
@@ -244,9 +206,9 @@ void Player::movePlayer() {
 
 	for (const auto& enemy : map->m_enemyList)
 	{
-		if (Helpers::CheckCollision(m_collider, enemy->m_collider))
+		if (Helpers::CheckCollision(m_collider, enemy->getCollider()))
 		{
-			if (enemy->m_is_alive)
+			if (enemy->isAlive())
 			{
 				die();
 				return;
@@ -315,8 +277,11 @@ void Player::render() {
 	animate();
 
 	// Debug
-	//SDL_SetRenderDrawColor(m_renderer, 255, 255, 0, 255);
-	//SDL_RenderDrawRect(m_renderer, &collider);
+	const auto state = Service<State>::Get();
+	if (state->m_debug == true) {
+		SDL_SetRenderDrawColor(m_renderer, 255, 255, 0, 255);
+		SDL_RenderDrawRect(m_renderer, &m_collider);
+	}
 }
 
 void Player::die()

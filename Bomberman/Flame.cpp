@@ -31,10 +31,15 @@ void Flame::render(int frame)
 		SDL_RenderCopy(m_renderer, m_texture, &m_texture_rect, &m_window_rect);
 	}
 
-	// SDL_RenderDrawRect(m_renderer, &collider);
+	// Debug
+	const auto state = Service<State>::Get();
+	if (state->m_debug) {
+		SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
+		SDL_RenderDrawRect(m_renderer, &m_collider);
+	}
 }
 
-void Flame::colliderResize(int x, int y, int width, int height)
+void Flame::colliderResize(const int x, const int y, const int width, const int height)
 {
 	m_collider.x += x;
 	m_collider.y += y;
@@ -61,9 +66,9 @@ void Flame::checkCollision() const
 		}
 		for (const auto& enemy : map->m_enemyList)
 		{
-			if (Helpers::CheckCollision(m_collider, enemy->m_collider))
+			if (Helpers::CheckCollision(m_collider, enemy->getCollider()))
 			{
-				if (enemy->m_is_alive) {
+				if (enemy->isAlive()) {
 					enemy->die();
 				}
 			}
@@ -80,7 +85,7 @@ void Flame::checkCollision() const
 			}
 			else
 			{
-				map->spawnEnemiesAtPosition(power_up->m_index_x, power_up->m_index_y, 3, HARD);
+				map->spawnEnemiesAtPosition(power_up->m_index_x, power_up->m_index_y, 3, HARD_ENEMY);
 			}
 
 		}

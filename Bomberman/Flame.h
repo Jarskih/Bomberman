@@ -4,7 +4,6 @@
 #include <map>
 #include "Config.h"
 #include "Helpers.h"
-#include <iostream>
 
 class Flame
 {

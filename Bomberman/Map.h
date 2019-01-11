@@ -29,7 +29,6 @@ public:
 	sp<Block> findBlockByCoordinates(int x, int y);
 	sp<Block> findBlockByIndex(int x, int y);
 	sp<Block> findRandomGrassBlock();
-	static void win();
 	void spawnEnemies(int number, int enemyType);
 	void spawnEnemiesAtPosition(int x, int y, int number, int enemyType);
 
@@ -39,8 +38,6 @@ public:
 	std::vector<sp<Player>> m_playerList = {};
 	std::vector<sp<Enemy>> m_enemyList = {};
 	std::vector<sp<PowerUp>> m_powerUps = {};
-	bool m_level_cleared = false;
-	bool m_enemies_dead = false;
 private:
 	void generateMap();
 	void spawnEnemiesAtStart();

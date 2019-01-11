@@ -61,31 +61,41 @@ void Hud::render(const sp<Timer>& timer)
 	m_lives = state->m_lives;
 
 	auto lives = std::to_string(m_lives);
+
+	// Render number of lives
 	if (!loadFromRenderedText(lives, m_text_color))
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to render text texture!\n");
 	}
+	SDL_QueryTexture(m_textTexture, nullptr, nullptr, &m_livesRect.w, &m_livesRect.h);
 	SDL_RenderCopy(m_renderer, m_textTexture, nullptr, &m_livesRect);
 
+	// Render minutes in the timer
 	std::string min = std::to_string(m_min);
 	if (!loadFromRenderedText(min, m_text_color))
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to render text texture!\n");
 	}
+	SDL_QueryTexture(m_textTexture, nullptr, nullptr, &m_minRect.w, &m_minRect.h);
 	SDL_RenderCopy(m_renderer, m_textTexture, nullptr, &m_minRect);
 
+	// Render seconds in the timer
 	std::string sec = std::to_string(m_sec);
 	if (!loadFromRenderedText(sec, m_text_color))
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to render text texture!\n");
 	}
+	SDL_QueryTexture(m_textTexture, nullptr, nullptr, &m_secRect.w, &m_secRect.h);
 	SDL_RenderCopy(m_renderer, m_textTexture, nullptr, &m_secRect);
 
+	// Render scores (high score is same as score)
 	auto score = std::to_string(m_score);
 	if (!loadFromRenderedText(score, m_text_color))
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to render text texture!\n");
 	}
+	SDL_QueryTexture(m_textTexture, nullptr, nullptr, &m_scoreRect.w, &m_scoreRect.h);
 	SDL_RenderCopy(m_renderer, m_textTexture, nullptr, &m_scoreRect);
+	SDL_QueryTexture(m_textTexture, nullptr, nullptr, &m_hiScoreRect.w, &m_hiScoreRect.h);
 	SDL_RenderCopy(m_renderer, m_textTexture, nullptr, &m_hiScoreRect);
 }

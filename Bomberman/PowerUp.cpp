@@ -5,6 +5,7 @@
 
 void PowerUp::render()
 {
+	const auto state = Service<State>::Get();
 	if (m_is_picked_up) {
 		return;
 	}
@@ -19,7 +20,7 @@ void PowerUp::render()
 	SDL_RenderDrawRect(m_renderer, &m_window_rect);
 
 	const auto map = Service<Map>::Get();
-	if (m_type == EXIT && !map->m_enemies_dead)
+	if (m_type == EXIT && !state->m_enemies_dead)
 	{
 		m_frame = 0;
 	}
@@ -74,9 +75,9 @@ void PowerUp::checkCollision(const std::vector<sp<Player>>& m_playerList)
 					m_is_picked_up = true;
 					break;
 				case EXIT:
-					if (map->m_enemies_dead)
+					if (state->m_enemies_dead)
 					{
-						map->m_level_cleared = true;
+						state->m_level_cleared = true;
 					}
 					break;
 				default:

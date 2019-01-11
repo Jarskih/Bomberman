@@ -10,19 +10,7 @@ class Bomb;
 
 class Player : public Entity {
 public:
-	Player(SDL_Renderer* renderer) : m_renderer(renderer) {
-		m_pos_x = Config::BLOCK_WIDTH + Config::BLOCK_WIDTH / 2.0f;
-		m_pos_y = Config::BLOCK_HEIGHT + Config::BLOCK_HEIGHT / 2.0f;
-		m_type = PLAYER;
-		m_is_alive = true;
-		m_visible = true;
-		m_collider = { 0, 0, Config::PLAYER_WIDTH / 3, Config::PLAYER_HEIGHT / 3 };
-		m_windowRect = { 0, 0, Config::PLAYER_WIDTH, Config::PLAYER_HEIGHT };
-		m_textureRect = { 0, 0, 0, 0 };
-		m_state = IDLE_DOWN;
-		m_speed_x = 0;
-		m_speed_y = 0;
-	};
+	Player(SDL_Renderer* renderer);
 	Player() = delete;
 	~Player() = default;
 	void update() override;
