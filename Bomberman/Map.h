@@ -38,6 +38,8 @@ public:
 	std::vector<sp<Player>> m_playerList = {};
 	std::vector<sp<Enemy>> m_enemyList = {};
 	std::vector<sp<PowerUp>> m_powerUps = {};
+	bool m_enemies_dead = false;
+	bool m_level_cleared = false;
 private:
 	void generateMap();
 	void spawnEnemiesAtStart();

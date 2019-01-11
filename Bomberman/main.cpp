@@ -192,7 +192,7 @@ int main(int argc, char** args)
 					}
 				}
 
-				if (gameState->m_level_cleared)
+				if (map->m_level_cleared)
 				{
 					if (gameState->m_level == 1)
 					{

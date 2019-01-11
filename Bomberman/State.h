@@ -23,8 +23,6 @@ struct State
 	int m_lives = Config::STARTING_LIVES;
 	bool m_debug = false;
 	int m_level = 1;
-	bool m_level_cleared = false;
-	bool m_enemies_dead = false;
 
 	void changeScene(int newScene);
 	void incrementScore(int addedScore);

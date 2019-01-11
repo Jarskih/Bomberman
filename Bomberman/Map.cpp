@@ -240,7 +240,6 @@ sp<Block> Map::findRandomGrassBlock()
 
 void Map::checkWinCondition()
 {
-	const auto state = Service<State>::Get();
 	int deadEnemies = 0;
 	int totalEnemies = 0;
 	for (const auto& enemy : m_enemyList)
@@ -253,10 +252,10 @@ void Map::checkWinCondition()
 	}
 	if (deadEnemies >= totalEnemies)
 	{
-		state->m_enemies_dead = true;
+		m_enemies_dead = true;
 	}
 	else
 	{
-		state->m_enemies_dead = false;
+		m_enemies_dead = false;
 	}
 }

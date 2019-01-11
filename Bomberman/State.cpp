@@ -53,6 +53,8 @@ void State::goToMenu()
 {
 	changeScene(State::MENU);
 	MusicPlayer::StopMusic();
+	m_level = 1;
+	m_enemies = Config::NUMBER_OF_ENEMIES;
 }
 
 void State::nextLevel()
@@ -68,7 +70,7 @@ void State::incrementScore(int addedScore)
 
 void State::incrementLives()
 {
-	m_lives += 1;
+	m_lives++;
 }
 
 void State::decrementLives()
