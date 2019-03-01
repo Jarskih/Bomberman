@@ -73,11 +73,14 @@
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)\Dependencies\SDL2_ttf\include;$(SolutionDir)\Dependencies\SDL2_mixer\include;$(SolutionDir)\Dependencies\SDL2_image\include;$(SolutionDir)\Dependencies\SDL2\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Dependencies\SDL2_ttf\include;$(SolutionDir)Dependencies\SDL2_image\include;$(SolutionDir)Dependencies\SDL2_mixer\include;$(SolutionDir)Dependencies\SDL2\include;$(IncludePath)</IncludePath>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <OutDir>$(SolutionDir)\Builds\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)\Builds\$(Platform)\$(Configuration)\Bin\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(SolutionDir)Dependencies\SDL2_ttf\include;$(SolutionDir)Dependencies\SDL2_image\include;$(SolutionDir)Dependencies\SDL2_mixer\include;$(SolutionDir)Dependencies\SDL2\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -99,7 +102,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\C++\projects\Bomberman\Bomberman\Dependencies\SDL2_ttf\lib\x64;C:\C++\projects\Bomberman\Bomberman\Dependencies\SDL2_mixer\lib\x64;C:\C++\projects\Bomberman\Bomberman\Dependencies\SDL2_image\lib\x64;C:\C++\projects\Bomberman\Bomberman\Dependencies\SDL2\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_mixer.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)Dependencies\SDL2\lib\x64\SDL2.lib;$(SolutionDir)Dependencies\SDL2\lib\x64\SDL2main.lib;$(SolutionDir)Dependencies\SDL2_image\lib\x64\SDL2_image.lib;$(SolutionDir)Dependencies\SDL2_mixer\lib\x64\SDL2_mixer.lib;$(SolutionDir)Dependencies\SDL2_ttf\lib\x64\SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
       <SubSystem>Console</SubSystem>
     </Link>
@@ -128,6 +131,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>$(SolutionDir)Dependencies\SDL2\lib\x64\SDL2.lib;$(SolutionDir)Dependencies\SDL2\lib\x64\SDL2main.lib;$(SolutionDir)Dependencies\SDL2_image\lib\x64\SDL2_image.lib;$(SolutionDir)Dependencies\SDL2_mixer\lib\x64\SDL2_mixer.lib;$(SolutionDir)Dependencies\SDL2_ttf\lib\x64\SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
