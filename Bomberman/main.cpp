@@ -3,6 +3,7 @@
 #pragma comment(lib, "../Dependencies/SDL2/lib/x64/SDL2main.lib")
 #pragma comment(lib, "../Dependencies/SDL2_mixer/lib/x64/SDL2_mixer.lib")
 #pragma comment(lib, "../Dependencies/SDL2_image/lib/x64/SDL2_image.lib")
+#pragma comment(lib, "../Dependencies/SDL2_ttf/lib/x64/SDL2_ttf.lib")
 
 #include <SDL.h>
 #include <SDL_image.h>
